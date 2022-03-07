@@ -20,7 +20,7 @@ cbuffer treeProgressPass : register(b2)
 struct VertexIn
 {
 	float3 PosL  : POSITION;
-	float4 Color : COLOR;
+	float4 Normal : NORMAL;
 };
 
 struct VertexOut
@@ -57,7 +57,7 @@ VertexOut VS(VertexIn vin)
 	float4 PosView = mul(gView, float4(PosWorld));
 	vout.PosH = mul(gProj, PosView);
 
-	vout.Color = normalize(mul(gRotation, vin.Color));
+	vout.Color = normalize(mul(gRotation, vin.Normal));
 
 	return vout;
 }

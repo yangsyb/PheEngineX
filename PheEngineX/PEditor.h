@@ -4,11 +4,12 @@
 
 namespace Phe
 {
-	class PEditor
+	class PEditor : public Singleton<PEditor>
 	{
 	public:
 		PEditor();
 		~PEditor();
+		void Register(std::vector<std::function<void()>> RegisterList);
 		void Update();
 
 	private:

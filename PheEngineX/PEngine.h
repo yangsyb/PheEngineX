@@ -29,6 +29,7 @@ namespace Phe
 		void BeginFrame();
 		void EndFrame();
 
+		PWindow* GetWindow() { return PheWindow; }
 		PScene* GetScene() { return PMainScene; }
 	private:
 		UINT32 PWidth;
@@ -42,7 +43,6 @@ namespace Phe
 		PScene* PMainScene;
 		PEditor* PMainEditor;
 		PGameTimer PTimer;
-
 
 	};
 }

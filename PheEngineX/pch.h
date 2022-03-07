@@ -63,5 +63,6 @@
 #include "PCommonData.h"
 #include "UploadBuffer.h"
 #include <dxgidebug.h>
+#include <iostream>
 
 using namespace Microsoft::WRL;

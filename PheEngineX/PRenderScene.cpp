@@ -16,7 +16,7 @@ namespace Phe
 		cbHeapDesc.NumDescriptors = 1024;
 		cbHeapDesc.NodeMask = 0;
 		GraphicContext::GetSingleton().Device()->CreateDescriptorHeap(&cbHeapDesc, IID_PPV_ARGS(&CbvHeap));
-//		BuildConstantBuffer();
+		//		BuildConstantBuffer();
 		mPassCB = std::make_unique<UploadBuffer<PassConstants>>(GraphicContext::GetSingleton().Device().Get(), 1, true);
 		BuildPSO();
 	}
@@ -47,11 +47,35 @@ namespace Phe
 		BuildConstantBuffer();
 	}
 
+	void PRenderScene::BuildWPOMeshData(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform)
+	{
+		PMeshDataStruct data;
+		data.Vertices = StaticMesh->GetVertices();
+		data.Indices = StaticMesh->GetIndices();
+		data.Normal = StaticMesh->GetTangents();
+		std::shared_ptr<PRenderStaticMesh> RSM = std::make_shared<PRenderStaticMesh>(StaticMesh->GetName(), data);
+		WPORenderMeshData.insert({ StaticMesh->GetName(), RSM });
+		WPORenderSceneMeshList.insert({ StaticMesh->GetName(), std::vector<Transform>{MeshTransform} });
+		WPORenderMeshNum++;
+		BuildConstantBuffer();
+	}
+
+	void PRenderScene::AddWPOExistedMesh(std::string MeshName, Transform MeshTransform)
+	{
+		auto& MeshTransformVector = WPORenderSceneMeshList[MeshName];
+		MeshTransformVector.push_back(MeshTransform);
+		WPORenderMeshNum++;
+		BuildConstantBuffer();
+	}
+
 	void PRenderScene::ClearScene()
 	{
 		RenderMeshData.clear();
 		RenderSceneMeshList.clear();
+		WPORenderMeshData.clear();
+		WPORenderSceneMeshList.clear();
 		RenderMeshNum = 0;
+		WPORenderMeshNum = 0;
 	}
 
 	void PRenderScene::UpdateCamera(PassConstants passcb)
@@ -62,15 +86,32 @@ namespace Phe
 	void PRenderScene::BuildConstantBuffer()
 	{
 		GraphicContext::GetSingleton().ResetCommandList();
-
-		mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(GraphicContext::GetSingleton().Device().Get(), RenderMeshNum, true);
 		UINT objCBByteSize = (sizeof(ObjectConstants) + 255) & ~255;
 		UINT passCBByteSize = (sizeof(PassConstants) + 255) & ~255;
+		UINT treeCBByteSize = (sizeof(PTreeConstants) + 255) & ~255;
+
+		if (RenderMeshNum > 0)
+		{
+			mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(GraphicContext::GetSingleton().Device().Get(), RenderMeshNum + WPORenderMeshNum, true);
+
+		}
+		if (WPORenderMeshNum > 0)
+		{
+			mObjectCB = std::make_unique<UploadBuffer<ObjectConstants>>(GraphicContext::GetSingleton().Device().Get(), RenderMeshNum + WPORenderMeshNum, true);
+			mTreeCB = std::make_unique<UploadBuffer<PTreeConstants>>(GraphicContext::GetSingleton().Device().Get(), 1, true);
+
+		}
 
 		D3D12_GPU_VIRTUAL_ADDRESS objcbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
 		D3D12_GPU_VIRTUAL_ADDRESS passcbAddress = mPassCB->Resource()->GetGPUVirtualAddress();
+		D3D12_GPU_VIRTUAL_ADDRESS treecbAddress = 0;
+		if(mTreeCB)
+		{
+			treecbAddress = mTreeCB->Resource()->GetGPUVirtualAddress();
+		}
+
 		auto handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
-		for (size_t index = 0; index < RenderMeshNum; index++)
+		for (size_t index = 0; index < size_t(RenderMeshNum) + size_t(WPORenderMeshNum); index++)
 		{
 			objcbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
 			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
@@ -83,10 +124,10 @@ namespace Phe
 			cbvDesc.SizeInBytes = objCBByteSize;
 			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
 		}
-		int passCBufIndex = 0;
-		passcbAddress += passCBufIndex * passCBByteSize;
+		UINT passCBufIndex = 0;
+		passcbAddress += UINT(passCBufIndex) * UINT(passCBByteSize);
 
-		int passheapIndex = RenderMeshNum;
+		int passheapIndex = RenderMeshNum + WPORenderMeshNum;
 
 		handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
 		handle.Offset(passheapIndex, PCbvSrvUavDescriptorSize);
@@ -95,6 +136,22 @@ namespace Phe
 		cbvDesc1.SizeInBytes = passCBByteSize;
 
 		GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc1, handle);
+
+		if(mTreeCB)
+		{
+			int treeBufIndex = 0;
+			treecbAddress += treeBufIndex * treeCBByteSize;
+			int treepassheapIndex = RenderMeshNum + WPORenderMeshNum + 1;
+			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
+			handle.Offset(treepassheapIndex, PCbvSrvUavDescriptorSize);
+			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc2;
+			cbvDesc2.BufferLocation = treecbAddress;
+			cbvDesc2.SizeInBytes = treeCBByteSize;
+
+			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc2, handle);
+		}
+
+
 		GraphicContext::GetSingleton().ExecuteCommandList();
 		PRenderThread::Get()->FlushCommandQueue();
 	}
@@ -144,6 +201,52 @@ namespace Phe
 		PsoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;//DXGI_FORMAT mDepthStencilFormat
 		GraphicContext::GetSingleton().Device()->CreateGraphicsPipelineState(&PsoDesc, IID_PPV_ARGS(&PSO));
 
+
+		CD3DX12_ROOT_PARAMETER WPOSlotRootParameter[3];
+		CD3DX12_DESCRIPTOR_RANGE WPOCbvTable;
+		CD3DX12_DESCRIPTOR_RANGE WPOCbvTable1;
+		CD3DX12_DESCRIPTOR_RANGE WPOCbvTable2;
+		WPOCbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
+		WPOCbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
+		WPOCbvTable2.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 2);
+		WPOSlotRootParameter[0].InitAsDescriptorTable(1, &WPOCbvTable);
+		WPOSlotRootParameter[1].InitAsDescriptorTable(1, &WPOCbvTable1);
+		WPOSlotRootParameter[2].InitAsDescriptorTable(1, &WPOCbvTable2);
+		CD3DX12_ROOT_SIGNATURE_DESC WPORootSigDesc(3, WPOSlotRootParameter, 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		ComPtr<ID3DBlob> WPOSerializedRootSig = nullptr;
+		ComPtr<ID3DBlob> WPOErrorBlob = nullptr;
+		D3D12SerializeRootSignature(&WPORootSigDesc, D3D_ROOT_SIGNATURE_VERSION_1, WPOSerializedRootSig.GetAddressOf(), WPOErrorBlob.GetAddressOf());
+		GraphicContext::GetSingleton().Device()->CreateRootSignature(0, WPOSerializedRootSig->GetBufferPointer(), WPOSerializedRootSig->GetBufferSize(), IID_PPV_ARGS(&WPORootSignature));
+
+		WPOMvsByteCode = CompileShader(L"Shaders\\tree.hlsl", nullptr, "VS", "vs_5_0");
+		WPOMpsByteCode = CompileShader(L"Shaders\\tree.hlsl", nullptr, "PS", "ps_5_0");
+
+		WPOInputLayout =
+		{
+			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
+			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
+		};
+
+		D3D12_GRAPHICS_PIPELINE_STATE_DESC WPOPsoDesc;
+		ZeroMemory(&WPOPsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+		WPOPsoDesc.InputLayout = { WPOInputLayout.data(), (UINT)WPOInputLayout.size() };
+		WPOPsoDesc.pRootSignature = WPORootSignature.Get();
+		WPOPsoDesc.VS = { reinterpret_cast<BYTE*>(WPOMvsByteCode->GetBufferPointer()),WPOMvsByteCode->GetBufferSize() };
+		WPOPsoDesc.PS = { reinterpret_cast<BYTE*>(WPOMpsByteCode->GetBufferPointer()),WPOMpsByteCode->GetBufferSize() };
+
+		WPOPsoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		WPOPsoDesc.RasterizerState.FrontCounterClockwise = TRUE;
+		WPOPsoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		WPOPsoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		WPOPsoDesc.SampleMask = UINT_MAX;
+		WPOPsoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		WPOPsoDesc.NumRenderTargets = 1;
+		WPOPsoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT mBackBufferFormat
+		WPOPsoDesc.SampleDesc.Count = 1;//m4xMsaaState ? 4 : 1;
+		WPOPsoDesc.SampleDesc.Quality = 0;//m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+		WPOPsoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;//DXGI_FORMAT mDepthStencilFormat
+		GraphicContext::GetSingleton().Device()->CreateGraphicsPipelineState(&WPOPsoDesc, IID_PPV_ARGS(&WPOPSO));
+
 		GraphicContext::GetSingleton().ExecuteCommandList();
 		PRenderThread::Get()->FlushCommandQueue();
 	}
@@ -151,6 +254,7 @@ namespace Phe
 	void PRenderScene::Render()
 	{
 		ObjectConstants objConstants;
+		PTreeConstants treeConstants;
 		UINT32 MeshIndex = 0;
 
 		auto commandList = GraphicContext::GetSingleton().CommandList();
@@ -177,12 +281,46 @@ namespace Phe
 				cbvHandle.Offset(MeshIndex, PCbvSrvUavDescriptorSize);
 				commandList->SetGraphicsRootDescriptorTable(0, cbvHandle);
 				cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(CbvHeap->GetGPUDescriptorHandleForHeapStart());
-				cbvHandle.Offset(RenderMeshNum, PCbvSrvUavDescriptorSize);
+				cbvHandle.Offset(RenderMeshNum + WPORenderMeshNum, PCbvSrvUavDescriptorSize);
 				commandList->SetGraphicsRootDescriptorTable(1, cbvHandle);
 				commandList->DrawIndexedInstanced(DrawIndexCount, 1, 0, 0, 0);
 				MeshIndex++;
 			}
 		}
+
+		commandList->SetPipelineState(WPOPSO.Get());
+		commandList->SetGraphicsRootSignature(WPORootSignature.Get());
+		for(auto MeshGenre : WPORenderSceneMeshList)
+		{
+			auto vbv = WPORenderMeshData[MeshGenre.first]->VertexBufferView();
+			commandList->IASetVertexBuffers(0, 1, &vbv);
+			auto ibv = WPORenderMeshData[MeshGenre.first]->IndexBufferView();
+			commandList->IASetIndexBuffer(&ibv);
+			commandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+			UINT DrawIndexCount = WPORenderMeshData[MeshGenre.first]->IndexCount();
+			for (auto MeshTransform : MeshGenre.second)
+			{
+				objConstants.Position = MeshTransform.GetPositionMat();
+				objConstants.Rotation = MeshTransform.GetRotaionMat();
+				objConstants.Scale = MeshTransform.GetScaleMat();
+				treeConstants.Center = glm::vec3(0,0,0);
+				treeConstants.Time = PRenderThread::Get()->GetCurrentTotalTime();
+				mObjectCB->CopyData(MeshIndex, objConstants);
+				mTreeCB->CopyData(0, treeConstants);
+				auto cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(CbvHeap->GetGPUDescriptorHandleForHeapStart());
+				cbvHandle.Offset(MeshIndex, PCbvSrvUavDescriptorSize);
+				commandList->SetGraphicsRootDescriptorTable(0, cbvHandle);
+				cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(CbvHeap->GetGPUDescriptorHandleForHeapStart());
+				cbvHandle.Offset(RenderMeshNum + WPORenderMeshNum, PCbvSrvUavDescriptorSize);
+				commandList->SetGraphicsRootDescriptorTable(1, cbvHandle);
+				cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(CbvHeap->GetGPUDescriptorHandleForHeapStart());
+				cbvHandle.Offset(RenderMeshNum + WPORenderMeshNum + 1, PCbvSrvUavDescriptorSize);
+				commandList->SetGraphicsRootDescriptorTable(2, cbvHandle);
+				commandList->DrawIndexedInstanced(DrawIndexCount, 1, 0, 0, 0);
+				MeshIndex++;
+			}
+		}
+		
 	}
 
 

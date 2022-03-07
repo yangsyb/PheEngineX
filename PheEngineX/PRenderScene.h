@@ -13,6 +13,8 @@ namespace Phe
 
 		void BuildMeshData(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform);
 		void AddExistedMesh(std::string MeshName, Transform MeshTransform);
+		void BuildWPOMeshData(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform);
+		void AddWPOExistedMesh(std::string MeshName, Transform MeshTransform);
 		void ClearScene();
 		void UpdateCamera(PassConstants passcb);
 
@@ -25,6 +27,9 @@ namespace Phe
 		UINT RenderMeshNum;
 		std::unordered_map<std::string, std::shared_ptr<PRenderStaticMesh>> RenderMeshData;
 		std::unordered_map<std::string, std::vector<Transform>> RenderSceneMeshList;
+		UINT WPORenderMeshNum;
+		std::unordered_map<std::string, std::shared_ptr<PRenderStaticMesh>> WPORenderMeshData;
+		std::unordered_map<std::string, std::vector<Transform>> WPORenderSceneMeshList;
 
 
 	private:
@@ -32,11 +37,17 @@ namespace Phe
 		ComPtr<ID3D12DescriptorHeap> CbvHeap;
 		std::unique_ptr <UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
 		std::unique_ptr <UploadBuffer<PassConstants>> mPassCB = nullptr;
+		std::unique_ptr <UploadBuffer<PTreeConstants>> mTreeCB = nullptr;
 
 		ComPtr<ID3D12RootSignature> RootSignature = nullptr;
+		ComPtr<ID3D12RootSignature> WPORootSignature = nullptr;
 		ComPtr<ID3DBlob> MvsByteCode = nullptr;
 		ComPtr<ID3DBlob> MpsByteCode = nullptr;
+		ComPtr<ID3DBlob> WPOMvsByteCode = nullptr;
+		ComPtr<ID3DBlob> WPOMpsByteCode = nullptr;
 		std::vector<D3D12_INPUT_ELEMENT_DESC> InputLayout;
+		std::vector<D3D12_INPUT_ELEMENT_DESC> WPOInputLayout;
 		ComPtr<ID3D12PipelineState> PSO = nullptr;
+		ComPtr<ID3D12PipelineState> WPOPSO = nullptr;
 	};
 }

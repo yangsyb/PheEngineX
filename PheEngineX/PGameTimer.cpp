@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "PGameTimer.h"
 
-PGameTimer::PGameTimer()
+PGameTimer::PGameTimer() : mStopTime(0)
 {
 	mSecondsPerCount = 0.0;
 	mDeltaTime = -1.0;

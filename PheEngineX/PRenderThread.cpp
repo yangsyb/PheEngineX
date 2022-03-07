@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PRenderThread.h"
 #include "DxException.h"
+#include "PEngine.h"
 namespace Phe
 {
 	PRenderThread* PRenderThread::pRenderThread = nullptr;
@@ -21,11 +22,8 @@ namespace Phe
 		return pRenderThread;
 	}
 
-	PRenderThread::PRenderThread() : PRenderNum(0), RenderFrameIndex(0), NextFrameIndex(0)
+	PRenderThread::PRenderThread() : PRenderNum(0), RenderFrameIndex(0), NextFrameIndex(0), PCbvSrvUavDescriptorSize(0), PDsvDescriptorSize(0)
 	{
-		Initialize();
-		OnResize();
-		PGraphicContext = std::make_unique<GraphicContext>(PDevice.Get(), PCommandList.Get(), PCommandAllocator.Get(), PCommandQueue.Get(), PFence.Get(), PCbvSrvUavDescriptorSize);
 		
 	}
 
@@ -36,7 +34,6 @@ namespace Phe
 
 	void PRenderThread::Start()
 	{
-		PRScene = new PRenderScene();
 		if (IsRunning)
 		{
 			return;
@@ -80,6 +77,16 @@ namespace Phe
 		Render();
 	}
 
+	void PRenderThread::OnThreadStart()
+	{
+		std::unique_lock<std::mutex> RenderLock(Rendermtx);
+		Initialize();
+		OnResize();
+		PGraphicContext = std::make_unique<GraphicContext>(PDevice.Get(), PCommandList.Get(), PCommandAllocator.Get(), PCommandQueue.Get(), PFence.Get(), PCbvSrvUavDescriptorSize);
+		PRScene = new PRenderScene();
+		PRenderNum = 0;
+	}
+
 	void PRenderThread::AddTask(PTask* RenderTask)
 	{
 		if (IsRunning)
@@ -96,8 +103,8 @@ namespace Phe
 			CurrentTask = RenderFrame[RenderFrameIndex].PTaskQueue.front();
 			CurrentTask->Execute();
 			RenderFrame[RenderFrameIndex].PTaskQueue.pop();
+			delete CurrentTask;
 			CurrentTask = nullptr;
-
 		}
 		RenderFrameIndex = (RenderFrameIndex + 1) % 2;
 	}
@@ -108,6 +115,11 @@ namespace Phe
 		++PRenderNum;
 		NextFrameIndex = (NextFrameIndex + 1) % 2;
 		RenderCV.notify_one();
+	}
+
+	void PRenderThread::SetCurrentTotalTime(float TotalTime)
+	{
+		PTotalTime = TotalTime;
 	}
 
 	void PRenderThread::Initialize()
@@ -153,6 +165,7 @@ namespace Phe
 
 		//CreateSwapChain
 		PSwapChain.Reset();
+		PWindowWin32* CurrentWindow = dynamic_cast<PWindowWin32*>(PEngine::GetSingleton().GetWindow());
 
 		DXGI_SWAP_CHAIN_DESC sd;
 		sd.BufferDesc.Width = PWidth;
@@ -166,7 +179,8 @@ namespace Phe
 		sd.SampleDesc.Quality = 0;
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = SwapChainBufferCount;
-		sd.OutputWindow = GetActiveWindow();
+//		sd.OutputWindow = GetActiveWindow();
+		sd.OutputWindow = CurrentWindow->GetCurrentHwnd();
 		sd.Windowed = true;
 		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
 		sd.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;

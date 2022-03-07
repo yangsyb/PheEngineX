@@ -4,7 +4,7 @@
 
 namespace Phe
 {
-	PCameraController::PCameraController(std::shared_ptr<PCamera> camera) : PMainCamera(camera)
+	PCameraController::PCameraController(std::shared_ptr<PCamera> camera) : PMainCamera(camera), PInterpolatingState()
 	{
 		PTargetState.SetFromTransform(PMainCamera->GetTransform());
 	}
@@ -41,19 +41,19 @@ namespace Phe
 			}
 			if (Input::GetKey(KeyCode::W))
 			{
-				PTargetState.Translate(PMainCamera->MoveForward({ PSpeed * 2 * 0.01, 0, 0 }));
+				PTargetState.Translate(PMainCamera->MoveForward({ PSpeed * 2 * 0.01f, 0.0f, 0.0f }));
 			}
 			if (Input::GetKey(KeyCode::A))
 			{
-				PTargetState.Translate(PMainCamera->MoveForward({ 0, -PSpeed * 2 * 0.01, 0 }));
+				PTargetState.Translate(PMainCamera->MoveForward({ 0.0f, -PSpeed * 2 * 0.01f, 0.0f }));
 			}
 			if (Input::GetKey(KeyCode::S))
 			{
-				PTargetState.Translate(PMainCamera->MoveForward({ -PSpeed * 2 * 0.01, 0, 0 }));
+				PTargetState.Translate(PMainCamera->MoveForward({ -PSpeed * 2 * 0.01f, 0.0f, 0.0f }));
 			}
 			if (Input::GetKey(KeyCode::D))
 			{
-				PTargetState.Translate(PMainCamera->MoveForward({ 0, PSpeed * 2 * 0.01, 0 }));
+				PTargetState.Translate(PMainCamera->MoveForward({ 0.0f, PSpeed * 2 * 0.01f, 0.0f }));
 			}
 		}
 		else

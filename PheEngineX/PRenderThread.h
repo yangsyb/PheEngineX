@@ -20,11 +20,15 @@ namespace Phe
 		virtual void Start() override;
 		virtual void Stop() override;
 		virtual void Run() override;
+		virtual void OnThreadStart();
 		void AddTask(PTask* RenderTask);
 		void DoTasks();
 		void TriggerRender();
 		int GetRenderNum() { return PRenderNum; }
 		PRenderScene* GetRenderScene() { return PRScene; }
+
+		void SetCurrentTotalTime(float TotalTime);
+		float GetCurrentTotalTime() { return PTotalTime; }
 	public:
 
 		void Initialize();
@@ -54,6 +58,7 @@ namespace Phe
 		std::unique_ptr<GraphicContext> PGraphicContext;
 		PRenderScene* PRScene;
 		int PRenderNum = 0;
+		float PTotalTime = 0;
 
 		UINT PWidth = 1920;
 		UINT PHeight = 1080;

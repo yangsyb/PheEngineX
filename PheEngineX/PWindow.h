@@ -7,7 +7,7 @@ namespace Phe
 	public:
 		static PWindow* Create(const std::string& Name, UINT32 Width, UINT32 Height);
 		static void DestroyWindow(PWindow* Window);
-
+		
 		virtual bool Run() = 0;
 
 	protected:
@@ -29,7 +29,7 @@ namespace Phe
 		virtual bool Run();
 
 		void GenerateWindow(const std::string& Name);
-
+		HWND GetCurrentHwnd() { return HWnd; }
 	protected:
 		HWND HWnd;
 	};

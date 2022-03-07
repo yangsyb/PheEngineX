@@ -4,7 +4,7 @@
 
 namespace Phe
 {
-	PEngine::PEngine(UINT32 width, UINT32 height) : PWidth(width), PHeight(height), IsRunning(false), PCurrentPlatform(Undefined)
+	PEngine::PEngine(UINT32 width, UINT32 height) : PWidth(width), PHeight(height), IsRunning(false), PCurrentPlatform(Undefined), PMainScene(nullptr), PRender(nullptr)
 	{
 #ifdef PlatformWin32
 		PCurrentPlatform = Win32;
@@ -27,8 +27,6 @@ namespace Phe
 		PMainEditor = nullptr;
 		delete PMainScene;
 		PMainScene = nullptr;
-
-
 	}
 
 
@@ -36,7 +34,8 @@ namespace Phe
 	void PEngine::Start()
 	{
 		PMainScene = new PScene();
-
+		PTimer.Reset();
+		PTimer.Start();
 		IsRunning = true;
 		while(IsRunning && PheWindow->Run())
 		{
@@ -52,13 +51,15 @@ namespace Phe
 
 	void PEngine::Tick()
 	{
-
 		BeginFrame();
 		EndFrame();
 	}
 
 	void PEngine::BeginFrame()
 	{
+		PTimer.Tick();
+		PTask* task = new PTask([=]() {PRenderThread::Get()->SetCurrentTotalTime(PTimer.TotalTime()); });
+		PRenderThread::Get()->AddTask(task);
 		Input::Update();
 		PMainEditor->Update();
 		PMainScene->Update();
@@ -67,7 +68,7 @@ namespace Phe
 	void PEngine::EndFrame()
 	{
 		PRenderThread* renderthread = PRenderThread::Get();
-		while(renderthread->GetRenderNum()>=1)
+		while(renderthread->GetRenderNum()>=0)
 		{
 			std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 		}
