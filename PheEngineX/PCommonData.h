@@ -4,28 +4,6 @@
 #include <DirectXCollision.h>
 #include "glm/ext/matrix_float4x4.hpp"
 using namespace Microsoft::WRL;
-static glm::mat4 Identity4x4()
-{
-	static glm::mat4 I(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		0.0f, 0.0f, 0.0f, 1.0f);
-
-	return I;
-}
-
-static glm::mat4 Test4x4()
-{
-	static glm::mat4 I(
-		1.0f, 0.0f, 0.0f, 0.0f,
-		0.0f, 1.0f, 0.0f, 0.0f,
-		0.0f, 0.0f, 1.0f, 0.0f,
-		5.0f, 2.0f, 5.0f, 1.0f);
-
-	return I;
-}
-
 
 struct ObjectConstants
 {

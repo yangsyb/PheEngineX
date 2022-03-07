@@ -20,7 +20,7 @@ static void DeserilizeJsonFile(const std::string FilePath, std::vector<std::shar
 			std::vector<float> TangentZs;
 			Transform Trans;
 
-			MeshName = it["Name"].asString();
+			MeshName = it["StaticMeshName"].asString();
 
 			for(auto iVertex : it["Vertices"])
 			{
