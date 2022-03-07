@@ -20,7 +20,7 @@ public:
 			mElementByteSize = (sizeof(T) + 255) & ~255;
 
 		auto HeapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
-		auto ResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(mElementByteSize * elementCount);
+		auto ResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(size_t(mElementByteSize) * elementCount);
 		device->CreateCommittedResource(
 			&HeapProperty,
 			D3D12_HEAP_FLAG_NONE,

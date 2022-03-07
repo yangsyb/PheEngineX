@@ -22,7 +22,8 @@ namespace Phe
 		return pRenderThread;
 	}
 
-	PRenderThread::PRenderThread() : PRenderNum(0), RenderFrameIndex(0), NextFrameIndex(0), PCbvSrvUavDescriptorSize(0), PDsvDescriptorSize(0)
+	PRenderThread::PRenderThread() : PRenderNum(0), RenderFrameIndex(0), NextFrameIndex(0), PCbvSrvUavDescriptorSize(0), PDsvDescriptorSize(0), PFenceEvent(HANDLE()), PFenceValue(0),
+		PRScene(nullptr), PRtvDescriptorSize(0)
 	{
 		
 	}
@@ -355,8 +356,11 @@ namespace Phe
 
 			ThrowIfFailed(PFence->SetEventOnCompletion(PFenceValue, eventHandle));
 
-			WaitForSingleObject(eventHandle, INFINITE);
-			CloseHandle(eventHandle);
+			if(eventHandle)
+			{
+				WaitForSingleObject(eventHandle, INFINITE);
+				CloseHandle(eventHandle);
+			}
 		}
 	}
 

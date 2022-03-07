@@ -36,7 +36,7 @@ namespace Phe
 		PVertexByteStride = sizeof(PVertex);
 		PVertexBufferByteSize = PVertexCount * sizeof(PVertex);
 		PIndexBufferByteSize = PIndexCount * sizeof(UINT32);
-		ULONGLONG bufferSize = PVertexBufferByteSize + PIndexBufferByteSize;
+		ULONGLONG bufferSize = ULONGLONG(PVertexBufferByteSize) + PIndexBufferByteSize;
 		char* buffer = new char[bufferSize];
 		std::unique_ptr<char> dataPtrGuard(buffer);
 		UINT offset = 0;
@@ -46,7 +46,7 @@ namespace Phe
 			{
 				for (UINT i = 0; i < PVertexCount; ++i)
 				{
-					memcpy(buffer + i * PVertexByteStride + offset, ptr + size * i, size);
+					memcpy(buffer + size_t(i) * PVertexByteStride + offset, ptr + size_t(size) * i, size);
 				}
 				offset += size;
 			}

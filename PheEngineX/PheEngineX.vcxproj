@@ -78,7 +78,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>.\Json\json;.\Json\include;.\Math\glm;$(IncludePath)</IncludePath>
+    <IncludePath>.\Json\json;.\Json\include;.\Math\glm;.\;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -162,6 +162,7 @@
     <ClInclude Include="PTask.h" />
     <ClInclude Include="PUtility.h" />
     <ClInclude Include="PWindow.h" />
+    <ClInclude Include="RHI\PGPUResource.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="PThread.h" />
     <ClInclude Include="Transform.h" />
@@ -190,6 +191,9 @@
     <ClCompile Include="PTask.cpp" />
     <ClCompile Include="PThread.cpp" />
     <ClCompile Include="PWindow.cpp" />
+    <ClCompile Include="RHI\PGPUResource.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
+    </ClCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

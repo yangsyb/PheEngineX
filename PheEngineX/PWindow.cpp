@@ -202,9 +202,12 @@ void PWindowWin32::GenerateWindow(const std::string& Name)
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 	}
 
-	ShowWindow(HWnd, SW_SHOW);
-	UpdateWindow(HWnd);
-	SetActiveWindow(HWnd);
-	SetForegroundWindow(HWnd);
+	if(HWnd)
+	{
+		ShowWindow(HWnd, SW_SHOW);
+		UpdateWindow(HWnd);
+		SetActiveWindow(HWnd);
+		SetForegroundWindow(HWnd);
+	}
 }
 #endif

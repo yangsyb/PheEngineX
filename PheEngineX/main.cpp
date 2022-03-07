@@ -30,7 +30,6 @@ int main()
 		});
 
 	Phe::PEditor::GetSingleton().Register(RegisterList);
-
 	PheEngine->Start();
 	return 0;
 }

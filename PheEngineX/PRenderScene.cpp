@@ -104,8 +104,8 @@ namespace Phe
 
 		D3D12_GPU_VIRTUAL_ADDRESS objcbAddress = mObjectCB->Resource()->GetGPUVirtualAddress();
 		D3D12_GPU_VIRTUAL_ADDRESS passcbAddress = mPassCB->Resource()->GetGPUVirtualAddress();
-		D3D12_GPU_VIRTUAL_ADDRESS treecbAddress = 0;
-		if(mTreeCB)
+		D3D12_GPU_VIRTUAL_ADDRESS treecbAddress = D3D12_GPU_VIRTUAL_ADDRESS();
+		if (mTreeCB)
 		{
 			treecbAddress = mTreeCB->Resource()->GetGPUVirtualAddress();
 		}
@@ -124,8 +124,8 @@ namespace Phe
 			cbvDesc.SizeInBytes = objCBByteSize;
 			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
 		}
-		UINT passCBufIndex = 0;
-		passcbAddress += UINT(passCBufIndex) * UINT(passCBByteSize);
+		size_t passCBufIndex = 0;
+		passcbAddress += size_t(passCBufIndex) * UINT(passCBByteSize);
 
 		int passheapIndex = RenderMeshNum + WPORenderMeshNum;
 
@@ -137,10 +137,10 @@ namespace Phe
 
 		GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc1, handle);
 
-		if(mTreeCB)
+		if (mTreeCB)
 		{
-			int treeBufIndex = 0;
-			treecbAddress += treeBufIndex * treeCBByteSize;
+			size_t treeBufIndex = 0;
+			treecbAddress += size_t(treeBufIndex) * treeCBByteSize;
 			int treepassheapIndex = RenderMeshNum + WPORenderMeshNum + 1;
 			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
 			handle.Offset(treepassheapIndex, PCbvSrvUavDescriptorSize);
@@ -159,7 +159,7 @@ namespace Phe
 	void PRenderScene::BuildPSO()
 	{
 		GraphicContext::GetSingleton().ResetCommandList();
-		CD3DX12_ROOT_PARAMETER SlotRootParameter[2];
+		CD3DX12_ROOT_PARAMETER SlotRootParameter[2]{ CD3DX12_ROOT_PARAMETER(), CD3DX12_ROOT_PARAMETER() };
 		CD3DX12_DESCRIPTOR_RANGE CbvTable;
 		CD3DX12_DESCRIPTOR_RANGE CbvTable1;
 		CbvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
@@ -202,7 +202,7 @@ namespace Phe
 		GraphicContext::GetSingleton().Device()->CreateGraphicsPipelineState(&PsoDesc, IID_PPV_ARGS(&PSO));
 
 
-		CD3DX12_ROOT_PARAMETER WPOSlotRootParameter[3];
+		CD3DX12_ROOT_PARAMETER WPOSlotRootParameter[3]{ CD3DX12_ROOT_PARAMETER(),CD3DX12_ROOT_PARAMETER(),CD3DX12_ROOT_PARAMETER() };
 		CD3DX12_DESCRIPTOR_RANGE WPOCbvTable;
 		CD3DX12_DESCRIPTOR_RANGE WPOCbvTable1;
 		CD3DX12_DESCRIPTOR_RANGE WPOCbvTable2;
@@ -290,7 +290,7 @@ namespace Phe
 
 		commandList->SetPipelineState(WPOPSO.Get());
 		commandList->SetGraphicsRootSignature(WPORootSignature.Get());
-		for(auto MeshGenre : WPORenderSceneMeshList)
+		for (auto MeshGenre : WPORenderSceneMeshList)
 		{
 			auto vbv = WPORenderMeshData[MeshGenre.first]->VertexBufferView();
 			commandList->IASetVertexBuffers(0, 1, &vbv);
@@ -303,7 +303,7 @@ namespace Phe
 				objConstants.Position = MeshTransform.GetPositionMat();
 				objConstants.Rotation = MeshTransform.GetRotaionMat();
 				objConstants.Scale = MeshTransform.GetScaleMat();
-				treeConstants.Center = glm::vec3(0,0,0);
+				treeConstants.Center = glm::vec3(0, 0, 0);
 				treeConstants.Time = PRenderThread::Get()->GetCurrentTotalTime();
 				mObjectCB->CopyData(MeshIndex, objConstants);
 				mTreeCB->CopyData(0, treeConstants);
@@ -320,7 +320,7 @@ namespace Phe
 				MeshIndex++;
 			}
 		}
-		
+
 	}
 
 
