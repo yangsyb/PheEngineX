@@ -4,6 +4,7 @@
 #include "PRenderThread.h"
 #include "PAssetManager.h"
 #include "RHI/PShader.h"
+#include "RHI/PShaderManager.h"
 
 namespace Phe
 {
@@ -31,7 +32,7 @@ namespace Phe
 	void PRenderScene::BuildMeshData(std::string MeshName, Transform MeshTransform)
 	{
 		PMeshDataStruct data = PAssetManager::GetSingleton().GetMeshData(MeshName);
-
+		
 		std::shared_ptr<PRenderStaticMesh> RSM = std::make_shared<PRenderStaticMesh>(MeshName, data);
 		RenderMeshData.insert({ MeshName, RSM });
 		RenderSceneMeshList.insert({ MeshName, std::vector<Transform>{MeshTransform} });

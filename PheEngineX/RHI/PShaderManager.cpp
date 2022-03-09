@@ -20,6 +20,11 @@ namespace Phe
 
 
 
+	void PShaderManager::AddShader(std::shared_ptr<PShader> Shader)
+	{
+		ShaderList.push_back(Shader);
+	}
+
 	UINT PShaderManager::PropertyToID(std::string property)
 	{
 		auto&& IDIterator = PropertyID.find(property);
@@ -33,6 +38,33 @@ namespace Phe
 
 		return IDIterator->second;
 	}
+
+	void PShaderManager::CompileAllShader()
+	{
+		for(auto Shader : ShaderList)
+		{
+			Shader->Initialize();
+			Shader->ReflectShader();
+
+		}
+	}
+
+	void PShaderManager::CreateUploadBuffer()
+	{
+// 		UINT PElementByteSize = (TotalSize + 255) & ~255;
+// 		auto HeapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_UPLOAD);
+// 		auto ResourceDesc = CD3DX12_RESOURCE_DESC::Buffer(size_t(PElementByteSize) * ElementCount);
+// 		GraphicContext::GetSingleton().Device()->CreateCommittedResource(
+// 			&HeapProperty,
+// 			D3D12_HEAP_FLAG_NONE,
+// 			&ResourceDesc,
+// 			D3D12_RESOURCE_STATE_GENERIC_READ,
+// 			nullptr,
+// 			IID_PPV_ARGS(&mUploadBuffer));
+// 
+// 		mUploadBuffer->Map(0, nullptr, reinterpret_cast<void**>(&mMappedData));
+	}
+
 }
 
 

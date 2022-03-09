@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PWindow.h"
 #include "PInput.h"
+#include "PEngine.h"
 
 using namespace Phe;
 
@@ -24,7 +25,7 @@ void PWindow::DestroyWindow(PWindow* Window)
 
 PWindow::PWindow(UINT32 Width, UINT32 Height) : PWidth(Width), PHeight(Height)
 {
-
+	PInput = Input::Create();
 }
 
 PWindow::~PWindow()
@@ -119,14 +120,14 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 		((MINMAXINFO*)lParam)->ptMinTrackSize.y = 200;
 		return 0;
 	case WM_MOUSEMOVE:
-		Input::OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		PEngine::GetSingleton().GetWindow()->GetInput()->OnMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 		return 0;
 	case WM_LBUTTONDOWN:
-		Input::OnMouseDown(KeyCode::Mouse0);
+		PEngine::GetSingleton().GetWindow()->GetInput()->OnMouseDown(KeyCode::Mouse0);
 		return 0;
 
 	case WM_LBUTTONUP:
-		Input::OnMouseUp(KeyCode::Mouse0);
+		PEngine::GetSingleton().GetWindow()->GetInput()->OnMouseUp(KeyCode::Mouse0);
 		return 0;
 	}
 	return DefWindowProc(hWnd, message, wParam, lParam);
@@ -137,12 +138,13 @@ PWindowWin32::PWindowWin32(UINT32 Width, UINT32 Height, void* Handle, const std:
 //	PheEngine = std::make_unique<PEngine>();
 	GenerateWindow(Name);
 //	PheEngine->Initialize(PWidth, PHeight, HWnd);
-
+	PInput = dynamic_cast<PInputWin32*>(PInput);
 	PWin32 = this;
 }
 
 PWindowWin32::~PWindowWin32()
 {
+	PInput = nullptr;
 	PWin32 = nullptr;
 }
 
@@ -151,6 +153,7 @@ bool PWindowWin32::Run()
 //	PEngine::GetSingleton().PTimer.Reset();
 	MSG msg;
 	bool quit = false;
+	PInput->Update();
 	while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 	{
 		TranslateMessage(&msg);

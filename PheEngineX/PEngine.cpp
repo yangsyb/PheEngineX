@@ -62,7 +62,6 @@ namespace Phe
 		PTimer.Tick();
 		PTask* task = new PTask([=]() {PRenderThread::Get()->SetCurrentTotalTime(PTimer.TotalTime()); });
 		PRenderThread::Get()->AddTask(task);
-		Input::Update();
 		PMainEditor->Update();
 		PMainScene->Update();
 	}

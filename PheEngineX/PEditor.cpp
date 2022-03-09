@@ -26,7 +26,7 @@ namespace Phe
 
 	void PEditor::Update()
 	{
-		if (Input::GetKeyDown(KeyCode::Keypad1))
+		if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKeyDown(KeyCode::Keypad1))
 		{
 			if (EditorEvent.size() > 0)
 			{
@@ -34,7 +34,7 @@ namespace Phe
 			}
 		}
 
-		else if (Input::GetKeyDown(KeyCode::Keypad2))
+		else if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKeyDown(KeyCode::Keypad2))
 		{
 			if (EditorEvent.size() > 1)
 			{
@@ -42,7 +42,7 @@ namespace Phe
 			}
 		}
 
-		else if (Input::GetKeyDown(KeyCode::Keypad3))
+		else if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKeyDown(KeyCode::Keypad3))
 		{
 			if (EditorEvent.size() > 2)
 			{

@@ -42,9 +42,6 @@
     <ClInclude Include="PStaticMesh.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="PInput.h">
-      <Filter>Source Files</Filter>
-    </ClInclude>
     <ClInclude Include="PGameTimer.h">
       <Filter>Source Files</Filter>
     </ClInclude>
@@ -102,6 +99,12 @@
     <ClInclude Include="PAssetManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PActor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="PInput.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="PEngine.cpp">
@@ -114,9 +117,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PScene.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="PInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PGameTimer.cpp">
@@ -171,6 +171,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="PAssetManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PActor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

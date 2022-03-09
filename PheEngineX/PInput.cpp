@@ -3,9 +3,27 @@
 
 using namespace std;
 
-std::array<KeyState, (size_t)KeyCode::COUNT> Input::m_KeyStates = {};
-std::pair<float, float> Input::PMousePosition = std::pair<float, float>(0, 0);
-void Input::Update()
+
+Input* Input::Create()
+{
+	Input* input = nullptr;
+#ifdef PlatformWin32
+	input = new PInputWin32();
+#elif defined (PlatformIOS)
+	input = new PInputIOS();
+#elif defined (PlatformAndroid)
+	input = new PInputAndroid();
+#endif
+	return input;
+}
+
+#ifdef PlatformWin32
+PInputWin32::PInputWin32() : m_KeyStates{}, PMousePosition(std::pair<float, float>(0, 0))
+{
+
+}
+
+void PInputWin32::Update()
 {
 	UpdateKeyState(KeyCode::W, 'W');
 	UpdateKeyState(KeyCode::A, 'A');
@@ -24,32 +42,29 @@ void Input::Update()
 	UpdateKeyState(KeyCode::Keypad3, '3');
 	UpdateKeyState(KeyCode::Z, 'Z');
 	UpdateKeyState(KeyCode::X, 'X');
-	//UpdateKeyState(KeyCode::Mouse0, VK_LBUTTON);
-	//UpdateKeyState(KeyCode::Mouse2, VK_RBUTTON);
-
 }
 
-bool Input::GetKey(KeyCode keyCode)
+bool PInputWin32::GetKey(KeyCode keyCode)
 {
 	return ((int)m_KeyStates[(int)keyCode] & (int)KeyState::KeyHold) != 0;
 }
 
-bool Input::GetKeyUp(KeyCode keyCode)
+bool PInputWin32::GetKeyUp(KeyCode keyCode)
 {
 	return ((int)m_KeyStates[(int)keyCode] & (int)KeyState::KeyUp) != 0;
 }
 
-bool Input::GetKeyDown(KeyCode keyCode)
+bool PInputWin32::GetKeyDown(KeyCode keyCode)
 {
 	return ((int)m_KeyStates[(int)keyCode] & (int)KeyState::KeyDown) != 0;
 }
 
-std::pair<float, float> Input::GetMousePosition()
+std::pair<float, float> PInputWin32::GetMousePosition()
 {
 	return PMousePosition;
 }
 
-void Input::UpdateKeyState(KeyCode keyCode, int windowsKeyCode)
+void PInputWin32::UpdateKeyState(KeyCode keyCode, int windowsKeyCode)
 {
 	bool isKeyDown = GetAsyncKeyState(windowsKeyCode) & 0x0001;
 	bool isKeyHold = GetAsyncKeyState(windowsKeyCode) & 0x8000;
@@ -68,17 +83,17 @@ void Input::UpdateKeyState(KeyCode keyCode, int windowsKeyCode)
 	}
 }
 
-void Input::OnMouseDown(KeyCode MouseBtnCode)
+void PInputWin32::OnMouseDown(KeyCode MouseBtnCode)
 {
 	m_KeyStates[(int)MouseBtnCode] = KeyState::KeyDown;
 }
 
-void Input::OnMouseUp(KeyCode MouseBtnCode)
+void PInputWin32::OnMouseUp(KeyCode MouseBtnCode)
 {
 	m_KeyStates[(int)MouseBtnCode] = KeyState::KeyUp;
 }
 
-void Input::UpdateMouseState()
+void PInputWin32::UpdateMouseState()
 {
 	if (m_KeyStates[(int)KeyCode::Mouse0] == KeyState::KeyDown)
 		m_KeyStates[(int)KeyCode::Mouse0] = KeyState::KeyHold;
@@ -87,7 +102,8 @@ void Input::UpdateMouseState()
 		m_KeyStates[(int)KeyCode::Mouse2] = KeyState::KeyHold;
 }
 
-void Input::OnMouseMove(int x, int y)
+void PInputWin32::OnMouseMove(int x, int y)
 {
-	PMousePosition = std::pair<float, float>(x, y);
+	PMousePosition = std::pair<float, float>(float(x), float(y));
 }
+#endif

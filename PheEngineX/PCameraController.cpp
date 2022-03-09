@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "PCameraController.h"
-#include "PInput.h"
+#include "PEngine.h"
 
 namespace Phe
 {
@@ -19,18 +19,18 @@ namespace Phe
 		static float prev_x = 0, prev_y = 0;
 		static bool prev_IsMoving = false;
 		bool isMoving = false;
-		if (Input::GetKeyDown(KeyCode::Mouse0))
+		if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKeyDown(KeyCode::Mouse0))
 		{
 			isMoving = true;
 			if (prev_IsMoving == false)
 			{
 				prev_IsMoving = true;
-				std::pair<float, float> pos = Input::GetMousePosition();
+				std::pair<float, float> pos = PEngine::GetSingleton().GetWindow()->GetInput()->GetMousePosition();
 				prev_x = pos.first; prev_y = pos.second;
 			}
 			else
 			{
-				std::pair<float, float> pos = Input::GetMousePosition();
+				std::pair<float, float> pos = PEngine::GetSingleton().GetWindow()->GetInput()->GetMousePosition();
 				float diffx = pos.first - prev_x;
 				float diffy = pos.second - prev_y;
 				glm::vec3 currRotation = PMainCamera->GetRotation();
@@ -39,19 +39,19 @@ namespace Phe
 				PTargetState.yaw += +PRotateSpeed * 400 * 0.0005f * diffx;
 				prev_x = pos.first; prev_y = pos.second;
 			}
-			if (Input::GetKey(KeyCode::W))
+			if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::W))
 			{
 				PTargetState.Translate(PMainCamera->MoveForward({ PSpeed * 2 * 0.01f, 0.0f, 0.0f }));
 			}
-			if (Input::GetKey(KeyCode::A))
+			if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::A))
 			{
 				PTargetState.Translate(PMainCamera->MoveForward({ 0.0f, -PSpeed * 2 * 0.01f, 0.0f }));
 			}
-			if (Input::GetKey(KeyCode::S))
+			if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::S))
 			{
 				PTargetState.Translate(PMainCamera->MoveForward({ -PSpeed * 2 * 0.01f, 0.0f, 0.0f }));
 			}
-			if (Input::GetKey(KeyCode::D))
+			if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::D))
 			{
 				PTargetState.Translate(PMainCamera->MoveForward({ 0.0f, PSpeed * 2 * 0.01f, 0.0f }));
 			}
@@ -61,14 +61,14 @@ namespace Phe
 			prev_IsMoving = false;
 		}
 
-		if (Input::GetKey(KeyCode::Z))
+		if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::Z))
 		{
 			if (PSpeed < 10)
 			{
 				PSpeed = PSpeed + 1;
 			}
 		}
-		if (Input::GetKey(KeyCode::X))
+		if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::X))
 		{
 			if (PSpeed > 1)
 			{

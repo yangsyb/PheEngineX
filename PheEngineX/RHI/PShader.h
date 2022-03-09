@@ -32,14 +32,16 @@ namespace Phe
 			registerSpace(registerSpace) {}
 	};
 
-	class PShader
+	class PShader : std::enable_shared_from_this<PShader>
 	{
 	public:
 		PShader(const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS");
 		virtual ~PShader();
 		bool operator==(const std::shared_ptr<PShader> p) { return this->GetName() == p->GetName(); }
 
-		virtual void Initialize(ID3D12Device* device);
+		virtual void Register();
+		virtual void Initialize();
+		virtual void ReflectShader();
 		void BindRootSignature(ID3D12GraphicsCommandList* commandList);
 		void SetDescriptorTable(ID3D12GraphicsCommandList* commandList, UINT paramID, CD3DX12_GPU_DESCRIPTOR_HANDLE handle);
 		void SetRootConstantBufferView(ID3D12GraphicsCommandList* commandList, UINT paramID, D3D12_GPU_VIRTUAL_ADDRESS address);

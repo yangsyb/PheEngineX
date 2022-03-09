@@ -1,6 +1,6 @@
 #pragma once
-#include <array>
-
+#include "pch.h"
+#include "array"
 enum class KeyCode
 {
 	None,
@@ -70,21 +70,59 @@ enum class KeyState
 class Input
 {
 public:
-	static void Update();
-	static bool GetKey(KeyCode keyCode);
-	static bool GetKeyUp(KeyCode keyCode);
-	static bool GetKeyDown(KeyCode keyCode);
-	static std::pair<float, float> GetMousePosition();
-	static void OnMouseMove(int x, int y);
-	static void OnMouseDown(KeyCode MouseBtnCode);
-	static void OnMouseUp(KeyCode MouseBtnCode);
+	static Input* Create();
+	virtual void Update() = 0;
+	virtual bool GetKey(KeyCode keyCode) = 0;
+	virtual bool GetKeyUp(KeyCode keyCode) = 0;
+	virtual bool GetKeyDown(KeyCode keyCode) = 0;
+	virtual std::pair<float, float> GetMousePosition() = 0;
+	virtual void OnMouseMove(int x, int y) = 0;
+	virtual void OnMouseDown(KeyCode MouseBtnCode) = 0;
+	virtual void OnMouseUp(KeyCode MouseBtnCode) = 0;
 
 
-private:
-	static void UpdateKeyState(KeyCode keyCode, int windowsKeyCode);
-	static void UpdateMouseState();
-
-private:
-	static std::array<KeyState, (size_t)KeyCode::COUNT> m_KeyStates;
-	static std::pair<float, float> PMousePosition;
+protected:
+	virtual void UpdateKeyState(KeyCode keyCode, int windowsKeyCode) = 0;
+	virtual void UpdateMouseState() = 0;
 };
+
+
+#ifdef PlatformWin32
+class PInputWin32 : public Input
+{
+public:
+	PInputWin32();
+	~PInputWin32() = default;
+	virtual void Update() override;
+	virtual bool GetKey(KeyCode keyCode) override;
+	virtual bool GetKeyUp(KeyCode keyCode) override;
+	virtual bool GetKeyDown(KeyCode keyCode) override;
+	virtual std::pair<float, float> GetMousePosition() override;
+	virtual void OnMouseMove(int x, int y) override;
+	virtual void OnMouseDown(KeyCode MouseBtnCode) override;
+	virtual void OnMouseUp(KeyCode MouseBtnCode) override;
+
+protected:
+	virtual void UpdateKeyState(KeyCode keyCode, int windowsKeyCode) override;
+	virtual void UpdateMouseState() override;
+
+protected:
+	std::array<KeyState, (size_t)KeyCode::COUNT> m_KeyStates;
+	std::pair<float, float> PMousePosition;
+};
+
+#elif defined(PlatformIOS)
+class PInputIOS : public Input
+{
+public:
+	
+};
+
+#elif defined(PlatformAndroid)
+class PInputAndroid : public Input
+{
+public:
+
+};
+
+#endif

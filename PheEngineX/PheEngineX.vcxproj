@@ -144,6 +144,7 @@
   <ItemGroup>
     <ClInclude Include="Json\json\json-forwards.h" />
     <ClInclude Include="Json\json\json.h" />
+    <ClInclude Include="PActor.h" />
     <ClInclude Include="PCamera.h" />
     <ClInclude Include="d3dx12.h" />
     <ClInclude Include="DxException.h" />
@@ -176,6 +177,7 @@
     <ClCompile Include="Json\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="PActor.cpp" />
     <ClCompile Include="PCamera.cpp" />
     <ClCompile Include="DxException.cpp" />
     <ClCompile Include="GraphicsContext.cpp" />

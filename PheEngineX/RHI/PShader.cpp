@@ -2,6 +2,7 @@
 #include "PShader.h"
 #include "PShaderManager.h"
 #include "DxException.h"
+#include "GraphicsContext.h"
 
 namespace Phe
 {
@@ -24,10 +25,6 @@ namespace Phe
 		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerCameraBuffer")] = UINT(Params.size());
 		Params.push_back(perPass);
 
-		ShaderParameter perMaterial("cbPerMaterial", ShaderParamType::CBVDescriptorHeap, 1, 2, 0);
-		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerMaterialBuffer")] = UINT(Params.size());
-		Params.push_back(perMaterial);
-
 		PRasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		PBlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		PDepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -38,7 +35,12 @@ namespace Phe
 
 	}
 
-	void PShader::Initialize(ID3D12Device* device)
+	void PShader::Register()
+	{
+		PShaderManager::GetSingleton().AddShader(shared_from_this());
+	}
+
+	void PShader::Initialize()
 	{
 		PVS = CompileShader(PFilePath, nullptr, PVSEntry, "vs_5_0");
 		PPS = CompileShader(PFilePath, nullptr, PPSEntry, "ps_5_0");
@@ -84,8 +86,7 @@ namespace Phe
 		{
 			::OutputDebugStringA((char*)errorBlob->GetBufferPointer());
 		}
-
-		ThrowIfFailed(device->CreateRootSignature(
+		ThrowIfFailed(GraphicContext::GetSingleton().Device()->CreateRootSignature(
 			0,
 			serializedRootSig->GetBufferPointer(),
 			serializedRootSig->GetBufferSize(),
@@ -93,6 +94,28 @@ namespace Phe
 	}
 
 
+
+	void PShader::ReflectShader()
+	{
+		ComPtr<ID3D12ShaderReflection> Reflection;
+		D3DReflect(PVS->GetBufferPointer(), PVS->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)& Reflection);
+		D3D12_SHADER_DESC desc;
+		Reflection->GetDesc(&desc);
+		for(size_t CBindex = 0; CBindex<desc.ConstantBuffers; ++CBindex)
+		{
+			ID3D12ShaderReflectionConstantBuffer* buffer = Reflection->GetConstantBufferByIndex(CBindex);
+			D3D12_SHADER_BUFFER_DESC bufferDesc;
+			buffer->GetDesc(&bufferDesc);
+			for (UINT Varindex = 0; Varindex < bufferDesc.Variables; Varindex++)
+			{
+				ID3D12ShaderReflectionVariable* var = buffer->GetVariableByIndex(Varindex);
+				D3D12_SHADER_VARIABLE_DESC varDesc;
+				var->GetDesc(&varDesc);
+
+//				memcpy(&mMappedData[elementIndex * mElementByteSize], &data, varDesc);
+			}
+		}
+	}
 
 	void PShader::BindRootSignature(ID3D12GraphicsCommandList* commandList)
 	{

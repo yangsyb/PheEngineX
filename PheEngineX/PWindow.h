@@ -1,5 +1,6 @@
 #pragma once
 #include "pch.h"
+#include "PInput.h"
 namespace Phe
 {
 	class PWindow
@@ -9,7 +10,7 @@ namespace Phe
 		static void DestroyWindow(PWindow* Window);
 		
 		virtual bool Run() = 0;
-
+		virtual Input* GetInput() {return PInput;}
 	protected:
 		PWindow(UINT32 Width, UINT32 Height);
 		virtual ~PWindow();
@@ -17,7 +18,7 @@ namespace Phe
 	protected:
 		UINT32 PWidth;
 		UINT32 PHeight;
-
+		Input* PInput;
 	};
 
 #ifdef PlatformWin32
