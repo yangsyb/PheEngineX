@@ -2,6 +2,8 @@
 #include "PRenderScene.h"
 #include "GraphicsContext.h"
 #include "PRenderThread.h"
+#include "PAssetManager.h"
+#include "RHI/PShader.h"
 
 namespace Phe
 {
@@ -26,15 +28,13 @@ namespace Phe
 
 	}
 
-	void PRenderScene::BuildMeshData(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform)
+	void PRenderScene::BuildMeshData(std::string MeshName, Transform MeshTransform)
 	{
-		PMeshDataStruct data;
-		data.Vertices = StaticMesh->GetVertices();
-		data.Indices = StaticMesh->GetIndices();
-		data.Normal = StaticMesh->GetTangents();
-		std::shared_ptr<PRenderStaticMesh> RSM = std::make_shared<PRenderStaticMesh>(StaticMesh->GetName(), data);
-		RenderMeshData.insert({ StaticMesh->GetName(), RSM });
-		RenderSceneMeshList.insert({ StaticMesh->GetName(), std::vector<Transform>{MeshTransform} });
+		PMeshDataStruct data = PAssetManager::GetSingleton().GetMeshData(MeshName);
+
+		std::shared_ptr<PRenderStaticMesh> RSM = std::make_shared<PRenderStaticMesh>(MeshName, data);
+		RenderMeshData.insert({ MeshName, RSM });
+		RenderSceneMeshList.insert({ MeshName, std::vector<Transform>{MeshTransform} });
 		RenderMeshNum++;
 		BuildConstantBuffer();
 	}
@@ -47,15 +47,12 @@ namespace Phe
 		BuildConstantBuffer();
 	}
 
-	void PRenderScene::BuildWPOMeshData(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform)
+	void PRenderScene::BuildWPOMeshData(std::string MeshName, Transform MeshTransform)
 	{
-		PMeshDataStruct data;
-		data.Vertices = StaticMesh->GetVertices();
-		data.Indices = StaticMesh->GetIndices();
-		data.Normal = StaticMesh->GetTangents();
-		std::shared_ptr<PRenderStaticMesh> RSM = std::make_shared<PRenderStaticMesh>(StaticMesh->GetName(), data);
-		WPORenderMeshData.insert({ StaticMesh->GetName(), RSM });
-		WPORenderSceneMeshList.insert({ StaticMesh->GetName(), std::vector<Transform>{MeshTransform} });
+		PMeshDataStruct data = PAssetManager::GetSingleton().GetMeshData(MeshName);
+		std::shared_ptr<PRenderStaticMesh> RSM = std::make_shared<PRenderStaticMesh>(MeshName, data);
+		WPORenderMeshData.insert({ MeshName, RSM });
+		WPORenderSceneMeshList.insert({ MeshName, std::vector<Transform>{MeshTransform} });
 		WPORenderMeshNum++;
 		BuildConstantBuffer();
 	}

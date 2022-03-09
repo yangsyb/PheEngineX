@@ -16,6 +16,8 @@ namespace Phe
 		PheWindow = PWindow::Create("PheEngine", PWidth, PHeight);
 		PRenderThread::CreateRenderThread();
 		PMainEditor = new PEditor();
+		MainAssetManager = std::make_unique<PAssetManager>();
+		MainShaderManager = std::make_unique<PShaderManager>();
 	}
 
 
@@ -37,7 +39,7 @@ namespace Phe
 		PTimer.Reset();
 		PTimer.Start();
 		IsRunning = true;
-		while(IsRunning && PheWindow->Run())
+		while (IsRunning && PheWindow->Run())
 		{
 			Tick();
 		}
@@ -68,7 +70,7 @@ namespace Phe
 	void PEngine::EndFrame()
 	{
 		PRenderThread* renderthread = PRenderThread::Get();
-		while(renderthread->GetRenderNum()>=0)
+		while (renderthread->GetRenderNum() >= 0)
 		{
 			std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 		}

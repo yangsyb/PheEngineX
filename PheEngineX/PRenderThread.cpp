@@ -25,7 +25,7 @@ namespace Phe
 	PRenderThread::PRenderThread() : PRenderNum(0), RenderFrameIndex(0), NextFrameIndex(0), PCbvSrvUavDescriptorSize(0), PDsvDescriptorSize(0), PFenceEvent(HANDLE()), PFenceValue(0),
 		PRScene(nullptr), PRtvDescriptorSize(0)
 	{
-		
+
 	}
 
 	PRenderThread::~PRenderThread()
@@ -180,7 +180,7 @@ namespace Phe
 		sd.SampleDesc.Quality = 0;
 		sd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		sd.BufferCount = SwapChainBufferCount;
-//		sd.OutputWindow = GetActiveWindow();
+		//		sd.OutputWindow = GetActiveWindow();
 		sd.OutputWindow = CurrentWindow->GetCurrentHwnd();
 		sd.Windowed = true;
 		sd.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
@@ -356,7 +356,7 @@ namespace Phe
 
 			ThrowIfFailed(PFence->SetEventOnCompletion(PFenceValue, eventHandle));
 
-			if(eventHandle)
+			if (eventHandle)
 			{
 				WaitForSingleObject(eventHandle, INFINITE);
 				CloseHandle(eventHandle);

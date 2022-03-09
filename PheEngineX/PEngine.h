@@ -5,6 +5,8 @@
 #include "PGameTimer.h"
 #include "PScene.h"
 #include "PEditor.h"
+#include "PAssetManager.h"
+#include "RHI/PShaderManager.h"
 
 namespace Phe
 {
@@ -43,6 +45,7 @@ namespace Phe
 		PScene* PMainScene;
 		PEditor* PMainEditor;
 		PGameTimer PTimer;
-
+		std::unique_ptr<PAssetManager> MainAssetManager;
+		std::unique_ptr<PShaderManager> MainShaderManager;
 	};
 }

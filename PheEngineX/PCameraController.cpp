@@ -61,6 +61,21 @@ namespace Phe
 			prev_IsMoving = false;
 		}
 
+		if (Input::GetKey(KeyCode::Z))
+		{
+			if (PSpeed < 10)
+			{
+				PSpeed = PSpeed + 1;
+			}
+		}
+		if (Input::GetKey(KeyCode::X))
+		{
+			if (PSpeed > 1)
+			{
+				PSpeed = PSpeed - 1;
+			}
+		}
+
 
 		float positionLerpPct = 1.f - exp((log(1.f - 0.99f) / PPositionLerpTime) * 0.01f);
 		float rotationLerpPct = 1.f - exp((log(1.f - 0.99f) / PRotationLerpTime) * 0.01f);

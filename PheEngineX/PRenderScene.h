@@ -11,9 +11,9 @@ namespace Phe
 		PRenderScene();
 		~PRenderScene();
 
-		void BuildMeshData(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform);
+		void BuildMeshData(std::string MeshName, Transform MeshTransform);
 		void AddExistedMesh(std::string MeshName, Transform MeshTransform);
-		void BuildWPOMeshData(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform);
+		void BuildWPOMeshData(std::string MeshName, Transform MeshTransform);
 		void AddWPOExistedMesh(std::string MeshName, Transform MeshTransform);
 		void ClearScene();
 		void UpdateCamera(PassConstants passcb);
@@ -33,6 +33,7 @@ namespace Phe
 
 
 	private:
+
 		UINT PCbvSrvUavDescriptorSize;
 		ComPtr<ID3D12DescriptorHeap> CbvHeap;
 		std::unique_ptr <UploadBuffer<ObjectConstants>> mObjectCB = nullptr;

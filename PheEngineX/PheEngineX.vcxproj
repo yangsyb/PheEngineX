@@ -162,7 +162,11 @@
     <ClInclude Include="PTask.h" />
     <ClInclude Include="PUtility.h" />
     <ClInclude Include="PWindow.h" />
+    <ClInclude Include="PAssetManager.h" />
+    <ClInclude Include="RHI\PMaterial.h" />
     <ClInclude Include="RHI\PGPUResource.h" />
+    <ClInclude Include="RHI\PShader.h" />
+    <ClInclude Include="RHI\PShaderManager.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="PThread.h" />
     <ClInclude Include="Transform.h" />
@@ -191,9 +195,13 @@
     <ClCompile Include="PTask.cpp" />
     <ClCompile Include="PThread.cpp" />
     <ClCompile Include="PWindow.cpp" />
+    <ClCompile Include="PAssetManager.cpp" />
     <ClCompile Include="RHI\PGPUResource.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RHI\PMaterial.cpp" />
+    <ClCompile Include="RHI\PShader.cpp" />
+    <ClCompile Include="RHI\PShaderManager.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

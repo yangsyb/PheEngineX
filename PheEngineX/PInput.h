@@ -54,6 +54,8 @@ enum class KeyCode
 	Mouse0,		// Left Mouse Button
 	Mouse1,		// Middle Mouse Button
 	Mouse2,		// Right Mouse Button
+	Add,
+	Minus,
 	COUNT
 };
 

@@ -15,11 +15,11 @@ namespace Phe
 		PScene();
 		~PScene();
 
-		void AddStaticMesh(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform);
+		void AddStaticMesh(std::string StaticMeshName, Transform MeshTransform);
 		void AddStaticMeshFromFile(const std::string FilePath);
 
-		//Those Two function below are static only for test WPO!!
-		void AddStaticMeshWPO(std::shared_ptr<PStaticMesh> StaticMesh, Transform MeshTransform);
+		//Those Two functions below are static only for test WPO!!
+		void AddStaticMeshWPO(std::string StaticMeshName, Transform MeshTransform);
 		void AddStaticMeshWPOFromFile(const std::string FilePath);
 
 		void ClearScene();
@@ -28,7 +28,6 @@ namespace Phe
 		void UpdateMainPassBuffer();
 
 	private:
-		std::unordered_map<std::string, PMeshDataStruct> MeshData;
 		std::unordered_map<std::string, std::vector<Transform>> SceneMeshList;
 		PRenderThread* PRender;
 		std::shared_ptr<PCamera> PMainCamera;

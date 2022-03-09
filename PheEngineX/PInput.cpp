@@ -22,6 +22,8 @@ void Input::Update()
 	UpdateKeyState(KeyCode::Keypad1, '1');
 	UpdateKeyState(KeyCode::Keypad2, '2');
 	UpdateKeyState(KeyCode::Keypad3, '3');
+	UpdateKeyState(KeyCode::Z, 'Z');
+	UpdateKeyState(KeyCode::X, 'X');
 	//UpdateKeyState(KeyCode::Mouse0, VK_LBUTTON);
 	//UpdateKeyState(KeyCode::Mouse2, VK_RBUTTON);
 

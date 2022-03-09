@@ -22,7 +22,7 @@ static void DeserilizeJsonFile(const std::string FilePath, std::vector<std::shar
 
 			MeshName = it["StaticMeshName"].asString();
 
-			for(auto iVertex : it["Vertices"])
+			for (auto iVertex : it["Vertices"])
 			{
 				Vertices.push_back(iVertex.asFloat());
 			}
@@ -32,7 +32,7 @@ static void DeserilizeJsonFile(const std::string FilePath, std::vector<std::shar
 				Indices.push_back(iIndex.asInt());
 			}
 
-			for(auto iTangent : it["TangentZ"])
+			for (auto iTangent : it["TangentZ"])
 			{
 				TangentZs.push_back(iTangent.asFloat());
 			}
@@ -56,6 +56,41 @@ static void DeserilizeJsonFile(const std::string FilePath, std::vector<std::shar
 			MeshList.push_back(Mesh);
 			MeshTransform.push_back(Trans);
 			index++;
+		}
+	}
+}
+
+static void DeserilizeActorJsonFile(const std::string FilePath, std::vector<std::pair<std::string, Transform>>& MeshTransform)
+{
+	Json::Reader reader;
+	Json::Value root;
+	std::ifstream in(FilePath, std::ifstream::binary);
+	if (reader.parse(in, root))
+	{
+		for (auto it : root)
+		{
+			std::string MeshName;
+			Transform Trans;
+
+			MeshName = it["StaticMeshName"].asString();
+
+			std::vector<float> Loc;
+			for (auto iLocation : it["Location"])
+			{
+				Loc.push_back(iLocation.asFloat());
+			}
+			std::vector<float> Rot;
+			for (auto iRotation : it["Rotation"])
+			{
+				Rot.push_back(iRotation.asFloat());
+			}
+			std::vector<float> Scl;
+			for (auto iScale : it["Scale"])
+			{
+				Scl.push_back(iScale.asFloat());
+			}
+			Trans = Transform(glm::vec3{ Loc[0], Loc[1], Loc[2] }, glm::vec3{ Rot[0], Rot[1], Rot[2] }, glm::vec3{ Scl[0], Scl[1], Scl[2] });
+			MeshTransform.push_back({ MeshName, Trans });
 		}
 	}
 }
