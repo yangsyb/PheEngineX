@@ -4,7 +4,7 @@
 namespace Phe
 {
 
-	PMaterial::PMaterial(std::shared_ptr<PShader> shader) : Shader(shader)
+	PMaterial::PMaterial(std::string MName, std::shared_ptr<PShader> shader) : Shader(shader), MaterialName(MName)
 	{
 
 	}

@@ -35,7 +35,7 @@ namespace Phe
 	class PShader : std::enable_shared_from_this<PShader>
 	{
 	public:
-		PShader(const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS");
+		PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS");
 		virtual ~PShader();
 		bool operator==(const std::shared_ptr<PShader> p) { return this->GetName() == p->GetName(); }
 

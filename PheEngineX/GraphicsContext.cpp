@@ -35,7 +35,7 @@ UINT GraphicContext::GetInputLayoutIndex(bool hasColor, bool hasNormal)
 	if (hasColor) { mask = mask | (1 << 0); }
 	if (hasNormal) { mask = mask | (1 << 1); }
 	auto&& InputLayoutIterator = InputLayoutMap.find(mask);
-	if(InputLayoutIterator == InputLayoutMap.end())
+	if (InputLayoutIterator == InputLayoutMap.end())
 	{
 		std::unique_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>> desc = std::make_unique<std::vector<D3D12_INPUT_ELEMENT_DESC>>();
 		GenerateInputElementDesc(*desc.get(), hasColor, hasNormal);
@@ -91,21 +91,23 @@ std::vector<D3D12_INPUT_ELEMENT_DESC>* GraphicContext::GetInputElementDesc(UINT 
 ID3D12PipelineState* GraphicContext::GetPSO(std::shared_ptr<Phe::PShader> shader)
 {
 	auto&& PsoMapIterator = PSOMap.find(shader);
-	if(PsoMapIterator == PSOMap.end())
+	if (PsoMapIterator == PSOMap.end())
 	{
 		D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDesc;
 		ZeroMemory(&PsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
 		//To Refactor
-		std::vector<D3D12_INPUT_ELEMENT_DESC> InputLayout = 
+		std::vector<D3D12_INPUT_ELEMENT_DESC> InputLayout =
 		{
 			{ "POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 },
 			{ "NORMAL", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA, 0 }
 		};
+
 		PsoDesc.InputLayout = { InputLayout.data(), (UINT)InputLayout.size() };
 		shader->SetPSODesc(&PsoDesc);
 		PsoDesc.NumRenderTargets = 1;
+		PsoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
 		PsoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
-		
+
 		PsoDesc.SampleMask = UINT_MAX;
 		PsoDesc.SampleDesc.Count = 1;
 		PsoDesc.SampleDesc.Quality = 0;
@@ -118,3 +120,26 @@ ID3D12PipelineState* GraphicContext::GetPSO(std::shared_ptr<Phe::PShader> shader
 	}
 	return PsoMapIterator->second.Get();
 }
+
+/*
+D3D12_GRAPHICS_PIPELINE_STATE_DESC PsoDesc;
+		ZeroMemory(&PsoDesc, sizeof(D3D12_GRAPHICS_PIPELINE_STATE_DESC));
+		PsoDesc.InputLayout = { InputLayout.data(), (UINT)InputLayout.size() };
+		PsoDesc.pRootSignature = RootSignature.Get();
+		PsoDesc.VS = { reinterpret_cast<BYTE*>(MvsByteCode->GetBufferPointer()),MvsByteCode->GetBufferSize() };
+		PsoDesc.PS = { reinterpret_cast<BYTE*>(MpsByteCode->GetBufferPointer()),MpsByteCode->GetBufferSize() };
+
+		PsoDesc.RasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
+		PsoDesc.RasterizerState.FrontCounterClockwise = TRUE;
+		PsoDesc.BlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		PsoDesc.DepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		PsoDesc.SampleMask = UINT_MAX;
+		PsoDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+		PsoDesc.NumRenderTargets = 1;
+		PsoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;//DXGI_FORMAT mBackBufferFormat
+		PsoDesc.SampleDesc.Count = 1;//m4xMsaaState ? 4 : 1;
+		PsoDesc.SampleDesc.Quality = 0;//m4xMsaaState ? (m4xMsaaQuality - 1) : 0;
+		PsoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;//DXGI_FORMAT mDepthStencilFormat
+		GraphicContext::GetSingleton().Device()->CreateGraphicsPipelineState(&PsoDesc, IID_PPV_ARGS(&PSO));
+
+*/

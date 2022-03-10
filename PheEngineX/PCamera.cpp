@@ -31,14 +31,14 @@ namespace Phe
 	void PCamera::UpdateViewConstant()
 	{
 		PMainPassCB.View = PView;
-//		SceneManager::GetSingleton().UpdateMainPassBuffer(PMainPassCB);
+		//		SceneManager::GetSingleton().UpdateMainPassBuffer(PMainPassCB);
 
 	}
 
 	void PCamera::UpdateProjectionConstant()
 	{
 		PMainPassCB.Proj = PProjection;
-//		SceneManager::GetSingleton().UpdateMainPassBuffer(PMainPassCB);
+		//		SceneManager::GetSingleton().UpdateMainPassBuffer(PMainPassCB);
 	}
 
 	void PCamera::SetPosition(const glm::vec3& position)

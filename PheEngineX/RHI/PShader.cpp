@@ -15,7 +15,7 @@ namespace Phe
 		return ByteCode;
 	}
 
-	PShader::PShader(const std::wstring FilePath, std::string VS, std::string PS) : PFilePath(FilePath), PVSEntry(VS), PPSEntry(PS)
+	PShader::PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS, std::string PS) : PFilePath(FilePath), PVSEntry(VS), PPSEntry(PS), PName(ShaderName)
 	{
 		ShaderParameter perObject("cbPerObject", ShaderParamType::CBVDescriptorHeap, 1, 0, 0);
 		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerObjectBuffer")] = UINT(Params.size());
@@ -24,6 +24,10 @@ namespace Phe
 		ShaderParameter perPass("cbPerPass", ShaderParamType::CBVDescriptorHeap, 1, 1, 0);
 		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerCameraBuffer")] = UINT(Params.size());
 		Params.push_back(perPass);
+
+		ShaderParameter perFrame("cbPerFrame", ShaderParamType::CBVDescriptorHeap, 1, 2, 0);
+		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerFrameBuffer")] = UINT(Params.size());
+		Params.push_back(perFrame);
 
 		PRasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		PBlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
@@ -73,6 +77,7 @@ namespace Phe
 				rootParameter.InitAsDescriptorTable(1, &texTables.back());
 				break;
 			}
+			rootParameters.push_back(rootParameter);
 		}
 
 		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(UINT(rootParameters.size()), rootParameters.data(), 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
@@ -98,23 +103,27 @@ namespace Phe
 	void PShader::ReflectShader()
 	{
 		ComPtr<ID3D12ShaderReflection> Reflection;
-		D3DReflect(PVS->GetBufferPointer(), PVS->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)& Reflection);
+		D3DReflect(PVS->GetBufferPointer(), PVS->GetBufferSize(), IID_ID3D12ShaderReflection, (void**)&Reflection);
 		D3D12_SHADER_DESC desc;
 		Reflection->GetDesc(&desc);
-		for(size_t CBindex = 0; CBindex<desc.ConstantBuffers; ++CBindex)
+		std::vector<UINT32> Ret;
+		for (size_t CBindex = 0; CBindex < desc.ConstantBuffers; ++CBindex)
 		{
 			ID3D12ShaderReflectionConstantBuffer* buffer = Reflection->GetConstantBufferByIndex(CBindex);
 			D3D12_SHADER_BUFFER_DESC bufferDesc;
 			buffer->GetDesc(&bufferDesc);
+
+			UINT32 VariableSize = 0;
 			for (UINT Varindex = 0; Varindex < bufferDesc.Variables; Varindex++)
 			{
 				ID3D12ShaderReflectionVariable* var = buffer->GetVariableByIndex(Varindex);
 				D3D12_SHADER_VARIABLE_DESC varDesc;
 				var->GetDesc(&varDesc);
-
-//				memcpy(&mMappedData[elementIndex * mElementByteSize], &data, varDesc);
+				VariableSize += varDesc.Size;
 			}
+			Ret.push_back(VariableSize);
 		}
+		PShaderManager::GetSingleton().AddConstantSize(PName, Ret);
 	}
 
 	void PShader::BindRootSignature(ID3D12GraphicsCommandList* commandList)
@@ -164,6 +173,7 @@ namespace Phe
 		};
 		psoDesc->pRootSignature = PRootSignature.Get();
 		psoDesc->RasterizerState = PRasterizerState;
+		psoDesc->RasterizerState.FrontCounterClockwise = TRUE;
 		psoDesc->DepthStencilState = PDepthStencilState;
 		psoDesc->BlendState = PBlendState;
 	}

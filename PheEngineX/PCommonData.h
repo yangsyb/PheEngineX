@@ -5,19 +5,23 @@
 #include "glm/ext/matrix_float4x4.hpp"
 using namespace Microsoft::WRL;
 
-struct ObjectConstants
+struct PerObjectCBuffer
 {
 	glm::mat4 Position;
 	glm::mat4 Rotation;
 	glm::mat4 Scale;
 };
 
-struct PassConstants
+struct PerCameraCBuffer
 {
 	glm::mat4 View;
 	glm::mat4 Proj;
 };
 
+struct PerFrameCBuffer
+{
+	float Time;
+};
 
 struct PVertex
 {

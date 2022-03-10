@@ -115,7 +115,7 @@ protected:
 class PInputIOS : public Input
 {
 public:
-	
+
 };
 
 #elif defined(PlatformAndroid)

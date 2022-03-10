@@ -16,7 +16,7 @@ namespace Phe
 		void UpdateViewConstant();
 		void UpdateProjectionConstant();
 
-		PassConstants GetPassConstant() { return PMainPassCB; }
+		PerCameraCBuffer GetPassConstant() { return PMainPassCB; }
 	public:
 		void SetPosition(const glm::vec3& position);
 
@@ -61,6 +61,6 @@ namespace Phe
 
 		Transform PTransform;
 
-		PassConstants PMainPassCB;
+		PerCameraCBuffer PMainPassCB;
 	};
 }

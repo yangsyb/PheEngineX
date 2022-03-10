@@ -47,65 +47,65 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 	case WM_ACTIVATE:
 		if (LOWORD(wParam) == WA_INACTIVE)
 		{
-//			PEngine::GetSingleton().Pause();
+			//			PEngine::GetSingleton().Pause();
 		}
 		else
 		{
-//			PEngine::GetSingleton().Resume();
+			//			PEngine::GetSingleton().Resume();
 		}
 		return 0;
 
 
 	case WM_SIZE:
-//		PEngine::GetSingleton().SetScreenSize(LOWORD(lParam), HIWORD(lParam));
+		//		PEngine::GetSingleton().SetScreenSize(LOWORD(lParam), HIWORD(lParam));
 		if (wParam == SIZE_MINIMIZED)
 		{
-//			PEngine::GetSingleton().Pause();
-//			PEngine::GetSingleton().Pminimized = true;
-//			PEngine::GetSingleton().Pmaximized = false;
+			//			PEngine::GetSingleton().Pause();
+			//			PEngine::GetSingleton().Pminimized = true;
+			//			PEngine::GetSingleton().Pmaximized = false;
 		}
 		else if (wParam == SIZE_MAXIMIZED)
 		{
-//			PEngine::GetSingleton().Resume();
-//			PEngine::GetSingleton().Pminimized = false;
-//			PEngine::GetSingleton().Pmaximized = true;
-//			PEngine::GetSingleton().OnResize();
+			//			PEngine::GetSingleton().Resume();
+			//			PEngine::GetSingleton().Pminimized = false;
+			//			PEngine::GetSingleton().Pmaximized = true;
+			//			PEngine::GetSingleton().OnResize();
 		}
 		else if (wParam == SIZE_RESTORED)
 		{
-// 			if (PEngine::GetSingleton().Pminimized)
-// 			{
-// 				PEngine::GetSingleton().Resume();
-// 				PEngine::GetSingleton().Pminimized = false;
-// 				PEngine::GetSingleton().OnResize();
-// 			}
-// 
-// 			else if (PEngine::GetSingleton().Pmaximized)
-// 			{
-// 				PEngine::GetSingleton().Resume();
-// 				PEngine::GetSingleton().Pmaximized = false;
-// 				PEngine::GetSingleton().OnResize();
-// 			}
-// 			else if (PEngine::GetSingleton().Presizing)
-// 			{
-// 
-// 			}
-// 			else
-// 			{
-// 				PEngine::GetSingleton().OnResize();
-// 			}
+			// 			if (PEngine::GetSingleton().Pminimized)
+			// 			{
+			// 				PEngine::GetSingleton().Resume();
+			// 				PEngine::GetSingleton().Pminimized = false;
+			// 				PEngine::GetSingleton().OnResize();
+			// 			}
+			// 
+			// 			else if (PEngine::GetSingleton().Pmaximized)
+			// 			{
+			// 				PEngine::GetSingleton().Resume();
+			// 				PEngine::GetSingleton().Pmaximized = false;
+			// 				PEngine::GetSingleton().OnResize();
+			// 			}
+			// 			else if (PEngine::GetSingleton().Presizing)
+			// 			{
+			// 
+			// 			}
+			// 			else
+			// 			{
+			// 				PEngine::GetSingleton().OnResize();
+			// 			}
 		}
 		return 0;
 
 	case WM_ENTERSIZEMOVE:
-// 		PEngine::GetSingleton().Pause();
-// 		PEngine::GetSingleton().Presizing = true;
+		// 		PEngine::GetSingleton().Pause();
+		// 		PEngine::GetSingleton().Presizing = true;
 		return 0;
 
 	case WM_EXITSIZEMOVE:
-// 		PEngine::GetSingleton().Resume();
-// 		PEngine::GetSingleton().Presizing = false;
-// 		PEngine::GetSingleton().OnResize();
+		// 		PEngine::GetSingleton().Resume();
+		// 		PEngine::GetSingleton().Presizing = false;
+		// 		PEngine::GetSingleton().OnResize();
 		return 0;
 
 	case WM_DESTROY:
@@ -135,9 +135,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
 
 PWindowWin32::PWindowWin32(UINT32 Width, UINT32 Height, void* Handle, const std::string& Name) : PWindow(Width, Height), HWnd((HWND)Handle)
 {
-//	PheEngine = std::make_unique<PEngine>();
+	//	PheEngine = std::make_unique<PEngine>();
 	GenerateWindow(Name);
-//	PheEngine->Initialize(PWidth, PHeight, HWnd);
+	//	PheEngine->Initialize(PWidth, PHeight, HWnd);
 	PInput = dynamic_cast<PInputWin32*>(PInput);
 	PWin32 = this;
 }
@@ -150,7 +150,7 @@ PWindowWin32::~PWindowWin32()
 
 bool PWindowWin32::Run()
 {
-//	PEngine::GetSingleton().PTimer.Reset();
+	//	PEngine::GetSingleton().PTimer.Reset();
 	MSG msg;
 	bool quit = false;
 	PInput->Update();
@@ -205,7 +205,7 @@ void PWindowWin32::GenerateWindow(const std::string& Name)
 		MessageBox(0, L"CreateWindow Failed.", 0, 0);
 	}
 
-	if(HWnd)
+	if (HWnd)
 	{
 		ShowWindow(HWnd, SW_SHOW);
 		UpdateWindow(HWnd);

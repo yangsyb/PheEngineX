@@ -11,7 +11,7 @@ namespace Phe
 
 	PActor::~PActor()
 	{
-
+		PActorMaterial = nullptr;
 	}
 
 	void PActor::SetStaticMesh(std::string ActorName)
@@ -28,5 +28,6 @@ namespace Phe
 	{
 		PActorMaterial = ActorMaterial;
 	}
+
 
 }

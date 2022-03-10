@@ -14,6 +14,9 @@ namespace Phe
 		void SetTransform(Transform ActorTransform);
 		void SetMaterial(std::shared_ptr<PMaterial> ActorMaterial);
 
+		std::string GetName() { return PActorName; }
+		Transform GetTransform() { return PActorTransform; }
+		std::shared_ptr<PMaterial> GetMaterial() { return PActorMaterial; }
 	protected:
 		std::string PActorName;
 		Transform PActorTransform;

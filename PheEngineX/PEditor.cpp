@@ -18,7 +18,7 @@ namespace Phe
 
 	void PEditor::Register(std::vector<std::function<void()>> RegisterList)
 	{
-		for(auto func : RegisterList)
+		for (auto func : RegisterList)
 		{
 			EditorEvent.push_back(func);
 		}

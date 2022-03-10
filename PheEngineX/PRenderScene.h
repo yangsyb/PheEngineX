@@ -2,53 +2,60 @@
 #include "pch.h"
 #include "Transform.h"
 #include "PStaticMesh.h"
+#include "PActor.h"
+#include "RHI/PGPUBuffer.h"
 
 namespace Phe
 {
+	class DrawPool
+	{
+	public:
+		DrawPool(std::string ShaderName);
+		~DrawPool();
+		void Push(std::shared_ptr<PActor> actor);
+
+		std::string GetShaderName() { return PShaderName; }
+		std::unordered_map<std::string, std::vector<std::shared_ptr<PActor>>> Request();
+	private:
+		std::string PShaderName;
+		std::unordered_map<std::string, std::vector<std::shared_ptr<PActor>>> PActorMap;
+	};
+
 	class PRenderScene
 	{
 	public:
 		PRenderScene();
 		~PRenderScene();
 
-		void BuildMeshData(std::string MeshName, Transform MeshTransform);
-		void AddExistedMesh(std::string MeshName, Transform MeshTransform);
-		void BuildWPOMeshData(std::string MeshName, Transform MeshTransform);
-		void AddWPOExistedMesh(std::string MeshName, Transform MeshTransform);
+		void AddActor(std::string StaticMeshName, Transform MeshTransform, std::shared_ptr<PMaterial> MeshMaterial);
+		void AddActors(std::vector<std::string> StaticMeshName, std::vector<Transform> MeshTransform, std::vector<std::shared_ptr<PMaterial>> MeshMaterial);
 		void ClearScene();
-		void UpdateCamera(PassConstants passcb);
+		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
 
 		void BuildConstantBuffer();
-		void BuildPSO();
 		void Render();
 
-		ComPtr<ID3DBlob> CompileShader(const std::wstring& Filename, const D3D_SHADER_MACRO* Defines, const std::string& EntryPoint, const std::string& Target);
 	private:
-		UINT RenderMeshNum;
-		std::unordered_map<std::string, std::shared_ptr<PRenderStaticMesh>> RenderMeshData;
-		std::unordered_map<std::string, std::vector<Transform>> RenderSceneMeshList;
-		UINT WPORenderMeshNum;
-		std::unordered_map<std::string, std::shared_ptr<PRenderStaticMesh>> WPORenderMeshData;
-		std::unordered_map<std::string, std::vector<Transform>> WPORenderSceneMeshList;
 
+
+		UINT ActorNum;
+		std::unordered_map<std::string, std::shared_ptr<PRenderStaticMesh>> RenderActorData;
+
+		std::unordered_map<std::string, std::shared_ptr<DrawPool>> RenderActorPools;
 
 	private:
 
 		UINT PCbvSrvUavDescriptorSize;
 		ComPtr<ID3D12DescriptorHeap> CbvHeap;
-		std::unique_ptr <UploadBuffer<ObjectConstants>> mObjectCB = nullptr;
-		std::unique_ptr <UploadBuffer<PassConstants>> mPassCB = nullptr;
-		std::unique_ptr <UploadBuffer<PTreeConstants>> mTreeCB = nullptr;
+		// 		std::unique_ptr <PGpuUploadBuffer> PerObjCB;
+		// 		std::unique_ptr <PGpuUploadBuffer> PerCameraCB;
+		// 		std::unique_ptr <PGpuUploadBuffer> PerFrameCB;
+		// 		std::unique_ptr <PGpuUploadBuffer> PerMaterialCB;
 
-		ComPtr<ID3D12RootSignature> RootSignature = nullptr;
-		ComPtr<ID3D12RootSignature> WPORootSignature = nullptr;
-		ComPtr<ID3DBlob> MvsByteCode = nullptr;
-		ComPtr<ID3DBlob> MpsByteCode = nullptr;
-		ComPtr<ID3DBlob> WPOMvsByteCode = nullptr;
-		ComPtr<ID3DBlob> WPOMpsByteCode = nullptr;
-		std::vector<D3D12_INPUT_ELEMENT_DESC> InputLayout;
-		std::vector<D3D12_INPUT_ELEMENT_DESC> WPOInputLayout;
-		ComPtr<ID3D12PipelineState> PSO = nullptr;
-		ComPtr<ID3D12PipelineState> WPOPSO = nullptr;
+		std::unique_ptr <UploadBuffer<PerObjectCBuffer>> PerObjCB;
+		std::unique_ptr <UploadBuffer<PerCameraCBuffer>> PerCameraCB;
+		std::unique_ptr <UploadBuffer<PerFrameCBuffer>> PerFrameCB;
+
+
 	};
 }

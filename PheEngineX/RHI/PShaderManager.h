@@ -14,19 +14,22 @@ namespace Phe
 		UINT PropertyToID(std::string property);
 		UINT GetPerObjectBufferID() { return PerObjectBufferID; }
 		UINT GetPerCameraBufferID() { return PerCameraBufferID; }
+		UINT GetPerFrameBufferID() { return PerFrameBufferID; }
 		UINT GetPerMaterialBufferID() { return PerMaterialBufferID; }
 
 		void CompileAllShader();
 		void CreateUploadBuffer();
+		std::shared_ptr<PShader> GetShader(std::string ShaderName);
+		void AddConstantSize(std::string ShaderName, std::vector<UINT32> ConstantSize);
 	private:
 		UINT CurID;
 		std::unordered_map<std::string, UINT> PropertyID;
 		std::vector<std::shared_ptr<PShader>> ShaderList;
-		std::unordered_map<std::string, ComPtr<ID3D12Resource>> UploadBufferMap;
-		std::unordered_map<std::string, BYTE*> MappedDataMap;
+		std::unordered_map<std::string, std::vector<UINT32>> ShaderConstantSizeMap;
 
 		UINT PerObjectBufferID;
 		UINT PerCameraBufferID;
+		UINT PerFrameBufferID;
 		UINT PerMaterialBufferID;
 
 	};

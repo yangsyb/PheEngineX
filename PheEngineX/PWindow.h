@@ -8,9 +8,9 @@ namespace Phe
 	public:
 		static PWindow* Create(const std::string& Name, UINT32 Width, UINT32 Height);
 		static void DestroyWindow(PWindow* Window);
-		
+
 		virtual bool Run() = 0;
-		virtual Input* GetInput() {return PInput;}
+		virtual Input* GetInput() { return PInput; }
 	protected:
 		PWindow(UINT32 Width, UINT32 Height);
 		virtual ~PWindow();

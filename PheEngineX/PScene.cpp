@@ -4,6 +4,7 @@
 #include "PTask.h"
 #include "PStaticMesh.h"
 #include "PAssetManager.h"
+#include "RHI/PMaterial.h"
 
 namespace Phe
 {
@@ -20,7 +21,7 @@ namespace Phe
 
 	// Add Mesh Data To MainThread Scene
 	// Then Create PTask to RenderThread queue
-	void PScene::AddStaticMesh(std::string StaticMeshName, Transform MeshTransform)
+	void PScene::AddStaticMesh(std::string StaticMeshName, Transform MeshTransform, std::shared_ptr<PMaterial> MeshMaterial)
 	{
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
@@ -28,7 +29,7 @@ namespace Phe
 		if (SceneMeshList.count(StaticMeshName) == 0)
 		{
 			SceneMeshList.insert({ StaticMeshName, std::vector<Transform>{MeshTransform} });
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->BuildMeshData(StaticMeshName, MeshTransform); });
+			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(StaticMeshName, MeshTransform, MeshMaterial); });
 			PRender->AddTask(task);
 		}
 		else
@@ -36,53 +37,25 @@ namespace Phe
 			auto KVpair = SceneMeshList.find(StaticMeshName);
 			std::vector<Transform>& TransformVec = KVpair->second;
 			TransformVec.push_back(MeshTransform);
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddExistedMesh(StaticMeshName, MeshTransform); });
+			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(StaticMeshName, MeshTransform, MeshMaterial); });
 			PRender->AddTask(task);
 		}
 	}
 
 	// Parse Json File Data
-	void PScene::AddStaticMeshFromFile(const std::string FilePath)
+	void PScene::AddStaticMeshFromFile(const std::string FilePath, std::shared_ptr<PMaterial> MeshMaterial)
 	{
 		std::vector<std::pair<std::string, Transform>> StaticMeshTransformList;
 		DeserilizeActorJsonFile(FilePath, StaticMeshTransformList);
 		for (size_t index = 0; index < StaticMeshTransformList.size(); index++)
 		{
-			AddStaticMesh(StaticMeshTransformList[index].first, StaticMeshTransformList[index].second);
+			AddStaticMesh(StaticMeshTransformList[index].first, StaticMeshTransformList[index].second, MeshMaterial);
 		}
+
+		//		PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(, MeshTransform, MeshMaterial); });
+		//		PRender->AddTask(task);
 	}
 
-
-	void PScene::AddStaticMeshWPO(std::string StaticMeshName, Transform MeshTransform)
-	{
-		if (!PRender) PRender = PRenderThread::Get();
-		assert(PRender);
-		PMeshDataStruct data = PAssetManager::GetSingleton().GetMeshData(StaticMeshName);
-		if (SceneMeshList.count(StaticMeshName) == 0)
-		{
-			SceneMeshList.insert({ StaticMeshName, std::vector<Transform>{MeshTransform} });
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->BuildWPOMeshData(StaticMeshName, MeshTransform); });
-			PRender->AddTask(task);
-		}
-		else
-		{
-			auto KVpair = SceneMeshList.find(StaticMeshName);
-			std::vector<Transform>& TransformVec = KVpair->second;
-			TransformVec.push_back(MeshTransform);
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddWPOExistedMesh(StaticMeshName, MeshTransform); });
-			PRender->AddTask(task);
-		}
-	}
-
-	void PScene::AddStaticMeshWPOFromFile(const std::string FilePath)
-	{
-		std::vector<std::pair<std::string, Transform>> StaticMeshTransformList;
-		DeserilizeActorJsonFile(FilePath, StaticMeshTransformList);
-		for (size_t index = 0; index < StaticMeshTransformList.size(); index++)
-		{
-			AddStaticMeshWPO(StaticMeshTransformList[index].first, StaticMeshTransformList[index].second);
-		}
-	}
 
 	void PScene::ClearScene()
 	{

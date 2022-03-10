@@ -164,6 +164,7 @@
     <ClInclude Include="PUtility.h" />
     <ClInclude Include="PWindow.h" />
     <ClInclude Include="PAssetManager.h" />
+    <ClInclude Include="RHI\PGPUBuffer.h" />
     <ClInclude Include="RHI\PMaterial.h" />
     <ClInclude Include="RHI\PGPUResource.h" />
     <ClInclude Include="RHI\PShader.h" />
@@ -198,6 +199,7 @@
     <ClCompile Include="PThread.cpp" />
     <ClCompile Include="PWindow.cpp" />
     <ClCompile Include="PAssetManager.cpp" />
+    <ClCompile Include="RHI\PGPUBuffer.cpp" />
     <ClCompile Include="RHI\PGPUResource.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>

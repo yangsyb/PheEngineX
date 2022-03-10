@@ -15,12 +15,8 @@ namespace Phe
 		PScene();
 		~PScene();
 
-		void AddStaticMesh(std::string StaticMeshName, Transform MeshTransform);
-		void AddStaticMeshFromFile(const std::string FilePath);
-
-		//Those Two functions below are static only for test WPO!!
-		void AddStaticMeshWPO(std::string StaticMeshName, Transform MeshTransform);
-		void AddStaticMeshWPOFromFile(const std::string FilePath);
+		void AddStaticMesh(std::string StaticMeshName, Transform MeshTransform, std::shared_ptr<PMaterial> MeshMaterial);
+		void AddStaticMeshFromFile(const std::string FilePath, std::shared_ptr<PMaterial> MeshMaterial);
 
 		void ClearScene();
 		void Update();

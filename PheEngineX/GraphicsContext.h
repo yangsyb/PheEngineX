@@ -27,14 +27,14 @@ public:
 	void GenerateInputElementDesc(std::vector<D3D12_INPUT_ELEMENT_DESC>& desc,
 		bool hasColor,
 		bool hasNormal
-		);
+	);
 	std::vector<D3D12_INPUT_ELEMENT_DESC>* GetInputElementDesc(UINT index);
 	ID3D12PipelineState* GetPSO(std::shared_ptr<Phe::PShader> shader);
 	std::unordered_map<UINT, UINT> InputLayoutMap;
 	std::vector<std::unique_ptr<std::vector<D3D12_INPUT_ELEMENT_DESC>>> InputLayoutsVec;
 	std::unordered_map<std::shared_ptr<Phe::PShader>, ComPtr<ID3D12PipelineState>> PSOMap;
 private:
-//	ID3D12Device* PDevice;
+	//	ID3D12Device* PDevice;
 	ComPtr<ID3D12Device> PDevice;
 	ID3D12GraphicsCommandList* PCommandList;
 	ID3D12CommandAllocator* PCommandAllocator;
