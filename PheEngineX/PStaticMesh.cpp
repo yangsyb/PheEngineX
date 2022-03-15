@@ -4,9 +4,9 @@
 #include "DxException.h"
 namespace Phe
 {
-	// Raw StaticMesh Data
-	// Managed By MainThread Scene
-	PStaticMesh::PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT32> Indices, std::vector<float> Tangents) : PMeshName(Name), PVertices(Vertices), PIndices(Indices), PTangents(Tangents)
+	// Raw StaticMesh Data2
+	// Managed By AssetManager
+	PStaticMesh::PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT32> Indices, std::vector<float> Tangents, std::vector<float> UVs) : PMeshName(Name), PVertices(Vertices), PIndices(Indices), PTangents(Tangents), PUVs(UVs)
 	{
 
 	}
@@ -19,15 +19,16 @@ namespace Phe
 	// Render StaticMesh Data
 	// Managed By RenderThread Scene
 	// Raw StaticMesh Data passed by MainThread, and converted to Default Buffer in Constructor 
-	PRenderStaticMesh::PRenderStaticMesh(std::string Name, PMeshDataStruct RMeshData) : PStaticMesh(Name, RMeshData.Vertices, RMeshData.Indices, RMeshData.Normal)
+	PRenderStaticMesh::PRenderStaticMesh(std::string Name, PMeshDataStruct RMeshData) : PStaticMesh(Name, RMeshData.Vertices, RMeshData.Indices, RMeshData.Normal, RMeshData.UVs)
 	{
-		GraphicContext::GetSingleton().ResetCommandList();
+		//		GraphicContext::GetSingleton().ResetCommandList();
 		std::vector<PVertex> VerticesVec;
 		for (size_t index = 0; index < RMeshData.Vertices.size() / 3; index++)
 		{
 			PVertex Vertex;
 			Vertex.Pos = { RMeshData.Vertices[index * 3], RMeshData.Vertices[index * 3 + 1] ,RMeshData.Vertices[index * 3 + 2] };
-			Vertex.Normal = { RMeshData.Normal[index * 3], RMeshData.Normal[index * 3 + 1] ,RMeshData.Normal[index * 3 + 2], 1 };
+			Vertex.Normal = { RMeshData.Normal[index * 3], RMeshData.Normal[index * 3 + 1] ,RMeshData.Normal[index * 3 + 2],1 };
+			Vertex.TextCoord = { RMeshData.UVs[index * 2], RMeshData.UVs[index * 2 + 1] };
 			VerticesVec.push_back(Vertex);
 		}
 
@@ -65,7 +66,7 @@ namespace Phe
 		PIndexBufferView.BufferLocation = PVertexBufferGPU->GetGPUVirtualAddress() + PVertexBufferByteSize;
 		PIndexBufferView.Format = PIndexFormat;
 		PIndexBufferView.SizeInBytes = PIndexBufferByteSize;
-		GraphicContext::GetSingleton().ExecuteCommandList();
+		//		GraphicContext::GetSingleton().ExecuteCommandList();
 	}
 
 	PRenderStaticMesh::~PRenderStaticMesh()

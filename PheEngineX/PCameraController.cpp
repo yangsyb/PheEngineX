@@ -63,7 +63,7 @@ namespace Phe
 
 		if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::Z))
 		{
-			if (PSpeed < 10)
+			if (PSpeed < 30)
 			{
 				PSpeed = PSpeed + 1;
 			}
@@ -88,6 +88,7 @@ namespace Phe
 		roll = t.EulerAngles.x;
 		pitch = t.EulerAngles.y;
 		yaw = t.EulerAngles.z;
+
 		x = t.Translation.x;
 		y = t.Translation.y;
 		z = t.Translation.z;
@@ -113,7 +114,7 @@ namespace Phe
 
 	void PCameraController::CameraState::UpdateTransform(Transform t)
 	{
-		t.EulerAngles = glm::vec3(pitch, yaw, roll);
+		t.EulerAngles = glm::vec3(roll, pitch, yaw);
 		t.Translation = glm::vec3(x, y, z);
 	}
 

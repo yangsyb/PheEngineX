@@ -23,10 +23,18 @@ struct PerFrameCBuffer
 	float Time;
 };
 
+struct PerMaterialCBuffer
+{
+	glm::vec4 DiffuseAlbedo;
+	glm::vec3 FresnelR0;
+	float Roughness;
+};
+
 struct PVertex
 {
 	glm::vec3 Pos;
 	glm::vec4 Normal;
+	glm::vec2 TextCoord;
 };
 
 struct PMeshDataStruct
@@ -34,16 +42,5 @@ struct PMeshDataStruct
 	std::vector<float> Vertices;
 	std::vector<float> Normal;
 	std::vector<UINT32> Indices;
+	std::vector<float> UVs;
 };
-
-struct PTreeConstants
-{
-	float Time;
-	glm::vec3 Center;
-};
-
-
-static UINT CalcConstantBufferByteSize(UINT byteSize)
-{
-	return (byteSize + 255) & ~255;//..
-}

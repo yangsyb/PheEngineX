@@ -241,7 +241,9 @@ namespace Phe
 		ID3D12CommandList* ppCommandLists[] = { PCommandList.Get() };
 		PCommandQueue->ExecuteCommandLists(_countof(ppCommandLists), ppCommandLists);
 
-		ThrowIfFailed(PSwapChain->Present(0, 0));
+		//ThrowIfFailed(PSwapChain->Present(0, 0));
+		PSwapChain->Present(1, 0);
+
 		PCurrBackBuffer = (PCurrBackBuffer + 1) % SwapChainBufferCount;
 
 		FlushCommandQueue();

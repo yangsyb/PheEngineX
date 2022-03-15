@@ -23,12 +23,7 @@ namespace Phe
 
 	PEngine::~PEngine()
 	{
-		PRenderThread::Get()->Stop();
-		PWindow::DestroyWindow(PheWindow);
-		delete PMainEditor;
-		PMainEditor = nullptr;
-		delete PMainScene;
-		PMainScene = nullptr;
+
 	}
 
 
@@ -48,7 +43,12 @@ namespace Phe
 
 	void PEngine::Shutdown()
 	{
-
+		PRenderThread::Get()->Stop();
+		PWindow::DestroyWindow(PheWindow);
+		delete PMainEditor;
+		PMainEditor = nullptr;
+		delete PMainScene;
+		PMainScene = nullptr;
 	}
 
 	void PEngine::Tick()

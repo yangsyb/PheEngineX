@@ -7,7 +7,7 @@ namespace Phe
 	{
 		PTransform = Transform();
 		PWorldUp = PUp = glm::vec3(0.0f, 0.0f, 1.0f);
-		SetPosition(glm::vec3(-70.0f, 0.0f, 5.0f));
+		SetPosition(glm::vec3(-70.0f, 0.0f, 0.0f));
 		SetRotation(glm::vec3(0.0f, 0.0f, 0.0f));
 		RecalculateProjectionMatrix();
 		RecalculateViewMatrix();

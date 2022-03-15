@@ -59,6 +59,8 @@ namespace Phe
 		std::string PPSEntry;
 
 	private:
+		std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+
 		ComPtr<ID3D12RootSignature> PRootSignature;
 		ComPtr<ID3DBlob> PVS;
 		ComPtr<ID3DBlob> PPS;

@@ -7,6 +7,7 @@ namespace Phe
 	{
 		PropertyID.reserve(64);
 
+		TextureID = PropertyToID("Texture");
 		PerObjectBufferID = PropertyToID("PerObjectBuffer");
 		PerCameraBufferID = PropertyToID("PerCameraBuffer");
 		PerFrameBufferID = PropertyToID("PerFrameBuffer");
@@ -45,7 +46,7 @@ namespace Phe
 		for (auto Shader : ShaderList)
 		{
 			Shader->Initialize();
-			Shader->ReflectShader();
+//			Shader->ReflectShader();
 		}
 	}
 

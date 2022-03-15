@@ -142,6 +142,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="DDSTextureLoader.h" />
     <ClInclude Include="Json\json\json-forwards.h" />
     <ClInclude Include="Json\json\json.h" />
     <ClInclude Include="PActor.h" />
@@ -164,17 +165,23 @@
     <ClInclude Include="PUtility.h" />
     <ClInclude Include="PWindow.h" />
     <ClInclude Include="PAssetManager.h" />
+    <ClInclude Include="RHI\PDX12RHI.h" />
     <ClInclude Include="RHI\PGPUBuffer.h" />
     <ClInclude Include="RHI\PMaterial.h" />
     <ClInclude Include="RHI\PGPUResource.h" />
+    <ClInclude Include="RHI\PRHI.h" />
     <ClInclude Include="RHI\PShader.h" />
     <ClInclude Include="RHI\PShaderManager.h" />
+    <ClInclude Include="RHI\PTexture.h" />
     <ClInclude Include="Singleton.h" />
     <ClInclude Include="PThread.h" />
     <ClInclude Include="Transform.h" />
     <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="DDSTextureLoader.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="Json\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
@@ -199,13 +206,16 @@
     <ClCompile Include="PThread.cpp" />
     <ClCompile Include="PWindow.cpp" />
     <ClCompile Include="PAssetManager.cpp" />
+    <ClCompile Include="RHI\PDX12RHI.cpp" />
     <ClCompile Include="RHI\PGPUBuffer.cpp" />
     <ClCompile Include="RHI\PGPUResource.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="RHI\PMaterial.cpp" />
+    <ClCompile Include="RHI\PRHI.cpp" />
     <ClCompile Include="RHI\PShader.cpp" />
     <ClCompile Include="RHI\PShaderManager.cpp" />
+    <ClCompile Include="RHI\PTexture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

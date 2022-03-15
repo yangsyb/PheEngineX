@@ -4,6 +4,7 @@
 #include "PStaticMesh.h"
 #include "PActor.h"
 #include "RHI/PGPUBuffer.h"
+#include "RHI/PTexture.h"
 
 namespace Phe
 {
@@ -27,8 +28,8 @@ namespace Phe
 		PRenderScene();
 		~PRenderScene();
 
-		void AddActor(std::string StaticMeshName, Transform MeshTransform, std::shared_ptr<PMaterial> MeshMaterial);
-		void AddActors(std::vector<std::string> StaticMeshName, std::vector<Transform> MeshTransform, std::vector<std::shared_ptr<PMaterial>> MeshMaterial);
+		void AddActor(std::string StaticMeshName, Transform MeshTransform, std::string MaterialName);
+		void AddActors(std::vector<std::string> StaticMeshName, std::vector<Transform> MeshTransform, std::vector<std::string> MeshMaterialName);
 		void ClearScene();
 		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
 
@@ -43,6 +44,10 @@ namespace Phe
 
 		std::unordered_map<std::string, std::shared_ptr<DrawPool>> RenderActorPools;
 
+		//		std::unordered_map<std::string, std::shared_ptr<PRenderTexture>> RenderTextureData;
+		std::unordered_map<std::string, std::shared_ptr<PRenderMaterial>> RenderMaterialData;
+		std::unordered_map<std::shared_ptr<PRenderTexture>, UINT> RenderTextureData;
+
 	private:
 
 		UINT PCbvSrvUavDescriptorSize;
@@ -55,7 +60,12 @@ namespace Phe
 		std::unique_ptr <UploadBuffer<PerObjectCBuffer>> PerObjCB;
 		std::unique_ptr <UploadBuffer<PerCameraCBuffer>> PerCameraCB;
 		std::unique_ptr <UploadBuffer<PerFrameCBuffer>> PerFrameCB;
+		std::unique_ptr <UploadBuffer<PerMaterialCBuffer>> PerMaterialCB;
 
+		UINT PerObjectCBufferByteSize;
+		UINT PerCameraCBufferByteSize;
+		UINT PerFrameCBufferByteSize;
+		UINT PerMaterialCBufferByteSize;
 
 	};
 }

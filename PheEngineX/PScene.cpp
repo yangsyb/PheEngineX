@@ -21,7 +21,7 @@ namespace Phe
 
 	// Add Mesh Data To MainThread Scene
 	// Then Create PTask to RenderThread queue
-	void PScene::AddStaticMesh(std::string StaticMeshName, Transform MeshTransform, std::shared_ptr<PMaterial> MeshMaterial)
+	void PScene::AddStaticMesh(std::string StaticMeshName, Transform MeshTransform, std::string MaterialName)
 	{
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
@@ -29,7 +29,7 @@ namespace Phe
 		if (SceneMeshList.count(StaticMeshName) == 0)
 		{
 			SceneMeshList.insert({ StaticMeshName, std::vector<Transform>{MeshTransform} });
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(StaticMeshName, MeshTransform, MeshMaterial); });
+			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(StaticMeshName, MeshTransform, MaterialName); });
 			PRender->AddTask(task);
 		}
 		else
@@ -37,19 +37,19 @@ namespace Phe
 			auto KVpair = SceneMeshList.find(StaticMeshName);
 			std::vector<Transform>& TransformVec = KVpair->second;
 			TransformVec.push_back(MeshTransform);
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(StaticMeshName, MeshTransform, MeshMaterial); });
+			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(StaticMeshName, MeshTransform, MaterialName); });
 			PRender->AddTask(task);
 		}
 	}
 
 	// Parse Json File Data
-	void PScene::AddStaticMeshFromFile(const std::string FilePath, std::shared_ptr<PMaterial> MeshMaterial)
+	void PScene::AddStaticMeshFromFile(const std::string FilePath, std::string MaterialName)
 	{
 		std::vector<std::pair<std::string, Transform>> StaticMeshTransformList;
 		DeserilizeActorJsonFile(FilePath, StaticMeshTransformList);
 		for (size_t index = 0; index < StaticMeshTransformList.size(); index++)
 		{
-			AddStaticMesh(StaticMeshTransformList[index].first, StaticMeshTransformList[index].second, MeshMaterial);
+			AddStaticMesh(StaticMeshTransformList[index].first, StaticMeshTransformList[index].second, MaterialName);
 		}
 
 		//		PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddActor(, MeshTransform, MeshMaterial); });

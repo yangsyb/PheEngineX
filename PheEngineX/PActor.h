@@ -12,14 +12,14 @@ namespace Phe
 		~PActor();
 		void SetStaticMesh(std::string ActorName);
 		void SetTransform(Transform ActorTransform);
-		void SetMaterial(std::shared_ptr<PMaterial> ActorMaterial);
+		void SetMaterial(std::string MaterialName);
 
 		std::string GetName() { return PActorName; }
 		Transform GetTransform() { return PActorTransform; }
-		std::shared_ptr<PMaterial> GetMaterial() { return PActorMaterial; }
+		std::string GetMaterialName() { return PMaterialName; }
 	protected:
 		std::string PActorName;
 		Transform PActorTransform;
-		std::shared_ptr<PMaterial> PActorMaterial;
+		std::string PMaterialName;
 	};
 }

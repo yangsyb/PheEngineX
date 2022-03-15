@@ -17,17 +17,25 @@ namespace Phe
 
 	PShader::PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS, std::string PS) : PFilePath(FilePath), PVSEntry(VS), PPSEntry(PS), PName(ShaderName)
 	{
-		ShaderParameter perObject("cbPerObject", ShaderParamType::CBVDescriptorHeap, 1, 0, 0);
+		ShaderParameter perText("cbTexture", ShaderParamType::SRVDescriptorHeap, 1, 0, 0);
+		ParamMap[PShaderManager::GetSingleton().PropertyToID("Texture")] = UINT(Params.size());
+		Params.push_back(perText);
+
+		ShaderParameter perObject("cbPerObject", ShaderParamType::ConstantBuffer, 1, 0, 0);
 		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerObjectBuffer")] = UINT(Params.size());
 		Params.push_back(perObject);
 
-		ShaderParameter perPass("cbPerPass", ShaderParamType::CBVDescriptorHeap, 1, 1, 0);
+		ShaderParameter perPass("cbPerPass", ShaderParamType::ConstantBuffer, 1, 1, 0);
 		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerCameraBuffer")] = UINT(Params.size());
 		Params.push_back(perPass);
 
-		ShaderParameter perFrame("cbPerFrame", ShaderParamType::CBVDescriptorHeap, 1, 2, 0);
+		ShaderParameter perFrame("cbPerFrame", ShaderParamType::ConstantBuffer, 1, 2, 0);
 		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerFrameBuffer")] = UINT(Params.size());
 		Params.push_back(perFrame);
+
+		ShaderParameter perMaterial("cbPerMaterial", ShaderParamType::ConstantBuffer, 1, 3, 0);
+		ParamMap[PShaderManager::GetSingleton().PropertyToID("PerMaterialBuffer")] = UINT(Params.size());
+		Params.push_back(perMaterial);
 
 		PRasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		PBlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
@@ -80,7 +88,9 @@ namespace Phe
 			rootParameters.push_back(rootParameter);
 		}
 
-		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(UINT(rootParameters.size()), rootParameters.data(), 0, nullptr, D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
+		auto staticSamplers = GetStaticSamplers();
+
+		CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(UINT(rootParameters.size()), rootParameters.data(), (UINT)staticSamplers.size(), staticSamplers.data(), D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
 		ComPtr<ID3DBlob> serializedRootSig = nullptr;
 		ComPtr<ID3DBlob> errorBlob = nullptr;
@@ -177,4 +187,59 @@ namespace Phe
 		psoDesc->DepthStencilState = PDepthStencilState;
 		psoDesc->BlendState = PBlendState;
 	}
+
+	std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> PShader::GetStaticSamplers()
+	{
+		const CD3DX12_STATIC_SAMPLER_DESC pointWrap(
+			0, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC pointClamp(
+			1, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_POINT, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC linearWrap(
+			2, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC linearClamp(
+			3, // shaderRegister
+			D3D12_FILTER_MIN_MAG_MIP_LINEAR, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP); // addressW
+
+		const CD3DX12_STATIC_SAMPLER_DESC anisotropicWrap(
+			4, // shaderRegister
+			D3D12_FILTER_ANISOTROPIC, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_WRAP,  // addressW
+			0.0f,                             // mipLODBias
+			8);                               // maxAnisotropy
+
+		const CD3DX12_STATIC_SAMPLER_DESC anisotropicClamp(
+			5, // shaderRegister
+			D3D12_FILTER_ANISOTROPIC, // filter
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressU
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressV
+			D3D12_TEXTURE_ADDRESS_MODE_CLAMP,  // addressW
+			0.0f,                              // mipLODBias
+			8);                                // maxAnisotropy
+
+		return {
+		pointWrap, pointClamp,
+		linearWrap, linearClamp,
+		anisotropicWrap, anisotropicClamp };
+	}
+
 }

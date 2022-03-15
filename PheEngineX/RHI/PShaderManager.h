@@ -27,6 +27,7 @@ namespace Phe
 		std::vector<std::shared_ptr<PShader>> ShaderList;
 		std::unordered_map<std::string, std::vector<UINT32>> ShaderConstantSizeMap;
 
+		UINT TextureID;
 		UINT PerObjectBufferID;
 		UINT PerCameraBufferID;
 		UINT PerFrameBufferID;

@@ -15,8 +15,8 @@ namespace Phe
 		PScene();
 		~PScene();
 
-		void AddStaticMesh(std::string StaticMeshName, Transform MeshTransform, std::shared_ptr<PMaterial> MeshMaterial);
-		void AddStaticMeshFromFile(const std::string FilePath, std::shared_ptr<PMaterial> MeshMaterial);
+		void AddStaticMesh(std::string StaticMeshName, Transform MeshTransform, std::string MaterialName);
+		void AddStaticMeshFromFile(const std::string FilePath, std::string MaterialName);
 
 		void ClearScene();
 		void Update();

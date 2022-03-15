@@ -11,6 +11,9 @@ namespace Phe
 
 		virtual bool Run() = 0;
 		virtual Input* GetInput() { return PInput; }
+
+		virtual UINT32 GetHeight() { return PHeight; }
+		virtual UINT32 GetWidth() { return PWidth; }
 	protected:
 		PWindow(UINT32 Width, UINT32 Height);
 		virtual ~PWindow();

@@ -6,19 +6,20 @@ namespace Phe
 	class PStaticMesh
 	{
 	public:
-		PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT32> Indices, std::vector<float> Tangents);
+		PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT32> Indices, std::vector<float> Tangents, std::vector<float> UVs);
 		~PStaticMesh();
 
 		std::string GetName() { return PMeshName; }
 		std::vector<float> GetVertices() { return PVertices; }
 		std::vector<UINT32> GetIndices() { return PIndices; }
 		std::vector<float> GetTangents() { return PTangents; }
-
+		std::vector<float> GetUVs() { return PUVs; }
 	protected:
 		std::string PMeshName;
 		std::vector<float> PVertices;
 		std::vector<UINT32> PIndices;
 		std::vector<float> PTangents;
+		std::vector<float> PUVs;
 
 	};
 
@@ -33,8 +34,7 @@ namespace Phe
 		UINT VertexCount() const { return PVertexCount; }
 		UINT IndexCount() const { return PIndexCount; }
 		ComPtr<ID3D12Resource> CreateDefaultBuffer(ID3D12GraphicsCommandList* cmdList, const void* initData, UINT64 byteSize, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
-		// 		void BuildMesh();
-		// 		Transform GetWorldCb() { return PTransform; }
+
 	protected:
 		ComPtr<ID3D12Resource> PVertexBufferGPU = nullptr;
 		ComPtr<ID3D12Resource> PIndexBufferGPU = nullptr;

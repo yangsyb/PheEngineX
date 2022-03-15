@@ -1,6 +1,7 @@
 #include "pch.h"
 #include "PAssetManager.h"
 #include "PStaticMesh.h"
+#include "RHI/PShaderManager.h"
 #include <fstream>
 #include <json.h>
 
@@ -30,6 +31,7 @@ namespace Phe
 				std::vector<float> Vertices;
 				std::vector<UINT32> Indices;
 				std::vector<float> TangentZs;
+				std::vector<float> UVs;
 
 				MeshName = it["StaticMeshName"].asString();
 
@@ -48,11 +50,17 @@ namespace Phe
 					TangentZs.push_back(iTangent.asFloat());
 				}
 
-				std::shared_ptr<Phe::PStaticMesh> Mesh = std::make_shared<Phe::PStaticMesh>(MeshName, Vertices, Indices, TangentZs);
+				for (auto uv : it["UV"])
+				{
+					UVs.push_back(uv.asFloat());
+				}
+
+				std::shared_ptr<Phe::PStaticMesh> Mesh = std::make_shared<Phe::PStaticMesh>(MeshName, Vertices, Indices, TangentZs, UVs);
 				PMeshDataStruct MeshStruct;
 				MeshStruct.Vertices = Vertices;
 				MeshStruct.Indices = Indices;
 				MeshStruct.Normal = TangentZs;
+				MeshStruct.UVs = UVs;
 				MeshData.insert({ MeshName, MeshStruct });
 			}
 		}
@@ -64,6 +72,18 @@ namespace Phe
 		MeshData.insert({ MeshName, InMeshData });
 	}
 
+	void PAssetManager::AddTextureData(const std::string TextureName, const std::wstring TFileName)
+	{
+		std::shared_ptr<PTexture> InTexture = std::make_shared<PTexture>(TextureName, TFileName);
+		TextureData.insert({ TextureName, InTexture });
+	}
+
+	void PAssetManager::AddMaterialData(std::string MaterialName, std::string ShaderName, std::string TextureName, glm::vec4 DiffuseAlbedo /*= glm::vec4(1.f, 1.f, 1.f, 1.f)*/, glm::vec3 FresnelR0 /*= glm::vec3(0.05f, 0.05f, 0.05f)*/, float Roughness /*= 0.2f*/)
+	{
+		std::shared_ptr<PMaterial> InMaterial = std::make_shared<PMaterial>(MaterialName, PShaderManager::GetSingleton().GetShader(ShaderName), TextureName, DiffuseAlbedo, FresnelR0, Roughness);
+		MaterialData.insert({ MaterialName , InMaterial });
+	}
+
 	PMeshDataStruct PAssetManager::GetMeshData(std::string MeshName)
 	{
 		if (MeshData.count(MeshName) > 0)
@@ -72,6 +92,24 @@ namespace Phe
 		}
 		PMeshDataStruct Ret;
 		return Ret;
+	}
+
+	std::shared_ptr<Phe::PTexture> PAssetManager::GetTextureData(std::string TextureName)
+	{
+		if (TextureData.count(TextureName) > 0)
+		{
+			return TextureData[TextureName];
+		}
+		return nullptr;
+	}
+
+	std::shared_ptr<Phe::PMaterial> PAssetManager::GetMaterialData(std::string MaterialName)
+	{
+		if (MaterialData.count(MaterialName) > 0)
+		{
+			return MaterialData[MaterialName];
+		}
+		return nullptr;
 	}
 
 }
