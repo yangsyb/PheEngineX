@@ -29,7 +29,7 @@ namespace Phe
 
 	PRenderScene::~PRenderScene()
 	{
-
+		ClearScene();
 	}
 
 
@@ -115,6 +115,9 @@ namespace Phe
 	void PRenderScene::ClearScene()
 	{
 		RenderActorPools.clear();
+		RenderActorData.clear();
+		RenderMaterialData.clear();
+		RenderTextureData.clear();
 		ActorNum = 0;
 	}
 
@@ -144,58 +147,58 @@ namespace Phe
 			TextureIdx.first->CreateSRV(handle);
 		}
 		//PerObj
-		for (size_t index = 0; index < size_t(ActorNum); index++)
-		{
-			D3D12_GPU_VIRTUAL_ADDRESS PerObjCBAddress = PerObjCB->Resource()->GetGPUVirtualAddress();
-			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
-			size_t ObjBufferIndex = index;
-			PerObjCBAddress += ObjBufferIndex * PerObjectCBufferByteSize;
-			size_t ObjHeapIndex = index + RenderTextureData.size();
-			handle.Offset(int(ObjHeapIndex), PCbvSrvUavDescriptorSize);
-			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-			cbvDesc.BufferLocation = PerObjCBAddress;
-			cbvDesc.SizeInBytes = PerObjectCBufferByteSize;
-			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
-		}
+//		for (size_t index = 0; index < size_t(ActorNum); index++)
+//		{
+//			D3D12_GPU_VIRTUAL_ADDRESS PerObjCBAddress = PerObjCB->Resource()->GetGPUVirtualAddress();
+//			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
+//			size_t ObjBufferIndex = index;
+//			PerObjCBAddress += ObjBufferIndex * PerObjectCBufferByteSize;
+//			size_t ObjHeapIndex = index + RenderTextureData.size();
+//			handle.Offset(int(ObjHeapIndex), PCbvSrvUavDescriptorSize);
+//			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+//			cbvDesc.BufferLocation = PerObjCBAddress;
+//			cbvDesc.SizeInBytes = PerObjectCBufferByteSize;
+//			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
+//		}
 
 		//PerCamera
-		D3D12_GPU_VIRTUAL_ADDRESS PerCameraCBAddress = PerCameraCB->Resource()->GetGPUVirtualAddress();
-		handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
-		size_t CameraBufferIndex = 0;
-		PerCameraCBAddress += CameraBufferIndex * PerCameraCBufferByteSize;
-		size_t CameraHeapIndex = ActorNum + RenderTextureData.size();
-		handle.Offset(int(CameraHeapIndex), PCbvSrvUavDescriptorSize);
-		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-		cbvDesc.BufferLocation = PerCameraCBAddress;
-		cbvDesc.SizeInBytes = PerCameraCBufferByteSize;
-		GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
+//		D3D12_GPU_VIRTUAL_ADDRESS PerCameraCBAddress = PerCameraCB->Resource()->GetGPUVirtualAddress();
+//		handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
+//		size_t CameraBufferIndex = 0;
+//		PerCameraCBAddress += CameraBufferIndex * PerCameraCBufferByteSize;
+//		size_t CameraHeapIndex = ActorNum + RenderTextureData.size();
+//		handle.Offset(int(CameraHeapIndex), PCbvSrvUavDescriptorSize);
+//		D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+//		cbvDesc.BufferLocation = PerCameraCBAddress;
+//		cbvDesc.SizeInBytes = PerCameraCBufferByteSize;
+//		GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
 
-		for (size_t index = 0; index < size_t(ActorNum); index++)
-		{
-			//PerFrame
-			D3D12_GPU_VIRTUAL_ADDRESS PerFrameCBAddress = PerFrameCB->Resource()->GetGPUVirtualAddress();
-			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
-			size_t FrameBufferIndex = index;
-			PerFrameCBAddress += FrameBufferIndex * PerFrameCBufferByteSize;
-			size_t FrameHeapIndex = ActorNum + index + 1 + RenderTextureData.size();
-			handle.Offset(int(FrameHeapIndex), PCbvSrvUavDescriptorSize);
-			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
-			cbvDesc.BufferLocation = PerFrameCBAddress;
-			cbvDesc.SizeInBytes = PerFrameCBufferByteSize;
-			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
-
-			//PerMaterial
-			D3D12_GPU_VIRTUAL_ADDRESS PerMaterialCBAddress = PerMaterialCB->Resource()->GetGPUVirtualAddress();
-			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
-			size_t MaterialBufferIndex = index;
-			PerMaterialCBAddress += MaterialBufferIndex * PerMaterialCBufferByteSize;
-			size_t MaterialHeapIndex = 2 * ActorNum + index + 1 + RenderTextureData.size();
-			handle.Offset(int(MaterialHeapIndex), PCbvSrvUavDescriptorSize);
-			D3D12_CONSTANT_BUFFER_VIEW_DESC MatcbvDesc;
-			MatcbvDesc.BufferLocation = PerMaterialCBAddress;
-			MatcbvDesc.SizeInBytes = PerMaterialCBufferByteSize;
-			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&MatcbvDesc, handle);
-		}
+//		for (size_t index = 0; index < size_t(ActorNum); index++)
+//		{
+//			//PerFrame
+//			D3D12_GPU_VIRTUAL_ADDRESS PerFrameCBAddress = PerFrameCB->Resource()->GetGPUVirtualAddress();
+//			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
+//			size_t FrameBufferIndex = index;
+//			PerFrameCBAddress += FrameBufferIndex * PerFrameCBufferByteSize;
+//			size_t FrameHeapIndex = ActorNum + index + 1 + RenderTextureData.size();
+//			handle.Offset(int(FrameHeapIndex), PCbvSrvUavDescriptorSize);
+//			D3D12_CONSTANT_BUFFER_VIEW_DESC cbvDesc;
+//			cbvDesc.BufferLocation = PerFrameCBAddress;
+//			cbvDesc.SizeInBytes = PerFrameCBufferByteSize;
+//			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&cbvDesc, handle);
+//
+//			//PerMaterial
+//			D3D12_GPU_VIRTUAL_ADDRESS PerMaterialCBAddress = PerMaterialCB->Resource()->GetGPUVirtualAddress();
+//			handle = CD3DX12_CPU_DESCRIPTOR_HANDLE(CbvHeap->GetCPUDescriptorHandleForHeapStart());
+//			size_t MaterialBufferIndex = index;
+//			PerMaterialCBAddress += MaterialBufferIndex * PerMaterialCBufferByteSize;
+//			size_t MaterialHeapIndex = 2 * ActorNum + index + 1 + RenderTextureData.size();
+//			handle.Offset(int(MaterialHeapIndex), PCbvSrvUavDescriptorSize);
+//			D3D12_CONSTANT_BUFFER_VIEW_DESC MatcbvDesc;
+//			MatcbvDesc.BufferLocation = PerMaterialCBAddress;
+//			MatcbvDesc.SizeInBytes = PerMaterialCBufferByteSize;
+//			GraphicContext::GetSingleton().Device()->CreateConstantBufferView(&MatcbvDesc, handle);
+//		}
 
 
 		GraphicContext::GetSingleton().ExecuteCommandList();
@@ -266,10 +269,10 @@ namespace Phe
 					auto cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(CbvHeap->GetGPUDescriptorHandleForHeapStart());
 					cbvHandle.Offset(ActorMaterial->GetHeapOffsetIndex(), PCbvSrvUavDescriptorSize);
 					TShader->SetDescriptorTable(commandList, PShaderManager::GetSingleton().PropertyToID("Texture"), cbvHandle);
-					TShader->SetRootConstantBufferView(commandList, PShaderManager::GetSingleton().PropertyToID("PerObjectBuffer"), PerObjCB->Resource()->GetGPUVirtualAddress() + ActorIndex * PerObjectCBufferByteSize);
+					TShader->SetRootConstantBufferView(commandList, PShaderManager::GetSingleton().PropertyToID("PerObjectBuffer"), PerObjCB->Resource()->GetGPUVirtualAddress() + size_t(ActorIndex) * PerObjectCBufferByteSize);
 					TShader->SetRootConstantBufferView(commandList, PShaderManager::GetSingleton().PropertyToID("PerCameraBuffer"), PerCameraCB->Resource()->GetGPUVirtualAddress());
-					TShader->SetRootConstantBufferView(commandList, PShaderManager::GetSingleton().PropertyToID("PerFrameBuffer"), PerFrameCB->Resource()->GetGPUVirtualAddress() + ActorIndex * PerFrameCBufferByteSize);
-					TShader->SetRootConstantBufferView(commandList, PShaderManager::GetSingleton().PropertyToID("PerMaterialBuffer"), PerMaterialCB->Resource()->GetGPUVirtualAddress() + ActorIndex * PerMaterialCBufferByteSize);
+					TShader->SetRootConstantBufferView(commandList, PShaderManager::GetSingleton().PropertyToID("PerFrameBuffer"), PerFrameCB->Resource()->GetGPUVirtualAddress() + size_t(ActorIndex) * PerFrameCBufferByteSize);
+					TShader->SetRootConstantBufferView(commandList, PShaderManager::GetSingleton().PropertyToID("PerMaterialBuffer"), PerMaterialCB->Resource()->GetGPUVirtualAddress() + size_t(ActorIndex) * PerMaterialCBufferByteSize);
 
 
 					commandList->DrawIndexedInstanced(DrawIndexCount, 1, 0, 0, 0);

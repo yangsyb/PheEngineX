@@ -17,7 +17,7 @@ namespace Phe
 
 	PShader::PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS, std::string PS) : PFilePath(FilePath), PVSEntry(VS), PPSEntry(PS), PName(ShaderName)
 	{
-		ShaderParameter perText("cbTexture", ShaderParamType::SRVDescriptorHeap, 1, 0, 0);
+		ShaderParameter perText("srTexture", ShaderParamType::SRVDescriptorHeap, 1, 0, 0);
 		ParamMap[PShaderManager::GetSingleton().PropertyToID("Texture")] = UINT(Params.size());
 		Params.push_back(perText);
 

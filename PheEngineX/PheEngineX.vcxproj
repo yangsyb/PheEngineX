@@ -143,6 +143,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="DX12\PDescriptorHeap.h" />
     <ClInclude Include="Json\json\json-forwards.h" />
     <ClInclude Include="Json\json\json.h" />
     <ClInclude Include="PActor.h" />
@@ -182,6 +183,7 @@
     <ClCompile Include="DDSTextureLoader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DX12\PDescriptorHeap.cpp" />
     <ClCompile Include="Json\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
