@@ -40,6 +40,30 @@ struct VertexOut
 	float2 TextCoord : TEXTCOORD;
 };
 
+float3 SchlickFresnel(float3 R0, float3 normal, float3 lightVec)
+{
+	float cosIncidentAngle = saturate(dot(normal, lightVec));
+
+	float f0 = 1.0f - cosIncidentAngle;
+	float3 reflectPercent = R0 + (1.0f - R0) * (f0 * f0 * f0 * f0 * f0);
+
+	return reflectPercent;
+}
+
+float3 BlinnPhong(float3 lightStrength, float3 lightVec, float3 normal, float3 toEye, float Shininess, float4 DiffuseAlbedo, float3 FresnelR0)
+{
+	const float m = Shininess * 256.0f;
+	float3 halfVec = normalize(toEye + lightVec);
+
+	float roughnessFactor = (m + 8.0f) * pow(max(dot(halfVec, normal), 0.0f), m) / 8.0f;
+	float3 fresnelFactor = SchlickFresnel(FresnelR0, halfVec, lightVec);
+
+	float3 specAlbedo = fresnelFactor * roughnessFactor;
+
+	specAlbedo = specAlbedo / (specAlbedo + 1.0f);
+
+	return (DiffuseAlbedo.rgb + specAlbedo) * lightStrength;
+}
 
 VertexOut VS(VertexIn vin)
 {
@@ -60,8 +84,10 @@ float4 PS(VertexOut pin) : SV_Target
     float4 diffuseAlbedo = gDiffuseMap.Sample(gsamLinear, pin.TextCoord) * gDiffuseAlbedo;
 	float4 NormalAlbedo = gNormalMap.Sample(gsamLinear, pin.TextCoord) * gDiffuseAlbedo;
 
+	return pow(NormalAlbedo * diffuseAlbedo, 1 / 2.2f);
+
+
 //	float4 OutColor = pow(float4(pin.Color*0.5f+0.5f), 1/2.2f);
 //	return OutColor;
-	return pow(NormalAlbedo + diffuseAlbedo, 1 / 2.2f);
 //	return pow(diffuseAlbedo, 1/2.2f);
 }

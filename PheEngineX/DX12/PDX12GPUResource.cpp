@@ -1,4 +1,5 @@
 #include "pch.h"
+#if defined (RenderDeviceDX12)
 #include "PDX12GPUResource.h"
 
 namespace Phe
@@ -33,3 +34,4 @@ namespace Phe
 	}
 
 }
+#endif

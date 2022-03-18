@@ -1,3 +1,4 @@
+#if defined (RenderDeviceDX12)
 #pragma once
 #include "pch.h"
 
@@ -54,3 +55,4 @@ namespace Phe
 		CD3DX12_GPU_DESCRIPTOR_HANDLE PGpuHandle;
 	};
 }
+#endif

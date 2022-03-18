@@ -1,3 +1,4 @@
+#if defined (RenderDeviceDX12)
 #pragma once
 #include "pch.h"
 #include "PDescriptorHeap.h"
@@ -65,3 +66,5 @@ namespace Phe
 
 	};
 }
+
+#endif;

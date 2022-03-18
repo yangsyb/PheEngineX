@@ -1,4 +1,5 @@
 #include "pch.h"
+#if defined (RenderDeviceDX12)
 #include "PDynamicDescriptorHeap.h"
 
 //TODO
@@ -26,3 +27,5 @@ namespace Phe
 	}
 
 }
+
+#endif

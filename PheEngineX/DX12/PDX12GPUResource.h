@@ -1,3 +1,4 @@
+#if defined (RenderDeviceDX12)
 #pragma once
 #include "pch.h"
 
@@ -42,3 +43,4 @@ namespace Phe
 		ComPtr<ID3D12Resource> PResource;
 	};
 }
+#endif

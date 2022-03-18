@@ -1,4 +1,5 @@
 #include "pch.h"
+#if defined (RenderDeviceDX12)
 #include "PDX12GPUMeshBuffer.h"
 
 namespace Phe
@@ -15,3 +16,4 @@ namespace Phe
 	}
 
 }
+#endif

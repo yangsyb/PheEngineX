@@ -1,3 +1,4 @@
+#if defined (RenderDeviceDX12)
 #pragma once
 #include "pch.h"
 #include "GPUResource/PGPUMeshBuffer.h"
@@ -19,3 +20,4 @@ namespace Phe
 		D3D12_INDEX_BUFFER_VIEW IndexBufferView;
 	};
 }
+#endif

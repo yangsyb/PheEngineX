@@ -66,10 +66,12 @@ VertexOut VS(VertexIn vin)
 float4 PS(VertexOut pin) : SV_Target
 {
 	float4 diffuseAlbedo = gDiffuseMap.Sample(gsamLinear, pin.TextCoord) * gDiffuseAlbedo;
+	float4 NormalAlbedo = gNormalMap.Sample(gsamLinear, pin.TextCoord) * gDiffuseAlbedo;
 
+	return pow(NormalAlbedo * diffuseAlbedo, 1 / 2.2f);
 
 	//	float4 OutColor = pow(float4(pin.Color*0.5f+0.5f), 1/2.2f);
 	//	return OutColor;
 
-	return pow(diffuseAlbedo, 1 / 2.2f);
+	//  return pow(diffuseAlbedo, 1 / 2.2f);
 }

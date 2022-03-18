@@ -1,3 +1,4 @@
+#if defined (RenderDeviceDX12)
 #pragma once
 #include "pch.h"
 #include "GPUResource/PPipeline.h"
@@ -16,3 +17,4 @@ namespace Phe
 		ComPtr<ID3D12PipelineState> PPipelineState;
 	};
 }
+#endif

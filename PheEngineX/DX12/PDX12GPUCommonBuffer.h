@@ -1,5 +1,5 @@
-#pragma once
 #if defined (RenderDeviceDX12)
+#pragma once
 #include "pch.h"
 #include "GPUResource/PGPUCommonBuffer.h"
 #include "PDX12GPUResource.h"

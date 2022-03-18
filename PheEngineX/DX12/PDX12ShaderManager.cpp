@@ -1,4 +1,5 @@
 #include "pch.h"
+#if defined (RenderDeviceDX12)
 #include "PDX12ShaderManager.h"
 
 namespace Phe
@@ -63,3 +64,6 @@ namespace Phe
 
 
 }
+
+
+#endif

@@ -1,4 +1,5 @@
 #include "pch.h"
+#if defined (RenderDeviceDX12)
 #include "PDescriptorHeap.h"
 
 namespace Phe
@@ -75,3 +76,4 @@ namespace Phe
 	}
 
 }
+#endif
