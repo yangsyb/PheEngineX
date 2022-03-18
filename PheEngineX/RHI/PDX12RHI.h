@@ -1,12 +1,16 @@
 #pragma once
 #include "pch.h"
 #include "PRHI.h"
+#include "DX12/PDescriptorHeap.h"
+#include "DX12/PDX12ShaderManager.h"
+#include "DX12/DxException.h"
 
 namespace Phe
 {
 	class PDX12RHI : public PRHI
 	{
 	public:
+		PDX12RHI();
 		virtual void InitRHI() override;
 		virtual void BeginFrame() override;
 		virtual void EndFrame() override;
@@ -14,9 +18,53 @@ namespace Phe
 
 		virtual void InitGraphicsPipeline() override;
 
-		virtual void AddRenderResourceMesh() override;
+		virtual void ResizeWindow(UINT32 PWidth, UINT32 PHeight) override;
 
-		PDX12RHI();
+		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) override;
+
+		virtual void BeginRenderBackBuffer() override;
+		virtual void EndRenderBackBuffer() override;
+
+		virtual void SetGraphicsPipeline(PPipeline* Pipeline) override;
+		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) override;
+		virtual void DrawPrimitiveIndexedInstanced(UINT DrawIndexCount) override;
+
+		virtual PGPUMeshBuffer* CreateMeshBuffer() override;
+		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") override;
+		virtual PPipeline* CreatePipeline(PShader* Shader) override;
+		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum);
+		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName);
+		virtual void PrepareBufferHeap() override;
+		virtual void SetPipeline(PPipeline* Pipeline) override;
+		virtual void SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset) override;
+		virtual void ReCompileMaterial(PMaterial* Material) override;
+
+	private:
+		void ResetCommandList();
+		void ExecuteCommandList();
+
+		ID3D12Resource* CurrentBackBuffer() const
+		{
+			return PSwapChainBuffer[PCurrBackBuffer].Get();
+		}
+
+		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const
+		{
+			return CD3DX12_CPU_DESCRIPTOR_HANDLE(
+				PRtvHeap->GetCPUDescriptorHandleForHeapStart(),
+				PCurrBackBuffer,
+				PRtvDescriptorSize);
+		}
+
+		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const
+		{
+			return PDsvHeap->GetCPUDescriptorHandleForHeapStart();
+		}
+
+		static ComPtr<ID3DBlob> CompileShader(const std::wstring& Filename, const D3D_SHADER_MACRO* Defines, const std::string& EntryPoint, const std::string& Target);
+		std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+		ComPtr<ID3D12Resource> CreateDefaultBuffer(const void* initData, UINT64 byteSize, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
+
 	private:
 		ComPtr<IDXGIFactory4> PDXGIFactory;
 
@@ -49,16 +97,13 @@ namespace Phe
 
 
 		//Pipeline
-		ComPtr<ID3D12DescriptorHeap> CbvHeap;
-
-		std::unique_ptr <UploadBuffer<PerObjectCBuffer>> PerObjCB;
-		std::unique_ptr <UploadBuffer<PerCameraCBuffer>> PerCameraCB;
-		std::unique_ptr <UploadBuffer<PerFrameCBuffer>> PerFrameCB;
-		std::unique_ptr <UploadBuffer<PerMaterialCBuffer>> PerMaterialCB;
+		std::unique_ptr<PDescriptorHeap> CbvSrvUavHeap;
 
 		UINT PerObjectCBufferByteSize;
 		UINT PerCameraCBufferByteSize;
 		UINT PerFrameCBufferByteSize;
 		UINT PerMaterialCBufferByteSize;
+
+		PDX12Shadermanager* DX12ShaderManager;
 	};
 }

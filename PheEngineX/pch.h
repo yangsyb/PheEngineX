@@ -23,7 +23,7 @@
 #define D3D12_GPU_VIRTUAL_ADDRESS_NULL      ((D3D12_GPU_VIRTUAL_ADDRESS)0)
 #define D3D12_GPU_VIRTUAL_ADDRESS_UNKNOWN   ((D3D12_GPU_VIRTUAL_ADDRESS)-1)
 
-#include "d3dx12.h"
+#include "DX12/d3dx12.h"
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
 
@@ -51,7 +51,7 @@
 #include <assert.h>
 #include <algorithm>
 
-#include "Singleton.h"
+#include "Engine/Singleton.h"
 
 #include <mutex>
 #include <atomic>
@@ -61,8 +61,7 @@
 
 #include <glm/glm.hpp>
 #include "glm/gtx/quaternion.hpp"
-#include "PCommonData.h"
-#include "UploadBuffer.h"
+#include "Engine/PCommonData.h"
 #include <dxgidebug.h>
 #include <iostream>
 

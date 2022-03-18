@@ -115,7 +115,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;PlatformWin32;PlatformIOS;PlatformAndroid;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;PlatformWin32;PlatformIOS;PlatformAndroid;RenderDeviceDX12;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
@@ -142,82 +142,106 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="DDSTextureLoader.h" />
+    <ClInclude Include="DX12\d3dx12.h" />
+    <ClInclude Include="DX12\DDSTextureLoader.h" />
+    <ClInclude Include="DX12\DxException.h" />
     <ClInclude Include="DX12\PDescriptorHeap.h" />
+    <ClInclude Include="DX12\PDX12GPUCommonBuffer.h" />
+    <ClInclude Include="DX12\PDX12GPUMeshBuffer.h" />
+    <ClInclude Include="DX12\PDX12GPUTexture.h" />
+    <ClInclude Include="DX12\PDX12Pipeline.h" />
+    <ClInclude Include="DX12\PDX12Shader.h" />
+    <ClInclude Include="DX12\PDX12ShaderManager.h" />
+    <ClInclude Include="DX12\PDX12Texture.h" />
+    <ClInclude Include="DX12\PDynamicDescriptorHeap.h" />
+    <ClInclude Include="Engine\PAssetManager.h" />
+    <ClInclude Include="Engine\PCamera.h" />
+    <ClInclude Include="Engine\PCameraController.h" />
+    <ClInclude Include="Engine\PCommonData.h" />
+    <ClInclude Include="Engine\PEditor.h" />
+    <ClInclude Include="Engine\PEngine.h" />
+    <ClInclude Include="Engine\PGameTimer.h" />
+    <ClInclude Include="Engine\PInput.h" />
+    <ClInclude Include="Engine\PMaterial.h" />
+    <ClInclude Include="Engine\PScene.h" />
+    <ClInclude Include="Engine\PShader.h" />
+    <ClInclude Include="Engine\PShaderManager.h" />
+    <ClInclude Include="Engine\PStaticMesh.h" />
+    <ClInclude Include="Engine\PTask.h" />
+    <ClInclude Include="Engine\PThread.h" />
+    <ClInclude Include="Engine\PUtility.h" />
+    <ClInclude Include="Engine\PWindow.h" />
+    <ClInclude Include="Engine\Singleton.h" />
+    <ClInclude Include="Engine\Transform.h" />
+    <ClInclude Include="GPUResource\PGPUCommonBuffer.h" />
+    <ClInclude Include="GPUResource\PGPUMeshBuffer.h" />
+    <ClInclude Include="GPUResource\PGPUResource.h" />
+    <ClInclude Include="GPUResource\PGPUTexture.h" />
+    <ClInclude Include="GPUResource\PPipeline.h" />
     <ClInclude Include="Json\json\json-forwards.h" />
     <ClInclude Include="Json\json\json.h" />
-    <ClInclude Include="PActor.h" />
-    <ClInclude Include="PCamera.h" />
-    <ClInclude Include="d3dx12.h" />
-    <ClInclude Include="DxException.h" />
-    <ClInclude Include="GraphicsContext.h" />
-    <ClInclude Include="PCameraController.h" />
     <ClInclude Include="pch.h" />
-    <ClInclude Include="PCommonData.h" />
-    <ClInclude Include="PEditor.h" />
-    <ClInclude Include="PEngine.h" />
-    <ClInclude Include="PGameTimer.h" />
-    <ClInclude Include="PInput.h" />
-    <ClInclude Include="PRenderScene.h" />
-    <ClInclude Include="PRenderThread.h" />
-    <ClInclude Include="PScene.h" />
-    <ClInclude Include="PStaticMesh.h" />
-    <ClInclude Include="PTask.h" />
-    <ClInclude Include="PUtility.h" />
-    <ClInclude Include="PWindow.h" />
-    <ClInclude Include="PAssetManager.h" />
+    <ClInclude Include="Render\PPrimitive.h" />
+    <ClInclude Include="Render\PRenderer.h" />
+    <ClInclude Include="Render\PRenderScene.h" />
+    <ClInclude Include="Render\PRenderThread.h" />
     <ClInclude Include="RHI\PDX12RHI.h" />
     <ClInclude Include="RHI\PGPUBuffer.h" />
     <ClInclude Include="RHI\PMaterial.h" />
-    <ClInclude Include="RHI\PGPUResource.h" />
+    <ClInclude Include="DX12\PDX12GPUResource.h" />
     <ClInclude Include="RHI\PRHI.h" />
     <ClInclude Include="RHI\PShader.h" />
     <ClInclude Include="RHI\PShaderManager.h" />
-    <ClInclude Include="RHI\PTexture.h" />
-    <ClInclude Include="Singleton.h" />
-    <ClInclude Include="PThread.h" />
-    <ClInclude Include="Transform.h" />
-    <ClInclude Include="UploadBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="DDSTextureLoader.cpp">
+    <ClCompile Include="DX12\DDSTextureLoader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="DX12\DxException.cpp" />
     <ClCompile Include="DX12\PDescriptorHeap.cpp" />
+    <ClCompile Include="DX12\PDX12GPUCommonBuffer.cpp" />
+    <ClCompile Include="DX12\PDX12GPUMeshBuffer.cpp" />
+    <ClCompile Include="DX12\PDX12GPUTexture.cpp" />
+    <ClCompile Include="DX12\PDX12Pipeline.cpp" />
+    <ClCompile Include="DX12\PDX12Shader.cpp" />
+    <ClCompile Include="DX12\PDX12ShaderManager.cpp" />
+    <ClCompile Include="DX12\PDynamicDescriptorHeap.cpp" />
+    <ClCompile Include="Engine\PAssetManager.cpp" />
+    <ClCompile Include="Engine\PCamera.cpp" />
+    <ClCompile Include="Engine\PCameraController.cpp" />
+    <ClCompile Include="Engine\PEditor.cpp" />
+    <ClCompile Include="Engine\PEngine.cpp" />
+    <ClCompile Include="Engine\PGameTimer.cpp" />
+    <ClCompile Include="Engine\PInput.cpp" />
+    <ClCompile Include="Engine\PMaterial.cpp" />
+    <ClCompile Include="Engine\PScene.cpp" />
+    <ClCompile Include="Engine\PShader.cpp" />
+    <ClCompile Include="Engine\PShaderManager.cpp" />
+    <ClCompile Include="Engine\PStaticMesh.cpp" />
+    <ClCompile Include="Engine\PTask.cpp" />
+    <ClCompile Include="Engine\PThread.cpp" />
+    <ClCompile Include="Engine\PWindow.cpp" />
+    <ClCompile Include="GPUResource\PGPUCommonBuffer.cpp" />
+    <ClCompile Include="GPUResource\PGPUMeshBuffer.cpp" />
+    <ClCompile Include="GPUResource\PGPUResource.cpp" />
+    <ClCompile Include="GPUResource\PGPUTexture.cpp" />
+    <ClCompile Include="GPUResource\PPipeline.cpp" />
     <ClCompile Include="Json\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PActor.cpp" />
-    <ClCompile Include="PCamera.cpp" />
-    <ClCompile Include="DxException.cpp" />
-    <ClCompile Include="GraphicsContext.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PCameraController.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="PEditor.cpp" />
-    <ClCompile Include="PEngine.cpp" />
-    <ClCompile Include="PGameTimer.cpp" />
-    <ClCompile Include="PInput.cpp" />
-    <ClCompile Include="PRenderScene.cpp" />
-    <ClCompile Include="PRenderThread.cpp" />
-    <ClCompile Include="PScene.cpp" />
-    <ClCompile Include="PStaticMesh.cpp" />
-    <ClCompile Include="PTask.cpp" />
-    <ClCompile Include="PThread.cpp" />
-    <ClCompile Include="PWindow.cpp" />
-    <ClCompile Include="PAssetManager.cpp" />
+    <ClCompile Include="Render\PPrimitive.cpp" />
+    <ClCompile Include="Render\PRenderer.cpp" />
+    <ClCompile Include="Render\PRenderScene.cpp" />
+    <ClCompile Include="Render\PRenderThread.cpp" />
     <ClCompile Include="RHI\PDX12RHI.cpp" />
-    <ClCompile Include="RHI\PGPUBuffer.cpp" />
-    <ClCompile Include="RHI\PGPUResource.cpp">
+    <ClCompile Include="DX12\PDX12GPUResource.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="RHI\PMaterial.cpp" />
     <ClCompile Include="RHI\PRHI.cpp" />
-    <ClCompile Include="RHI\PShader.cpp" />
-    <ClCompile Include="RHI\PShaderManager.cpp" />
-    <ClCompile Include="RHI\PTexture.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

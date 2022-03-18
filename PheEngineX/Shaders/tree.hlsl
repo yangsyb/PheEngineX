@@ -1,4 +1,5 @@
 Texture2D    gDiffuseMap : register(t0);
+Texture2D    gNormalMap : register(t1);
 SamplerState gsamLinear  : register(s0);
 
 cbuffer cbPerObject : register(b0)
@@ -12,15 +13,11 @@ cbuffer cbPass : register(b1)
 {
 	float4x4 gView;
 	float4x4 gProj;
+	float4x4 gCameraPositionMat;
+	float gTime;
 };
 
-cbuffer treeProgressPass : register(b2)
-{
-	float gTime;
-	float3 gCenterPosition;
-}
-
-cbuffer cbMaterial : register(b3)
+cbuffer cbMaterial : register(b2)
 {
 	float4 gDiffuseAlbedo;
 	float3 gFresnelR0;
@@ -48,7 +45,7 @@ VertexOut VS(VertexIn vin)
 	float swayscale = 0.5f;
 	float swayspeed = 5.0f;
 
-	float dis = distance(gCenterPosition, vin.PosL) - 2;
+	float dis = distance(float3(0,0,0), vin.PosL) - 2;
 	float x = sin(vin.PosL.x * swayscale + gTime * swayspeed);
 	float y = sin(vin.PosL.y * swayscale + gTime * swayspeed);
 

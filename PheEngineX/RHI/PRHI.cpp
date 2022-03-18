@@ -4,6 +4,7 @@
 
 namespace Phe
 {
+
 	PRHI* PRHI::RHI = nullptr;
 
 	PRHI::PRHI()
@@ -23,12 +24,12 @@ namespace Phe
 
 	void PRHI::CreateRHI()
 	{
-#if defined (PlatformWin32)
+#if defined (RenderDeviceDX12)
 		RHI = new PDX12RHI();
 
-#elif defined (PlatformIOS)
+#elif defined (RenderDeviceVulkan)
 
-#elif defined (PlatformAndroid)
+#elif defined (RenderDeviceOpenGL)
 
 #endif
 	}

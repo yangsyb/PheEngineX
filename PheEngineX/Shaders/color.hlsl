@@ -1,4 +1,5 @@
 Texture2D    gDiffuseMap : register(t0);
+Texture2D    gNormalMap : register(t1);
 SamplerState gsamLinear  : register(s0);
 
 
@@ -14,9 +15,11 @@ cbuffer cbPass : register(b1)
 {
 	float4x4 gView;
 	float4x4 gProj;
+	float4x4 gCameraPositionMat;
+	float gTime;
 };
 
-cbuffer cbMaterial : register(b3)
+cbuffer cbMaterial : register(b2)
 {
 	float4 gDiffuseAlbedo;
 	float3 gFresnelR0;
@@ -55,10 +58,10 @@ VertexOut VS(VertexIn vin)
 float4 PS(VertexOut pin) : SV_Target
 {
     float4 diffuseAlbedo = gDiffuseMap.Sample(gsamLinear, pin.TextCoord) * gDiffuseAlbedo;
-	
+	float4 NormalAlbedo = gNormalMap.Sample(gsamLinear, pin.TextCoord) * gDiffuseAlbedo;
 
 //	float4 OutColor = pow(float4(pin.Color*0.5f+0.5f), 1/2.2f);
 //	return OutColor;
-
-	return pow(diffuseAlbedo, 1/2.2f);
+	return pow(NormalAlbedo + diffuseAlbedo, 1 / 2.2f);
+//	return pow(diffuseAlbedo, 1/2.2f);
 }
