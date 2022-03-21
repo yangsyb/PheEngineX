@@ -9,20 +9,20 @@ namespace Phe
 		PShader(ShaderName, FilePath, VS, PS), PVS(nullptr), PPS(nullptr)
 	{
 		PDX12Shadermanager* DX12ShaderManager = dynamic_cast<PDX12Shadermanager*>(PShaderManager::Get());
-		ShaderParameter perText("srTexture", ShaderParamType::SRVDescriptorHeap, 2, 0, 0);
-		ParamMap[DX12ShaderManager->PropertyToID("Texture")] = UINT(Params.size());
+		ShaderParameter perText("Texture", ShaderParamType::SRVDescriptorHeap, 2, 0, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(perText.name)] = UINT(Params.size());
 		Params.push_back(perText);
 
-		ShaderParameter perObject("cbPerObject", ShaderParamType::CBVDescriptorHeap, 1, 0, 0);
-		ParamMap[DX12ShaderManager->PropertyToID("PerObjectBuffer")] = UINT(Params.size());
+		ShaderParameter perObject("PerObjectBuffer", ShaderParamType::CBVDescriptorHeap, 1, 0, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(perObject.name)] = UINT(Params.size());
 		Params.push_back(perObject);
 
-		ShaderParameter perPass("cbPerPass", ShaderParamType::CBVDescriptorHeap, 1, 1, 0);
-		ParamMap[DX12ShaderManager->PropertyToID("PerCameraBuffer")] = UINT(Params.size());
+		ShaderParameter perPass("PerCameraBuffer", ShaderParamType::CBVDescriptorHeap, 1, 1, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(perPass.name)] = UINT(Params.size());
 		Params.push_back(perPass);
 
-		ShaderParameter perMaterial("cbPerMaterial", ShaderParamType::CBVDescriptorHeap, 1, 2, 0);
-		ParamMap[DX12ShaderManager->PropertyToID("PerMaterialBuffer")] = UINT(Params.size());
+		ShaderParameter perMaterial("PerMaterialBuffer", ShaderParamType::CBVDescriptorHeap, 1, 2, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(perMaterial.name)] = UINT(Params.size());
 		Params.push_back(perMaterial);
 
 		PRasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);

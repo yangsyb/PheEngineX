@@ -31,8 +31,7 @@ namespace Phe
 		{
 			IsRunning = false;
 			pThread->join();
-			delete pThread;
-			pThread = nullptr;
+			ReleasePtr(pThread);
 		}
 	}
 

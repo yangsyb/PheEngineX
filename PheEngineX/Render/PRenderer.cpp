@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "PRenderer.h"
 #include "RHI/PRHI.h"
-#include "PRenderScene.h"
 #include "PRenderThread.h"
 
 namespace Phe
@@ -30,7 +29,7 @@ namespace Phe
 			PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
 		}
 		CurrentCameraData.Time = PRenderThread::Get()->GetCurrentTotalTime();
-		PerCameraBuffer->AllocateData(0, &CurrentCameraData);
+		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, &CurrentCameraData);
 	}
 
 	void PRenderer::RenderFrameEnd(PRenderScene* RenderScene)
@@ -47,8 +46,21 @@ namespace Phe
 
 	void PRenderer::DestroyRenderer()
 	{
-		delete PerCameraBuffer;
-		PerCameraBuffer = nullptr;
+		ReleasePtr(PerCameraBuffer);
+	}
+
+	void PRenderer::UpdatePrimitiveBuffer(PPrimitive* Primitive)
+	{
+		if(Primitive->GetPerObjBuffer())
+		{
+			auto PerObj = Primitive->GetTransform().GetBufferData();
+			PRHI::Get()->UpdateCommonBuffer(Primitive->GetPerObjBuffer(), &PerObj);
+		}
+		if(Primitive->GetPerMatBuffer())
+		{
+			auto PerMat = Primitive->GetMaterial()->GetMaterialBuffer();
+			PRHI::Get()->UpdateCommonBuffer(Primitive->GetPerMatBuffer(), &PerMat);
+		}
 	}
 
 	void PRenderer::UpdateCamera(PerCameraCBuffer CameraCBuffer)
@@ -58,23 +70,40 @@ namespace Phe
 		CurrentCameraData.CameraLocation = CameraCBuffer.CameraLocation;
 	}
 
+	void PRenderer::ShaderResourceBinding(PPrimitive* Primitive)
+	{
+// 		auto Shader = Primitive->GetPipeline()->GetShader();
+// 		auto ShaderParameters = Shader->GetShaderParameters();
+// 		for(auto Parameters : ShaderParameters)
+// 		{
+// 			switch (Parameters.type)
+// 			{
+// 			case ShaderParamType::ConstantBuffer:
+// 				break;
+// 			case ShaderParamType::CBVDescriptorHeap:
+// 				PRHI::Get()->SetRenderResourceTable(Parameters.name, Shader->GetResourceBindingByPrimitiveName(Primitive->GetPrimitiveId()).at(Parameters.name));
+// 				break;
+// 			case ShaderParamType::SRVDescriptorHeap:
+// 				PRHI::Get()->SetRenderResourceTable(Parameters.name, Shader->GetResourceBindingByPrimitiveName(Primitive->GetPrimitiveId()).at(Parameters.name));
+// 				break;
+// 			}
+// 		}
+		PRHI::Get()->SetRenderResourceTable("Texture", Primitive->GetMaterial()->GetGPUTextureBuffer().at(0)->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("PerObjectBuffer", Primitive->GetPerObjBuffer()->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerCameraBuffer->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("PerMaterialBuffer", Primitive->GetPerMatBuffer()->GetHandleOffset());
+	}
+
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)
 	{
 		PRHI::Get()->PrepareBufferHeap();
 		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
 		for(auto Primitive : CurrentDrawPrimitives)
 		{
-			auto PerObj = Primitive->GetTransform().GetBufferData();
-			Primitive->GetPerObjBuffer()->AllocateData(0, &PerObj);
-			auto PerMat = Primitive->GetMaterial()->GetMaterialBuffer();
-			Primitive->GetPerMatBuffer()->AllocateData(0, &PerMat);
+			UpdatePrimitiveBuffer(Primitive);
 			PRHI::Get()->SetGraphicsPipeline(Primitive->GetPipeline());
 			PRHI::Get()->SetMeshBuffer(Primitive->GetMeshBuffer());
-
-			PRHI::Get()->SetRenderResourceTable("Texture", Primitive->GetMaterial()->GetGPUTextureBuffer().at(0)->GetHandleOffset());
-			PRHI::Get()->SetRenderResourceTable("PerObjectBuffer", Primitive->GetPerObjBuffer()->GetHandleOffset());
-			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerCameraBuffer->GetHandleOffset());
-			PRHI::Get()->SetRenderResourceTable("PerMaterialBuffer", Primitive->GetPerMatBuffer()->GetHandleOffset());
+			ShaderResourceBinding(Primitive);
 			
 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive->GetMeshBuffer()->GetIndexCount());
 		}

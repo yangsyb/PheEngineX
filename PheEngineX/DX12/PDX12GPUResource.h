@@ -36,7 +36,6 @@ namespace Phe
 			const D3D12_CLEAR_VALUE* pOptimizedClearValue = nullptr);
 
 		void SetResource(ComPtr<ID3D12Resource> InResource) { PResource = InResource; }
-		ComPtr<ID3D12Resource> GetPResouce() {return PResource;}
 
 	protected:
 		D3D12_RESOURCE_STATES PUsageState;

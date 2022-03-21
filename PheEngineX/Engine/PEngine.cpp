@@ -46,10 +46,8 @@ namespace Phe
 		PRenderThread::Get()->Stop();
 		PWindow::DestroyWindow(PheWindow);
 		PShaderManager::DestroyShaderManager();
-		delete PMainEditor;
-		PMainEditor = nullptr;
-		delete PMainScene;
-		PMainScene = nullptr;
+		ReleasePtr(PMainEditor);
+		ReleasePtr(PMainScene);
 	}
 
 	void PEngine::Tick()
@@ -61,7 +59,7 @@ namespace Phe
 	void PEngine::BeginFrame()
 	{
 		PTimer.Tick();
-		PTask* task = new PTask([=]() {PRenderThread::Get()->SetCurrentTotalTime(PTimer.TotalTime()); });
+		PTask* task = CreateTask(PTask, PRenderThread::Get()->SetCurrentTotalTime(PTimer.TotalTime()));
 		PRenderThread::Get()->AddTask(task);
 		PMainEditor->Update();
 		PMainScene->Update();

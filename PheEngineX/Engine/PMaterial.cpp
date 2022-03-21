@@ -15,11 +15,7 @@ namespace Phe
 
 	PMaterial::~PMaterial()
 	{
-		for(int index = 0; index < MatTextureBuffer.size(); index++)
-		{
-			delete MatTextureBuffer[index];
-			MatTextureBuffer[index] = nullptr;
-		}
+
 	}
 
 	void PMaterial::AddTexture(std::string TextureName)
@@ -32,10 +28,12 @@ namespace Phe
 			}
 		}
 		PTextureNames.push_back(TextureName);
+		PRHI::Get()->AddTextureToMaterial(this, TextureName);
 	}
 
 	void PMaterial::DeleteTextre(std::string TextureName)
 	{
+		PRHI::Get()->DeleteTexturefromMaterial(this, TextureName);
 		for (auto it = PTextureNames.begin(); it != PTextureNames.end(); it++)
 		{
 			if (*it == TextureName)
@@ -46,9 +44,9 @@ namespace Phe
 		}
 	}
 
-	void PMaterial::ReCompileMaterial()
+	void PMaterial::CompileMaterial()
 	{
-		PRHI::Get()->ReCompileMaterial(this);
+		PRHI::Get()->CompileMaterial(this);
 	}
 
 	PerMaterialCBuffer PMaterial::GetMaterialBuffer()

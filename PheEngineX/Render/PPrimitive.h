@@ -15,7 +15,7 @@ namespace Phe
 		~PPrimitive();
 
 		void SetPrimitiveRenderData(PGPUMeshBuffer* MeshBuffer, Transform MeshTransform, PGPUCommonBuffer* ObjBuffer, PGPUCommonBuffer* MatBuffer, PMaterial* MaterialBuffer);
-		void SetPipeline(PPipeline* pipe) { Pipeline = pipe;}
+		void SetPipeline(PPipeline* Pipe) { Pipeline = Pipe; }
 		PGPUMeshBuffer* GetMeshBuffer() { return PMeshBuffer; }
 		Transform GetTransform() { return PTransform; }
 		PPipeline* GetPipeline() { return Pipeline; }

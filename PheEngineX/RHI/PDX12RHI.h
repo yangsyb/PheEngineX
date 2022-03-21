@@ -11,34 +11,39 @@ namespace Phe
 	{
 	public:
 		PDX12RHI();
+		virtual ~PDX12RHI();
 		virtual void InitRHI() override;
 		virtual void BeginFrame() override;
 		virtual void EndFrame() override;
-		virtual void Flush() override;
-
 		virtual void InitGraphicsPipeline() override;
-
 		virtual void ResizeWindow(UINT32 PWidth, UINT32 PHeight) override;
-
-		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) override;
-
-		virtual void BeginRenderBackBuffer() override;
-		virtual void EndRenderBackBuffer() override;
-
-		virtual void SetGraphicsPipeline(PPipeline* Pipeline) override;
-		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) override;
-		virtual void DrawPrimitiveIndexedInstanced(UINT DrawIndexCount) override;
 
 		virtual PGPUMeshBuffer* CreateMeshBuffer() override;
 		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") override;
 		virtual PPipeline* CreatePipeline(PShader* Shader) override;
 		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum);
 		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName);
-		virtual void PrepareBufferHeap() override;
-		virtual void SetPipeline(PPipeline* Pipeline) override;
-		virtual void SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset) override;
-		virtual void ReCompileMaterial(PMaterial* Material) override;
 
+		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) override;
+		virtual void UpdatePipeline(PPipeline* Pipeline) override;
+		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data) override;
+
+		virtual void BeginRenderBackBuffer() override;
+		virtual void EndRenderBackBuffer() override;
+		virtual void PrepareBufferHeap() override;
+		virtual void SetGraphicsPipeline(PPipeline* Pipeline) override;
+		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) override;
+		virtual void SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset) override;
+		virtual void DrawPrimitiveIndexedInstanced(UINT DrawIndexCount) override;
+
+		virtual void CompileMaterial(PMaterial* Material) override;
+		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) override;
+		virtual void DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName) override;
+		virtual void DestroyPrimitive(PPrimitive* Primitive) override;
+		virtual void DestroyTexture(PGPUTexture* Texture) override;
+		virtual void DestroyMaterial(PMaterial* Material) override;
+
+		virtual void Flush() override;
 	private:
 		void ResetCommandList();
 		void ExecuteCommandList();
@@ -98,11 +103,6 @@ namespace Phe
 
 		//Pipeline
 		std::unique_ptr<PDescriptorHeap> CbvSrvUavHeap;
-
-		UINT PerObjectCBufferByteSize;
-		UINT PerCameraCBufferByteSize;
-		UINT PerFrameCBufferByteSize;
-		UINT PerMaterialCBufferByteSize;
 
 		PDX12Shadermanager* DX12ShaderManager;
 	};

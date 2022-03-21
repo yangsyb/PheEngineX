@@ -158,6 +158,7 @@
     <ClInclude Include="Engine\PCamera.h" />
     <ClInclude Include="Engine\PCameraController.h" />
     <ClInclude Include="Engine\PCommonData.h" />
+    <ClInclude Include="Engine\PDefines.h" />
     <ClInclude Include="Engine\PEditor.h" />
     <ClInclude Include="Engine\PEngine.h" />
     <ClInclude Include="Engine\PGameTimer.h" />

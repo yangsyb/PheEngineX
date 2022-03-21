@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "GPUResource/PGPUCommonBuffer.h"
-
+#include "PRenderScene.h"
 namespace Phe
 {
 	class PRHI;
@@ -19,7 +19,9 @@ namespace Phe
 		void Render(PRenderScene* RenderScene);	
 		void DestroyRenderer();
 
+		void UpdatePrimitiveBuffer(PPrimitive* Primitive);
 		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
+		void ShaderResourceBinding(PPrimitive* Primitive);
 	private:
 		void RenderCurrentScene(PRenderScene* RenderScene);
 		PGPUCommonBuffer* PerCameraBuffer;

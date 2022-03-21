@@ -5,3 +5,6 @@
 
 # 场景
 默认多线程渲染，目前按1可渲染一个box， 按2渲染导出的json地图, 按3渲染地图加上WPO树
+
+# Descriptor管理
+在DX12/Descriptor Heap中实现Allocate与DeAllocate，TODO: Dynamic Heap合并提交

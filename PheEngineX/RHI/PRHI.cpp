@@ -15,6 +15,11 @@ namespace Phe
 	PRHI::~PRHI()
 	{
 
+ 		for(auto it : TextureRefPool)
+ 		{
+ 			delete it.first;
+ 		}
+		TextureRefPool.clear();
 	}
 
 	PRHI* PRHI::Get()
@@ -36,8 +41,7 @@ namespace Phe
 
 	void PRHI::DestroyRHI()
 	{
-		delete RHI;
-		RHI = nullptr;
+		ReleasePtr(RHI);
 	}
 
 }

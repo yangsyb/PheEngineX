@@ -9,7 +9,7 @@ namespace Phe
 	public:
 		PGPUTexture(std::string TextureName, std::wstring FileName);
 		virtual ~PGPUTexture();
-		bool operator==(const PGPUTexture* t) { return this->GetTextureName() == t->PTextureName; }
+		virtual bool operator==(const PGPUTexture* t) { return this->GetTextureName() == t->PTextureName; }
 
 		virtual void SetHandleOffset(UINT32 Offset) { PHandleOffset = Offset; }
 		virtual std::string GetTextureName() { return PTextureName; }

@@ -63,7 +63,7 @@ namespace Phe
 
 		if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKey(KeyCode::Z))
 		{
-			if (PSpeed < 30)
+			if (PSpeed < 40)
 			{
 				PSpeed = PSpeed + 1;
 			}

@@ -26,8 +26,7 @@ namespace Phe
 
 	void PShaderManager::DestroyShaderManager()
 	{
-		delete ShaderManager;
-		ShaderManager = nullptr;
+		ReleasePtr(ShaderManager);
 	}
 
 	PShaderManager::PShaderManager()

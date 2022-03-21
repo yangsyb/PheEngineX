@@ -11,6 +11,7 @@ namespace Phe
 		PDescriptorHeap(D3D12_DESCRIPTOR_HEAP_TYPE HeapType, ComPtr<ID3D12Device> Device);
 		~PDescriptorHeap();
 		std::pair<CD3DX12_CPU_DESCRIPTOR_HANDLE, UINT32> Allocate(UINT32 Count);
+		void Deallocate(UINT32 Offset, UINT32 Count);
 		ID3D12DescriptorHeap* GetCurrentHeap() { return PCurrentHeap; }
 		void ClearHeap();
 	private:
@@ -25,6 +26,19 @@ namespace Phe
 		UINT32 PDescriptorSize;
 		UINT32 PRemainingFreeHandles;
 		UINT32 CurrentOffset;
+
+		// Free OffsetID/Size Map
+		std::unordered_map<UINT32, UINT32> PFreeSizeMap;
+		// Will be Created when Deallocate function Called
+		// Descriptors which be cleared will Recorded By this Map
+		// Then if somebody call Allocate function
+		// System will search this Map at first, if size matched, allocate descriptor to this space
+		// Otherwise will go one normal Allocation 
+
+		// The Allocation Strategy implemented Here was not considered situation that two descriptor spaces is continuous
+		// Normally That two continuous spaces should be Merged
+		// Here for simply implement, Only Map those continuous space one by one in Map
+		// TODO: Better Performance Allocation with Merged two spaces
 	};
 
 	class PDescriptorHandle

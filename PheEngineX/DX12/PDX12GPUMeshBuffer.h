@@ -12,12 +12,13 @@ namespace Phe
 		PDX12GPUMeshBuffer();
 		~PDX12GPUMeshBuffer();
 
-//		PDX12GPUResource VertexBuffer;
-//		PDX12GPUResource IndexBuffer;
+	private:
 		ComPtr<ID3D12Resource> Buffer;
 		ComPtr<ID3D12Resource> BufferUpload;
 		D3D12_VERTEX_BUFFER_VIEW VertexBufferView;
 		D3D12_INDEX_BUFFER_VIEW IndexBufferView;
+
+		friend class PDX12RHI;
 	};
 }
 #endif

@@ -28,7 +28,7 @@ namespace Phe
 		if (SceneMeshList.count(StaticMeshName) == 0)
 		{
 			SceneMeshList.insert({ StaticMeshName, std::vector<Transform>{MeshTransform} });
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddMeshBufferAndPrimitive(StaticMeshName, data, MeshTransform, MaterialName); });
+			PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddMeshBufferAndPrimitive(StaticMeshName, data, MeshTransform, MaterialName));
 			PRender->AddTask(task);
 		}
 		else
@@ -36,7 +36,7 @@ namespace Phe
 			auto KVpair = SceneMeshList.find(StaticMeshName);
 			std::vector<Transform>& TransformVec = KVpair->second;
 			TransformVec.push_back(MeshTransform);
-			PTask* task = new PTask([=]() {PRender->GetRenderScene()->AddPrimitive(StaticMeshName, MeshTransform, MaterialName); });
+			PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddPrimitive(StaticMeshName, MeshTransform, MaterialName));
 			PRender->AddTask(task);
 		}
 	}
@@ -56,8 +56,7 @@ namespace Phe
 	void PScene::ClearScene()
 	{
 		SceneMeshList.clear();
-
-		PTask* task = new PTask([=]() {PRender->GetRenderScene()->ClearScene(); });
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->ClearScene());
 		PRender->AddTask(task);
 	}
 
@@ -71,7 +70,7 @@ namespace Phe
 	{
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
-		PTask* task = new PTask([=]() {PRender->GetRenderer()->UpdateCamera(PMainCamera->GetPassConstant()); });
+		PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateCamera(PMainCamera->GetPassConstant()));
 		PRender->AddTask(task);
 	}
 

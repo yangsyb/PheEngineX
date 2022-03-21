@@ -59,15 +59,11 @@ namespace Phe
 			pThread->join();
 			
 			PMainRenderer->DestroyRenderer();
-			delete PMainRenderer;
-			PMainRenderer = nullptr;
+			ReleasePtr(PMainRenderer);
 			PRScene->DestroyRenderScene();
-			delete PRScene;
-			PRScene = nullptr;
-			delete pThread;
-			pThread = nullptr;
-			delete pRenderThread;
-			pRenderThread = nullptr;
+			ReleasePtr(PRScene);
+			ReleasePtr(pThread);
+			ReleasePtr(pRenderThread);
 			PRHI::DestroyRHI();
 		}
 	}
@@ -108,8 +104,7 @@ namespace Phe
 			CurrentTask = RenderFrame[RenderFrameIndex].PTaskQueue.front();
 			CurrentTask->Execute();
 			RenderFrame[RenderFrameIndex].PTaskQueue.pop();
-			delete CurrentTask;
-			CurrentTask = nullptr;
+			ReleasePtr(CurrentTask);
 		}
 		RenderFrameIndex = (RenderFrameIndex + 1) % 2;
 	}

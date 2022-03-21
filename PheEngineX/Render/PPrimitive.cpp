@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PPrimitive.h"
+#include "RHI/PRHI.h"
 
 namespace Phe
 {
@@ -26,10 +27,9 @@ namespace Phe
 
 	void PPrimitive::DestroyPrimitive()
 	{
+		PRHI::Get()->DestroyPrimitive(this);
  		PMeshBuffer = nullptr;
-		delete PerObjBuffer;
-		PerObjBuffer = nullptr;
-		delete PerMatBuffer;
-		PerMatBuffer = nullptr;
+		ReleasePtr(PerObjBuffer);
+		ReleasePtr(PerMatBuffer);
 	}
 }

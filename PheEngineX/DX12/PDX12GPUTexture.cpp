@@ -12,10 +12,8 @@ namespace Phe
 
 	PDX12GPUTexture::~PDX12GPUTexture()
 	{
-		delete PResource;
-		PResource = nullptr;
-		delete PUploadHeap;
-		PUploadHeap = nullptr;
+		ReleasePtr(PResource);
+		ReleasePtr(PUploadHeap);
 	}
 
 }

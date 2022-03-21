@@ -20,7 +20,7 @@ PWindow* PWindow::Create(const std::string& Name, UINT32 Width, UINT32 Height)
 
 void PWindow::DestroyWindow(PWindow* Window)
 {
-	delete Window;
+	ReleasePtr(Window);
 }
 
 PWindow::PWindow(UINT32 Width, UINT32 Height) : PWidth(Width), PHeight(Height)

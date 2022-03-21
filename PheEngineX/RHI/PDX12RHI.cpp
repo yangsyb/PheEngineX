@@ -10,12 +10,17 @@
 
 namespace Phe
 {
-	PDX12RHI::PDX12RHI() : PRHI(), PCbvSrvUavDescriptorSize(0), PDsvDescriptorSize(0), PFenceEvent(HANDLE()), PFenceValue(0), PRtvDescriptorSize(0)
+	PDX12RHI::PDX12RHI() : PRHI(), PCbvSrvUavDescriptorSize(0), PDsvDescriptorSize(0), PFenceEvent(HANDLE()), PFenceValue(0), PRtvDescriptorSize(0), DX12ShaderManager(nullptr)
 	{
 
 	}
 
 
+
+	PDX12RHI::~PDX12RHI()
+	{
+		
+	}
 
 	void PDX12RHI::InitRHI()
 	{
@@ -137,10 +142,6 @@ namespace Phe
 	void PDX12RHI::InitGraphicsPipeline()
 	{
 		CbvSrvUavHeap = std::make_unique<PDescriptorHeap>(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, PDevice);
-
-		PerObjectCBufferByteSize = (sizeof(PerObjectCBuffer) + 255) & ~255;
-		PerCameraCBufferByteSize = (sizeof(PerCameraCBuffer) + 255) & ~255;
-		PerMaterialCBufferByteSize = (sizeof(PerMaterialCBuffer) + 255) & ~255;
 
 		DX12ShaderManager = dynamic_cast<PDX12Shadermanager*>(PShaderManager::Get());
 	}
@@ -484,7 +485,7 @@ namespace Phe
 		auto Pair = CbvSrvUavHeap->Allocate(InElementsNum);
 		NewGPUCommonBuffer->BufferHandle = Pair.first;
 		NewGPUCommonBuffer->SetHandleOffset(Pair.second);
-		for(int index = 0; index < InElementsNum; index++)
+		for(size_t index = 0; index < InElementsNum; index++)
 		{
 			D3D12_GPU_VIRTUAL_ADDRESS PerAddress = NewGPUCommonBuffer->PBuffer->GetGPUVirtualAddress();
 			D3D12_CONSTANT_BUFFER_VIEW_DESC CbvDesc;
@@ -530,7 +531,7 @@ namespace Phe
 		PCommandList->SetDescriptorHeaps(_countof(DescriptorHeaps), DescriptorHeaps);
 	}
 
-	void PDX12RHI::SetPipeline(PPipeline* Pipeline)
+	void PDX12RHI::UpdatePipeline(PPipeline* Pipeline)
 	{
 		PDX12Pipeline* InDX12Pipeline = static_cast<PDX12Pipeline*>(Pipeline);
 		PDX12Shader* InDX12Shader = static_cast<PDX12Shader*>(Pipeline->GetShader());
@@ -559,6 +560,11 @@ namespace Phe
 		InDX12Pipeline->SetPipelineState(PSO);
 	}
 
+	void PDX12RHI::UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data)
+	{
+		CommonBuffer->AllocateData(0, Data);
+	}
+
 	void PDX12RHI::SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset)
 	{
 		auto CbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(CbvSrvUavHeap->GetCurrentHeap()->GetGPUDescriptorHandleForHeapStart());
@@ -567,17 +573,97 @@ namespace Phe
 		PCommandList->SetGraphicsRootDescriptorTable(DX12ShaderManager->PropertyToID(PropertyName), CbvHandle);
 	}
 
-	void PDX12RHI::ReCompileMaterial(PMaterial* Material)
+	void PDX12RHI::CompileMaterial(PMaterial* Material)
 	{
 		std::vector<PGPUTexture*> RetGPUTextureBuffer;
 		auto TextureNameVector = Material->GetTextureName();
 		for(auto TextureName : TextureNameVector)
 		{
-			auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
-			RetGPUTextureBuffer.push_back(PRHI::Get()->CreateTexture(TextureName, TextureData.TFileName));
-		}
+			bool IsFindInPool = false;
+			for(auto T : TextureRefPool)
+			{
+				if(T.first->GetTextureName() == TextureName)
+				{
+					T.second += 1;
+					RetGPUTextureBuffer.push_back(T.first);
+					IsFindInPool = true;
+					break;
+				}
+			}
+			if(!IsFindInPool)
+			{
+				auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
+				auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData.TFileName);
+				TextureRefPool.insert({ NewTexture, 1 });
+				RetGPUTextureBuffer.push_back(NewTexture);
+			}
 
+		}
 		Material->SetGPUTextureBuffer(RetGPUTextureBuffer);
+	}
+
+	void PDX12RHI::AddTextureToMaterial(PMaterial* Material, std::string TextureName)
+	{
+		auto CurrentTextureBuffer = Material->GetGPUTextureBuffer();
+		for (auto T : TextureRefPool)
+		{
+			if (T.first->GetTextureName() == TextureName)
+			{
+				T.second += 1;
+				CurrentTextureBuffer.push_back(T.first);
+				return;
+			}
+		}
+		auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
+		auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData.TFileName);
+		TextureRefPool.insert({ NewTexture, 1 });
+		CurrentTextureBuffer.push_back(NewTexture);
+		return;
+	}
+
+	void PDX12RHI::DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName)
+	{
+		for (auto T : TextureRefPool)
+		{
+			if (T.first->GetTextureName() == TextureName)
+			{
+				T.second -= 1;
+				if(T.second == 0)
+				{
+					TextureRefPool.erase(T.first);
+					DestroyTexture(T.first);
+				}
+				break;
+			}
+		}
+		auto CurrentTextureBuffer = Material->GetGPUTextureBuffer();
+
+		for(auto it = CurrentTextureBuffer.begin(); it != CurrentTextureBuffer.end(); it++)
+		{
+			if((*it)->GetTextureName() == TextureName)
+			{
+				CurrentTextureBuffer.erase(it);
+				return;
+			}
+		}
+	}
+
+	void PDX12RHI::DestroyPrimitive(PPrimitive* Primitive)
+	{
+		auto PerObjBuffer = Primitive->GetPerObjBuffer();
+		CbvSrvUavHeap->Deallocate(PerObjBuffer->GetHandleOffset(), PerObjBuffer->GetElements());
+		auto PerMatBuffer = Primitive->GetPerMatBuffer();
+		CbvSrvUavHeap->Deallocate(PerMatBuffer->GetHandleOffset(), PerMatBuffer->GetElements());
+	}
+
+	void PDX12RHI::DestroyTexture(PGPUTexture* Texture)
+	{
+		CbvSrvUavHeap->Deallocate(Texture->GetHandleOffset(), 1);
+	}
+
+	void PDX12RHI::DestroyMaterial(PMaterial* Material)
+	{
+
 	}
 
 	void PDX12RHI::ResetCommandList()

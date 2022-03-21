@@ -32,7 +32,7 @@ namespace Phe
 	private:
 		std::shared_ptr<PCamera> PMainCamera = nullptr;
 		float PBoost = 3.5f;
-		float PSpeed = 1.f;
+		float PSpeed = 10.f;
 		float PRotateSpeed = 0.4f;
 		float PPositionLerpTime = 0.2f;
 		float PRotationLerpTime = 0.01f;

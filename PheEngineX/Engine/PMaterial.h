@@ -29,7 +29,7 @@ namespace Phe
 		void SetSpecular(float S) { PSpecular = S; }
 		void SetRoughness(float R) { PRoughness = R; }
 
-		void ReCompileMaterial();
+		void CompileMaterial();
 
 		PerMaterialCBuffer GetMaterialBuffer();
 		std::vector<PGPUTexture*> GetGPUTextureBuffer() { return MatTextureBuffer; }

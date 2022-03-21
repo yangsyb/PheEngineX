@@ -6,7 +6,7 @@
 namespace Phe
 {
 
-	PDX12GPUCommonBuffer::PDX12GPUCommonBuffer(UINT32 StructByteSize, UINT32 ElementsNum, UINT32 Flag) : PGPUCommonBuffer(StructByteSize, ElementsNum, Flag), SizeofStructByteSize(StructByteSize)
+	PDX12GPUCommonBuffer::PDX12GPUCommonBuffer(UINT32 StructByteSize, UINT32 ElementsNum, UINT32 Flag) : PGPUCommonBuffer(StructByteSize, ElementsNum, Flag), SizeofStructByteSize(StructByteSize), PBufferResource(nullptr)
 	{
 		PStructureSizeInBytes = StructByteSize;
 		if (Flag == 0)
@@ -26,8 +26,7 @@ namespace Phe
 			}
 		}
 		PMappedData = nullptr;
-		delete PBufferResource;
-		PBufferResource = nullptr;
+		ReleasePtr(PBufferResource);
 	}
 
 	void PDX12GPUCommonBuffer::AllocateData(int DataIndex, void* data)

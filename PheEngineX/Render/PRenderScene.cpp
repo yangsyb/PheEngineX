@@ -38,7 +38,7 @@ namespace Phe
  		if(PMaterialPool.count(MaterialName) == 0)
  		{
  			PMaterial* NewMaterial = new PMaterial(MaterialName, MaterialData.ShaderName, MaterialData.TextureNames);
-			NewMaterial->ReCompileMaterial();
+			NewMaterial->CompileMaterial();
  			PMaterialPool.insert({ MaterialName , NewMaterial });
  		}
 		auto ptr = GetMeshBuffer(MeshBufferName);
@@ -62,7 +62,7 @@ namespace Phe
 					NewShader = PRHI::Get()->CreateShader(MaterialData.ShaderName, Shader->GetShaderFilePath());
 				}
 				PPipeline* NewPipeline = PRHI::Get()->CreatePipeline(NewShader);
-				PRHI::Get()->SetPipeline(NewPipeline);
+				PRHI::Get()->UpdatePipeline(NewPipeline);
 				PPipelinePool.insert({ MaterialData.ShaderName, NewPipeline });
 				NewPrimitive->SetPipeline(NewPipeline);
 				PShaderPool.push_back(NewShader);
@@ -86,8 +86,7 @@ namespace Phe
 		for (int index = 0; index < Primitives.size(); index++)
 		{
 			Primitives[index]->DestroyPrimitive();
-			delete Primitives[index];
-			Primitives[index] = nullptr;
+			ReleasePtr(Primitives[index]);
 		}
 		Primitives.clear();
 	}
@@ -96,32 +95,28 @@ namespace Phe
 	{
 		for(auto it : PMeshBufferPool)
 		{
-			delete it.second;
-			it.second = nullptr;
+			ReleasePtr(it.second);
 		}
 		PMeshBufferPool.clear();
  		for(auto it : PMaterialPool)
  		{
- 			delete it.second;
- 			it.second = nullptr;
+
+			ReleasePtr(it.second);
  		}
  		PMaterialPool.clear();
 		for(auto it : PPipelinePool)
 		{
-			delete it.second;
-			it.second = nullptr;
+			ReleasePtr(it.second);
 		}
 		PPipelinePool.clear();
 		for(int index = 0; index < Primitives.size(); index++)
 		{
 			Primitives[index]->DestroyPrimitive();
-			delete Primitives[index];
-			Primitives[index] = nullptr;
+			ReleasePtr(Primitives[index]);
 		}
 		for(int index = 0; index < PShaderPool.size(); index++)
 		{
-			delete PShaderPool[index];
-			PShaderPool[index] = nullptr;
+			ReleasePtr(PShaderPool[index]);
 		}
 		Primitives.clear();
 	}

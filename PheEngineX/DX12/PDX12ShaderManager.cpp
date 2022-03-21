@@ -1,7 +1,7 @@
 #include "pch.h"
 #if defined (RenderDeviceDX12)
 #include "PDX12ShaderManager.h"
-
+#include "RHI/PRHI.h"
 namespace Phe
 {
 	PDX12Shadermanager::PDX12Shadermanager() : PShaderManager(), CurID(0)
@@ -20,15 +20,14 @@ namespace Phe
 	{
 		for(auto it : ShaderPool)
 		{
-			delete it.second;
-			it.second = nullptr;
+			ReleasePtr(it.second);
 		}
 		ShaderPool.clear();
 	}
 
 	void PDX12Shadermanager::AddShader(std::string ShaderName, std::wstring FilePath)
 	{
-
+		PRHI::Get()->CreateShader(ShaderName, FilePath);
 	}
 
 	void PDX12Shadermanager::AddShader(PShader* Shader)

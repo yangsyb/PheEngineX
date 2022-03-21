@@ -48,15 +48,19 @@ VertexOut VS(VertexIn vin)
 	float4 PosWorld = mul(gWorld, float4(vin.PosL, 1.0f));
 	float4 PosView = mul(gView, float4(PosWorld));
 	float4 TPosH = mul(gProj, PosView);
-	if(vin.PosL.z > 5.2)
+	if (vin.PosL.z > 5.2)
 	{
 		vout.PosH = float4(TPosH.xyz, 0);
 	}
-	if(vin.PosL.z <= 5.2)
+	if (vin.PosL.z <= 5.2)
 	{
 		vout.PosH = TPosH;
 	}
-	
+	if (distance(float3(0, 0, 0), float3(vin.PosL.x, vin.PosL.y, 0)) > 2)
+	{
+		vout.PosH = float4(TPosH.xyz, 0);
+	}
+
 	vout.Color = float4(normalize(mul(gRotation, vin.Normal).xyz), 1);
 
 	vout.TextCoord = vin.TextCoord;
