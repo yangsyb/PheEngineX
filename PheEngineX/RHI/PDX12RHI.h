@@ -4,7 +4,7 @@
 #include "DX12/PDescriptorHeap.h"
 #include "DX12/PDX12ShaderManager.h"
 #include "DX12/DxException.h"
-
+#include "DX12/PDX12GPURenderTarget.h"
 namespace Phe
 {
 	class PDX12RHI : public PRHI
@@ -21,15 +21,24 @@ namespace Phe
 		virtual PGPUMeshBuffer* CreateMeshBuffer() override;
 		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") override;
 		virtual PPipeline* CreatePipeline(PShader* Shader) override;
-		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum);
-		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName);
+		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum) override;
+		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer) override;
+		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName) override;
+		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height) override;
+		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default") override;
+
+		virtual void ResetRTBuffer(RTBuffer* RtBuffer) override;
+		virtual void SetRenderTarget(PGPURenderTarget* RenderTarget) override;
 
 		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) override;
 		virtual void UpdatePipeline(PPipeline* Pipeline) override;
+		virtual void UpdatePipeline(PPipeline* Pipeline, PGPURenderTarget* RenderTarget) override;
 		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data) override;
 
 		virtual void BeginRenderBackBuffer() override;
 		virtual void EndRenderBackBuffer() override;
+		virtual void BeginRenderRTBuffer(RTBuffer* RtBuffer) override;
+		virtual void EndRenderRTBuffer(RTBuffer* RtBuffer) override;
 		virtual void PrepareBufferHeap() override;
 		virtual void SetGraphicsPipeline(PPipeline* Pipeline) override;
 		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) override;
@@ -40,8 +49,9 @@ namespace Phe
 		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) override;
 		virtual void DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName) override;
 		virtual void DestroyPrimitive(PPrimitive* Primitive) override;
-		virtual void DestroyTexture(PGPUTexture* Texture) override;
+		virtual void DestroyTexture(PGPUTexture* Texture, bool CheckMap = false) override;
 		virtual void DestroyMaterial(PMaterial* Material) override;
+		virtual void DestroyRTBuffer(RTBuffer* RtBuffer) override;
 
 		virtual void Flush() override;
 	private:
@@ -49,25 +59,27 @@ namespace Phe
 		void ExecuteCommandList();
 
 		ID3D12Resource* CurrentBackBuffer() const
-		{
-			return PSwapChainBuffer[PCurrBackBuffer].Get();
+ 		{
+// 			return PSwapChainBuffer[PCurrBackBuffer].Get();
+//			return static_cast<PDX12GPURenderTarget*>(PSwapChainBuffer[PCurrBackBuffer])->GetGpuResrouce()->GetResource().Get();
+			return static_cast<DX12RTBuffer*>(ScreenRT->GetColorBuffer().at(PCurrBackBuffer))->PResource->GetResource().Get();
 		}
 
 		D3D12_CPU_DESCRIPTOR_HANDLE CurrentBackBufferView() const
 		{
 			return CD3DX12_CPU_DESCRIPTOR_HANDLE(
-				PRtvHeap->GetCPUDescriptorHandleForHeapStart(),
+				PRtvHeap->GetCurrentHeap()->GetCPUDescriptorHandleForHeapStart(),
 				PCurrBackBuffer,
 				PRtvDescriptorSize);
 		}
 
 		D3D12_CPU_DESCRIPTOR_HANDLE DepthStencilView() const
 		{
-			return PDsvHeap->GetCPUDescriptorHandleForHeapStart();
+			return PDsvHeap->GetCurrentHeap()->GetCPUDescriptorHandleForHeapStart();
 		}
 
 		static ComPtr<ID3DBlob> CompileShader(const std::wstring& Filename, const D3D_SHADER_MACRO* Defines, const std::string& EntryPoint, const std::string& Target);
-		std::array<const CD3DX12_STATIC_SAMPLER_DESC, 6> GetStaticSamplers();
+		std::array<const CD3DX12_STATIC_SAMPLER_DESC, 7> GetStaticSamplers();
 		ComPtr<ID3D12Resource> CreateDefaultBuffer(const void* initData, UINT64 byteSize, Microsoft::WRL::ComPtr<ID3D12Resource>& uploadBuffer);
 
 	private:
@@ -83,8 +95,13 @@ namespace Phe
 		float RTVColor[4] = { 0,0,0,0 };
 
 		ComPtr<IDXGISwapChain> PSwapChain;
-		ComPtr<ID3D12Resource> PSwapChainBuffer[SwapChainBufferCount];
-		ComPtr<ID3D12Resource> PDepthStencilBuffer;
+//  		ComPtr<ID3D12Resource> PSwapChainBuffer[SwapChainBufferCount];
+//  		ComPtr<ID3D12Resource> PDepthStencilBuffer;
+		
+// 		std::vector<PGPURenderTarget*> PSwapChainBuffer;
+
+ 		ComPtr<ID3D12Resource> PDepthStencilBuffer;
+
 		int PCurrBackBuffer = 0;
 
 		ComPtr<ID3D12CommandQueue> PCommandQueue;
@@ -94,15 +111,17 @@ namespace Phe
 		UINT PRtvDescriptorSize;
 		UINT PDsvDescriptorSize;
 		UINT PCbvSrvUavDescriptorSize;
-		ComPtr<ID3D12DescriptorHeap> PRtvHeap;
-		ComPtr<ID3D12DescriptorHeap> PDsvHeap;
+//		ComPtr<ID3D12DescriptorHeap> PRtvHeap;
+//		ComPtr<ID3D12DescriptorHeap> PDsvHeap;
+		std::unique_ptr<PDescriptorHeap> PRtvHeap;
+		std::unique_ptr<PDescriptorHeap> PDsvHeap;
 
 		CD3DX12_VIEWPORT PViewport;
 		CD3DX12_RECT PScissorRect;
 
 
 		//Pipeline
-		std::unique_ptr<PDescriptorHeap> CbvSrvUavHeap;
+		std::unique_ptr<PDescriptorHeap> PCbvSrvUavHeap;
 
 		PDX12Shadermanager* DX12ShaderManager;
 	};

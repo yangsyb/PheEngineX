@@ -40,6 +40,7 @@ void PInputWin32::Update()
 	UpdateKeyState(KeyCode::Keypad1, '1');
 	UpdateKeyState(KeyCode::Keypad2, '2');
 	UpdateKeyState(KeyCode::Keypad3, '3');
+	UpdateKeyState(KeyCode::Keypad4, '4');
 	UpdateKeyState(KeyCode::Z, 'Z');
 	UpdateKeyState(KeyCode::X, 'X');
 }

@@ -7,6 +7,7 @@
 #include "GPUResource/PGPUCommonBuffer.h"
 #include "Engine/PMaterial.h"
 #include "Render/PPrimitive.h"
+#include "GPUResource/PGPURenderTarget.h"
 
 namespace Phe
 {
@@ -27,14 +28,25 @@ namespace Phe
 		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") = 0;
 		virtual PPipeline* CreatePipeline(PShader* Shader) = 0;
 		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum) = 0;
+		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer) = 0;
 		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName) = 0;
+		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height) = 0;
+		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default") = 0;
+
+		virtual void ResetRTBuffer(RTBuffer* RtBuffer) = 0;
+		virtual void SetRenderTarget(PGPURenderTarget* RenderTarget) = 0;
 
 		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) = 0;
 		virtual void UpdatePipeline(PPipeline* Pipeline) = 0;
+		virtual void UpdatePipeline(PPipeline* Pipeline, PGPURenderTarget* RenderTarget) = 0;
 		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data) = 0;
 
 		virtual void BeginRenderBackBuffer() = 0;
 		virtual void EndRenderBackBuffer() = 0;
+// 		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget, bool bIsClearRT, bool bIsClearDS) = 0;
+// 		virtual void EndRenderRenderTarget(PGPURenderTarget* RenderTarget) = 0;
+		virtual void BeginRenderRTBuffer(RTBuffer* RtBuffer) = 0;
+		virtual void EndRenderRTBuffer(RTBuffer* RtBuffer) = 0;
 		virtual void PrepareBufferHeap() = 0;
 		virtual void SetGraphicsPipeline(PPipeline* Pipeline) = 0;
 		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) = 0;
@@ -45,8 +57,9 @@ namespace Phe
 		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) = 0;
 		virtual void DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName) = 0;
 		virtual void DestroyPrimitive(PPrimitive* Primitive) = 0;
-		virtual void DestroyTexture(PGPUTexture* Texture) = 0;
+		virtual void DestroyTexture(PGPUTexture* Texture, bool CheckMap = false) = 0;
 		virtual void DestroyMaterial(PMaterial* Material) = 0;
+		virtual void DestroyRTBuffer(RTBuffer* RtBuffer) = 0;
 		
 
 		virtual void Flush() = 0;
@@ -56,6 +69,7 @@ namespace Phe
 		virtual ~PRHI();
 
 	protected:
+		static PGPURenderTarget* ScreenRT;
 		std::unordered_map<PGPUTexture*, UINT32> TextureRefPool;
 	};
 }

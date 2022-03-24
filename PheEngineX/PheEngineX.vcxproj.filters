@@ -27,18 +27,6 @@
     <ClInclude Include="DX12\PDX12GPUResource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="RHI\PShader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RHI\PShaderManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RHI\PMaterial.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="RHI\PGPUBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="DX12\DDSTextureLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -165,10 +153,28 @@
     <ClInclude Include="Render\PRenderThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Render\PLight.h">
+    <ClInclude Include="Engine\PLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\PDefines.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\PGPUBuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\PMaterial.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\PShader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="RHI\PShaderManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GPUResource\PGPURenderTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\PDX12GPURenderTarget.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -293,7 +299,13 @@
     <ClCompile Include="Render\PRenderThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Render\PLight.cpp">
+    <ClCompile Include="Engine\PLight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="GPUResource\PGPURenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DX12\PDX12GPURenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

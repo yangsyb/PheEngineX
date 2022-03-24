@@ -7,6 +7,7 @@ namespace Phe
 	class PGPUTexture : public PGPUResource
 	{
 	public:
+		PGPUTexture(std::string TextureName);
 		PGPUTexture(std::string TextureName, std::wstring FileName);
 		virtual ~PGPUTexture();
 		virtual bool operator==(const PGPUTexture* t) { return this->GetTextureName() == t->PTextureName; }

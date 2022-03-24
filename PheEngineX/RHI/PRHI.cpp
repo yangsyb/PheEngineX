@@ -1,12 +1,11 @@
 #include "pch.h"
 #include "PRHI.h"
 #include "PDX12RHI.h"
-
 namespace Phe
 {
 
 	PRHI* PRHI::RHI = nullptr;
-
+	PGPURenderTarget* PRHI::ScreenRT = nullptr;
 	PRHI::PRHI()
 	{
 
@@ -14,7 +13,6 @@ namespace Phe
 
 	PRHI::~PRHI()
 	{
-
  		for(auto it : TextureRefPool)
  		{
  			delete it.first;
@@ -41,6 +39,7 @@ namespace Phe
 
 	void PRHI::DestroyRHI()
 	{
+		ReleasePtr(ScreenRT);
 		ReleasePtr(RHI);
 	}
 

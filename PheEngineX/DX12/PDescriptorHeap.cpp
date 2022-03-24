@@ -21,7 +21,7 @@ namespace Phe
 		D3D12_DESCRIPTOR_HEAP_DESC Desc;
 		Desc.Type = Type;
 		Desc.NumDescriptors = NumDescriptorPerHeap;
-		Desc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;
+		Desc.Flags = Type == D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV ? D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE : D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
 		Desc.NodeMask = 1;
 
 		ComPtr<ID3D12DescriptorHeap> PHeap;

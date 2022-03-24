@@ -15,23 +15,23 @@ namespace Phe
 
 	}
 
-	void PShader::RegisterResourceBinding(UINT32 PrimitiveId, std::string ParameterName, UINT32 BindingOffset)
-	{
-		if(ResourceBinding.count(PrimitiveId)>0)
-		{
-			ResourceBinding.at(PrimitiveId).insert({ParameterName, BindingOffset});
-		}
-		else
-		{
-			std::unordered_map<std::string, UINT32> BindingMap;
-			BindingMap.insert({ParameterName, BindingOffset});
-			ResourceBinding.insert({ PrimitiveId, BindingMap });
-		}
-	}
-
-	void PShader::UnRegisterResourceBinding(UINT32 PrimitiveId)
-	{
-		ResourceBinding.erase(PrimitiveId);
-	}
+// 	void PShader::RegisterResourceBinding(UINT32 PrimitiveId, std::string ParameterName, UINT32 BindingOffset)
+// 	{
+// 		if(ResourceBinding.count(PrimitiveId)>0)
+// 		{
+// 			ResourceBinding.at(PrimitiveId).insert({ParameterName, BindingOffset});
+// 		}
+// 		else
+// 		{
+// 			std::unordered_map<std::string, UINT32> BindingMap;
+// 			BindingMap.insert({ParameterName, BindingOffset});
+// 			ResourceBinding.insert({ PrimitiveId, BindingMap });
+// 		}
+// 	}
+// 
+// 	void PShader::UnRegisterResourceBinding(UINT32 PrimitiveId)
+// 	{
+// 		ResourceBinding.erase(PrimitiveId);
+// 	}
 
 }

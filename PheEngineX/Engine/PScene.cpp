@@ -9,7 +9,8 @@ namespace Phe
 {
 	PScene::PScene()
 	{
-		PMainCamera = std::make_shared<PCamera>(45.0f, 1920.0f, 1080.0f);
+		PMainCamera = std::make_shared<PPerspectiveCamera>(45.0f, 1920.0f, 1080.0f);
+//		PMainCamera = std::make_shared<POrthographicCamera>(1000.0f, 1000.0f);
 		PMainCameraController = std::make_unique<PCameraController>(PMainCamera);
 	}
 
@@ -52,6 +53,17 @@ namespace Phe
 		}
 	}
 
+	void PScene::AddLight(std::string LightName, PLightDataStruct LightData)
+	{
+		SceneLightList.insert({LightName, LightData});
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(LightName, LightData));
+		PRender->AddTask(task);
+	}
+
+	void PScene::AddLightFromFile(const std::string FilePath)
+	{
+
+	}
 
 	void PScene::ClearScene()
 	{
@@ -64,6 +76,8 @@ namespace Phe
 	{
 		PMainCameraController->OnUpdate();
 		UpdateMainPassBuffer();
+		std::cout<< "PX:"<<PMainCamera->GetPosition().x << "Y:"<<PMainCamera->GetPosition().y << "Z:"<<PMainCamera->GetPosition().z << std::endl;
+		std::cout<< "RX:"<<PMainCamera->GetRotation().x << "Y:"<<PMainCamera->GetRotation().y << "Z:"<<PMainCamera->GetRotation().z << std::endl;
 	}
 
 	void PScene::UpdateMainPassBuffer()

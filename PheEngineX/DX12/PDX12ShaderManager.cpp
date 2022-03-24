@@ -27,7 +27,8 @@ namespace Phe
 
 	void PDX12Shadermanager::AddShader(std::string ShaderName, std::wstring FilePath)
 	{
-		PRHI::Get()->CreateShader(ShaderName, FilePath);
+		PShader* NewShader = PRHI::Get()->CreateShader(ShaderName, FilePath);
+		ShaderPool.insert({ NewShader->GetShaderName(), NewShader});
 	}
 
 	void PDX12Shadermanager::AddShader(PShader* Shader)

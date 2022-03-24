@@ -2,17 +2,19 @@
 #include "PRenderer.h"
 #include "RHI/PRHI.h"
 #include "PRenderThread.h"
+#include "Engine/PShaderManager.h"
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), CurrentCameraData(PerCameraCBuffer())
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), CurrentCameraData(PerCameraCBuffer()), PShadowMap(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
 
 	PRenderer::~PRenderer()
 	{
-
+// 		ReleasePtr(PShadowMap);
+// 		ReleasePtr(ShadowPipeline);
 	}
 
 	void PRenderer::Initialize()
@@ -29,6 +31,16 @@ namespace Phe
 			PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
 		}
 		CurrentCameraData.Time = PRenderThread::Get()->GetCurrentTotalTime();
+
+		if(RenderScene->GetMainLightBuffer())
+		{
+			PrepareShadowMap(RenderScene);
+		}
+
+		if (RenderScene->GetMainLight())
+		{
+			CurrentCameraData.ShadowTransform = RenderScene->GetMainLight()->GetPassCBuffer().ShadowTransform;
+		}
 		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, &CurrentCameraData);
 	}
 
@@ -47,6 +59,8 @@ namespace Phe
 	void PRenderer::DestroyRenderer()
 	{
 		ReleasePtr(PerCameraBuffer);
+		ReleasePtr(PShadowMap);
+		ReleasePtr(ShadowPipeline);
 	}
 
 	void PRenderer::UpdatePrimitiveBuffer(PPrimitive* Primitive)
@@ -90,8 +104,42 @@ namespace Phe
 // 		}
 		PRHI::Get()->SetRenderResourceTable("Texture", Primitive->GetMaterial()->GetGPUTextureBuffer().at(0)->GetHandleOffset());
 		PRHI::Get()->SetRenderResourceTable("PerObjectBuffer", Primitive->GetPerObjBuffer()->GetHandleOffset());
-		PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerCameraBuffer->GetHandleOffset());
 		PRHI::Get()->SetRenderResourceTable("PerMaterialBuffer", Primitive->GetPerMatBuffer()->GetHandleOffset());
+	}
+
+	void PRenderer::PrepareShadowMap(PRenderScene* RenderScene)
+	{
+		PGPUCommonBuffer* MainLightBuffer = RenderScene->GetMainLightBuffer();
+		if(PShadowMap)
+		{
+			ReleasePtr(PShadowMap);
+		}
+  		PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap");
+ 		PShadowMap->AddDepthStencilBuffer();
+		PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer());
+   		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
+  		if(!ShadowPipeline)
+  		{
+			PShader* ShadowShader = PRHI::Get()->CreateShader("PositionShader", L"Shaders\\Position.hlsl", "VS", "");
+  			ShadowPipeline = PRHI::Get()->CreatePipeline(ShadowShader);
+			PRHI::Get()->UpdatePipeline(ShadowPipeline, PShadowMap);
+  		}
+  
+  		PRHI::Get()->PrepareBufferHeap();
+ 		PRHI::Get()->SetRenderTarget(PShadowMap);
+  		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
+   		for (auto Primitive : CurrentDrawPrimitives)
+   		{
+ 			UpdatePrimitiveBuffer(Primitive);
+			auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
+			PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
+ 			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
+ 			PRHI::Get()->SetMeshBuffer(Primitive->GetMeshBuffer());
+			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", MainLightBuffer->GetHandleOffset());
+ 			ShaderResourceBinding(Primitive);
+ 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive->GetMeshBuffer()->GetIndexCount());
+   		}
+   		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
 	}
 
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)
@@ -103,8 +151,12 @@ namespace Phe
 			UpdatePrimitiveBuffer(Primitive);
 			PRHI::Get()->SetGraphicsPipeline(Primitive->GetPipeline());
 			PRHI::Get()->SetMeshBuffer(Primitive->GetMeshBuffer());
+			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerCameraBuffer->GetHandleOffset());
 			ShaderResourceBinding(Primitive);
-			
+   			if(PShadowMap)
+  			{
+   				PRHI::Get()->SetRenderResourceTable("ShadowTexture", PShadowMap->GetDepthStencilBuffer()->PRTTexture->GetHandleOffset());
+   			}
 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive->GetMeshBuffer()->GetIndexCount());
 		}
 	}

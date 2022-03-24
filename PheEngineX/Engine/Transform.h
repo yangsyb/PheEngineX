@@ -14,7 +14,7 @@ public:
 
 	glm::mat4 GetPositionMat()
 	{
-		return glm::translate(glm::mat4(1.0f), Translation);
+		return glm::translate(glm::mat4(1.f), Translation);
 	}
 
 	glm::mat4 GetRotaionMat()
@@ -34,7 +34,7 @@ public:
 		//		glm::mat4 rotation = glm::toMat4(glm::quat(EulerAngles));
 		glm::qua<float> qrotation = glm::qua<float>(glm::radians(-EulerAngles));
 		glm::mat4 rotation = glm::toMat4(qrotation);
-		return glm::translate(glm::mat4(1.0f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
+		return glm::translate(glm::mat4(1.f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
 	}
 
 	PerObjectCBuffer GetBufferData()

@@ -6,7 +6,6 @@
 #include "Engine/PMaterial.h"
 #include "Engine/PShaderManager.h"
 
-
 namespace Phe
 {
 
@@ -81,6 +80,13 @@ namespace Phe
 		AddPrimitive(StaticMeshName, MeshTransform, MaterialName);
 	}
 
+	void PRenderScene::AddLight(std::string LightName, PLightDataStruct LightData)
+	{
+		PGPUCommonBuffer* LightCommonBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
+		PLight* Light = new PLight(LightName, Transform(LightData.Position, LightData.Rotation, LightData.Scale), LightData.LightRadius, LightData.LightStrength);
+		PLightPool.insert({ Light, LightCommonBuffer});
+	}
+
 	void PRenderScene::ClearScene()
 	{
 		for (int index = 0; index < Primitives.size(); index++)
@@ -114,6 +120,11 @@ namespace Phe
 			Primitives[index]->DestroyPrimitive();
 			ReleasePtr(Primitives[index]);
 		}
+		for(auto it : PLightPool)
+		{
+			delete it.first;
+			ReleasePtr(it.second);
+		}
 		for(int index = 0; index < PShaderPool.size(); index++)
 		{
 			ReleasePtr(PShaderPool[index]);
@@ -126,6 +137,36 @@ namespace Phe
 		if (PMeshBufferPool.find(MeshBufferName) != PMeshBufferPool.end())
 		{
 			return PMeshBufferPool.at(MeshBufferName);
+		}
+		return nullptr;
+	}
+
+	PGPUCommonBuffer* PRenderScene::GetLightCommonBuffer(std::string LightName)
+	{
+		for(auto it : PLightPool)
+		{
+			if(it.first->GetLightName() == LightName)
+			{
+				return it.second;
+			}
+		}
+		return nullptr;
+	}
+
+	PGPUCommonBuffer* PRenderScene::GetMainLightBuffer()
+	{
+		if(PLightPool.size()>0)
+		{
+			return PLightPool.begin()->second;
+		}
+		return nullptr;
+	}
+
+	Phe::PLight* PRenderScene::GetMainLight()
+	{
+		if (PLightPool.size() > 0)
+		{
+			return PLightPool.begin()->first;
 		}
 		return nullptr;
 	}

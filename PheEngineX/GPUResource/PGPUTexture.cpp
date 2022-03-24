@@ -3,6 +3,10 @@
 
 namespace Phe
 {
+	PGPUTexture::PGPUTexture(std::string TextureName) : PTextureName(TextureName), PFileName(), PHandleOffset(0)
+	{
+
+	}
 
 	PGPUTexture::PGPUTexture(std::string TextureName, std::wstring FileName) : PTextureName(TextureName), PFileName(FileName), PHandleOffset(0)
 	{

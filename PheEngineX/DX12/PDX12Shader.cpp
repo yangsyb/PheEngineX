@@ -9,6 +9,7 @@ namespace Phe
 		PShader(ShaderName, FilePath, VS, PS), PVS(nullptr), PPS(nullptr)
 	{
 		PDX12Shadermanager* DX12ShaderManager = dynamic_cast<PDX12Shadermanager*>(PShaderManager::Get());
+
 		ShaderParameter perText("Texture", ShaderParamType::SRVDescriptorHeap, 2, 0, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(perText.name)] = UINT(Params.size());
 		Params.push_back(perText);
@@ -25,6 +26,10 @@ namespace Phe
 		ParamMap[DX12ShaderManager->PropertyToID(perMaterial.name)] = UINT(Params.size());
 		Params.push_back(perMaterial);
 
+  		ShaderParameter shadowTexture("ShadowTexture", ShaderParamType::SRVDescriptorHeap, 1, 2, 0);
+  		ParamMap[DX12ShaderManager->PropertyToID(shadowTexture.name)] = UINT(Params.size());
+  		Params.push_back(shadowTexture);
+
 		PRasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
 		PBlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
 		PDepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
@@ -34,21 +39,32 @@ namespace Phe
 
 	void PDX12Shader::SetPSODesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC* psoDesc)
 	{
-		psoDesc->VS =
+		if(PVS)
 		{
-			reinterpret_cast<BYTE*>(PVS->GetBufferPointer()),
-			PVS->GetBufferSize()
-		};
-		psoDesc->PS =
+			psoDesc->VS =
+			{
+				reinterpret_cast<BYTE*>(PVS->GetBufferPointer()),
+				PVS->GetBufferSize()
+			};
+		}
+		if(PPS)
 		{
-			reinterpret_cast<BYTE*>(PPS->GetBufferPointer()),
-			PPS->GetBufferSize()
-		};
+			psoDesc->PS =
+			{
+				reinterpret_cast<BYTE*>(PPS->GetBufferPointer()),
+				PPS->GetBufferSize()
+			};
+		}
+
 		psoDesc->pRootSignature = PRootSignature.Get();
 		psoDesc->RasterizerState = PRasterizerState;
 		psoDesc->RasterizerState.FrontCounterClockwise = TRUE;
 		psoDesc->DepthStencilState = PDepthStencilState;
 		psoDesc->BlendState = PBlendState;
+
+		psoDesc->RasterizerState.DepthBias = 100000;
+		psoDesc->RasterizerState.DepthBiasClamp = 0.0f;
+		psoDesc->RasterizerState.SlopeScaledDepthBias = 1.0f;
 	}
 
 }

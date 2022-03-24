@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "GPUResource/PGPUCommonBuffer.h"
+#include "GPUResource/PGPURenderTarget.h"
 #include "PRenderScene.h"
 namespace Phe
 {
@@ -22,9 +23,13 @@ namespace Phe
 		void UpdatePrimitiveBuffer(PPrimitive* Primitive);
 		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
 		void ShaderResourceBinding(PPrimitive* Primitive);
+		void PrepareShadowMap(PRenderScene* RenderScene);
 	private:
 		void RenderCurrentScene(PRenderScene* RenderScene);
 		PGPUCommonBuffer* PerCameraBuffer;
 		PerCameraCBuffer CurrentCameraData;
+
+		PGPURenderTarget* PShadowMap;
+		PPipeline* ShadowPipeline;
 	};
 }

@@ -49,6 +49,14 @@ namespace Phe
 				EditorEvent[2]();
 			}
 		}
+
+		else if (PEngine::GetSingleton().GetWindow()->GetInput()->GetKeyDown(KeyCode::Keypad4))
+		{
+			if (EditorEvent.size() > 3)
+			{
+				EditorEvent[3]();
+			}
+		}
 	}
 
 }

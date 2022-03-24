@@ -9,7 +9,7 @@ namespace Phe
 	class PDX12GPUTexture : public PGPUTexture
 	{
 	public:
-		PDX12GPUTexture(std::string TextureName, std::wstring FileName);
+		PDX12GPUTexture(std::string TextureName, std::wstring FileName = L"");
 		virtual ~PDX12GPUTexture();
 
  		void SetPResource(ComPtr<ID3D12Resource> Resource) { PResource->SetResource(Resource); }

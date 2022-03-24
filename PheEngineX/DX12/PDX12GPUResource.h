@@ -37,6 +37,8 @@ namespace Phe
 
 		void SetResource(ComPtr<ID3D12Resource> InResource) { PResource = InResource; }
 
+		void ResetResource() { PResource.Reset(); }
+
 	protected:
 		D3D12_RESOURCE_STATES PUsageState;
 		ComPtr<ID3D12Resource> PResource;

@@ -17,6 +17,7 @@ struct PerCameraCBuffer
 	glm::mat4 View;
 	glm::mat4 Proj;
 	glm::mat4 CameraLocation;
+	glm::mat4 ShadowTransform;
 	float Time;
 };
 
@@ -56,4 +57,13 @@ struct PMaterialDataStruct
 	float Metallic;
 	float Specular;
 	float Roughness;
+};
+
+struct PLightDataStruct
+{
+	glm::vec3 Position;
+	glm::vec3 Rotation;
+	glm::vec3 Scale;
+	float LightStrength;
+	float LightRadius;
 };
