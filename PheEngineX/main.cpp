@@ -101,7 +101,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		Phe::PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeTruckMat");
 		Phe::PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeLeafMat");
 	};
-	std::function<void()> f4 = [&](){
+	std::function<void()> f4 = [&]() {
 		PLightDataStruct LightData;
 		LightData.Position = glm::vec3(-1.4f, 52.3f, 35.7f);
 		LightData.Rotation = glm::vec3(0.f, -30.f, -90.f);
@@ -109,6 +109,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		LightData.LightRadius = 1.f;
 		LightData.LightStrength = 1.f;
 		Phe::PEngine::GetSingleton().GetScene()->AddLight("MainLight", LightData);
+	};
+	std::function<void()> f5 = [&]() {
+		Phe::PEngine::GetSingleton().GetScene()->SetLightDynamic("MainLight");
 	};
 	//Register Key
 	RegisterList.push_back(f1);
@@ -118,6 +121,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	RegisterList.push_back(f3);
 
 	RegisterList.push_back(f4);
+
+//	RegisterList.push_back(f5);
 
 	Phe::PEditor::GetSingleton().Register(RegisterList);
 	PheEngine->Start();

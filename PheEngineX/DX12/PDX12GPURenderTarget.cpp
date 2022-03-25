@@ -5,7 +5,7 @@
 namespace Phe
 {
 
-	PDX12GPURenderTarget::PDX12GPURenderTarget(std::string RenderTargetName) : PGPURenderTarget(RenderTargetName), PViewport(D3D12_VIEWPORT()), PScissorRect(D3D12_RECT())
+	PDX12GPURenderTarget::PDX12GPURenderTarget(std::string RenderTargetName, UINT32 Width, UINT32 Height) : PGPURenderTarget(RenderTargetName, Width, Height), PViewport(D3D12_VIEWPORT()), PScissorRect(D3D12_RECT())
 	{
 
 	}

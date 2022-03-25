@@ -87,6 +87,18 @@ namespace Phe
 		PLightPool.insert({ Light, LightCommonBuffer});
 	}
 
+	void PRenderScene::SetLightDynamic(std::string LightName)
+	{
+		for(auto it : PLightPool)
+		{
+			if(it.first->GetLightName() == LightName)
+			{
+				it.first->SetIsDynamic(!it.first->GetIsDynamic());
+				return;
+			}
+		}
+	}
+
 	void PRenderScene::ClearScene()
 	{
 		for (int index = 0; index < Primitives.size(); index++)

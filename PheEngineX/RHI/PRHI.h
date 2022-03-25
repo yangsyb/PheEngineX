@@ -31,7 +31,7 @@ namespace Phe
 		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer) = 0;
 		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName) = 0;
 		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height) = 0;
-		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default") = 0;
+		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default", UINT32 Width = 1920, UINT32 Height = 1080) = 0;
 
 		virtual void ResetRTBuffer(RTBuffer* RtBuffer) = 0;
 		virtual void SetRenderTarget(PGPURenderTarget* RenderTarget) = 0;

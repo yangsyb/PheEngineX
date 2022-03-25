@@ -65,6 +65,12 @@ namespace Phe
 
 	}
 
+	void PScene::SetLightDynamic(std::string LightName)
+	{
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->SetLightDynamic(LightName));
+		PRender->AddTask(task);
+	}
+
 	void PScene::ClearScene()
 	{
 		SceneMeshList.clear();

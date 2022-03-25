@@ -21,6 +21,8 @@ namespace Phe
 		void AddLight(std::string LightName, PLightDataStruct LightData);
 		void AddLightFromFile(const std::string FilePath);
 
+		void SetLightDynamic(std::string LightName);
+
 		void ClearScene();
 		void Update();
 

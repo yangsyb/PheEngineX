@@ -45,4 +45,14 @@ public:
 		ret.Scale = GetScaleMat();
 		return ret;
 	}
+
+	glm::vec3 GetPosition()
+	{
+		return Translation;
+	}
+
+	void SetPosition(glm::vec3 Position)
+	{
+		Translation = Position;
+	}
 };

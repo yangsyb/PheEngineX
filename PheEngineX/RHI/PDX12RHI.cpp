@@ -619,9 +619,9 @@ namespace Phe
 		return NewRTBuffer;
 	}
 
-	PGPURenderTarget* PDX12RHI::CreateRenderTarget(std::string RenderTargetName)
+	PGPURenderTarget* PDX12RHI::CreateRenderTarget(std::string RenderTargetName, UINT32 Width, UINT32 Height)
 	{
-		return new PDX12GPURenderTarget(RenderTargetName);
+		return new PDX12GPURenderTarget(RenderTargetName, Width, Height);
 	}
 
 	void PDX12RHI::ResetRTBuffer(RTBuffer* RtBuffer)

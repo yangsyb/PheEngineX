@@ -22,6 +22,7 @@ namespace Phe
 		void AddPrimitive(std::string MeshBufferName, Transform MeshTransform, std::string MaterialName);
 		void AddMeshBufferAndPrimitive(std::string StaticMeshName, PMeshDataStruct StaticMeshData, Transform MeshTransform, std::string MaterialName);
 		void AddLight(std::string LightName, PLightDataStruct LightData);
+		void SetLightDynamic(std::string LightName);
 		void ClearScene();
 		void DestroyRenderScene();
 		

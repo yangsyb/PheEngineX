@@ -73,7 +73,7 @@ namespace Phe
 	class PDX12GPURenderTarget : public PGPURenderTarget
 	{
 	public:
-		PDX12GPURenderTarget(std::string RenderTargetName);
+		PDX12GPURenderTarget(std::string RenderTargetName, UINT32 Width, UINT32 Height);
 		virtual ~PDX12GPURenderTarget();
 
 		virtual void AddColorBuffer() override;

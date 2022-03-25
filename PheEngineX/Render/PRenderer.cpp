@@ -39,7 +39,30 @@ namespace Phe
 
 		if (RenderScene->GetMainLight())
 		{
+			PLight* MainLight = RenderScene->GetMainLight();
 			CurrentCameraData.ShadowTransform = RenderScene->GetMainLight()->GetPassCBuffer().ShadowTransform;
+
+			if (MainLight->GetIsDynamic())
+			{
+				static bool IsLeft = true;
+				glm::vec3 CurrentPositon = MainLight->GetLightTransform().GetPosition();
+				if(IsLeft)
+				{
+					MainLight->SetLightPosition(glm::vec3(CurrentPositon.x, CurrentPositon.y-0.05, CurrentPositon.z));
+					if(CurrentPositon.y-0.1<-55)
+					{
+						IsLeft = false;
+					}
+				}
+				else
+				{
+					MainLight->SetLightPosition(glm::vec3(CurrentPositon.x, CurrentPositon.y + 0.05, CurrentPositon.z));
+					if (CurrentPositon.y + 0.1 > 55)
+					{
+						IsLeft = true;
+					}
+				}
+			}
 		}
 		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, &CurrentCameraData);
 	}
@@ -114,16 +137,16 @@ namespace Phe
 		{
 			ReleasePtr(PShadowMap);
 		}
-  		PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap");
+  		PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2048, 2048);
  		PShadowMap->AddDepthStencilBuffer();
 		PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer());
    		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
-  		if(!ShadowPipeline)
-  		{
-			PShader* ShadowShader = PRHI::Get()->CreateShader("PositionShader", L"Shaders\\Position.hlsl", "VS", "");
-  			ShadowPipeline = PRHI::Get()->CreatePipeline(ShadowShader);
-			PRHI::Get()->UpdatePipeline(ShadowPipeline, PShadowMap);
-  		}
+// 		if (!ShadowPipeline)
+// 		{
+// 			PShader* ShadowShader = PRHI::Get()->CreateShader("PositionShader", L"Shaders\\Position.hlsl", "VS", "");
+// 			ShadowPipeline = PRHI::Get()->CreatePipeline(ShadowShader);
+// 			PRHI::Get()->UpdatePipeline(ShadowPipeline, PShadowMap);
+//   		}
   
   		PRHI::Get()->PrepareBufferHeap();
  		PRHI::Get()->SetRenderTarget(PShadowMap);
@@ -132,8 +155,10 @@ namespace Phe
    		{
  			UpdatePrimitiveBuffer(Primitive);
 			auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
+			LightData.Time = PRenderThread::Get()->GetCurrentTotalTime();
 			PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
- 			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
+//			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
+			PRHI::Get()->SetGraphicsPipeline(Primitive->GetPipeline());
  			PRHI::Get()->SetMeshBuffer(Primitive->GetMeshBuffer());
 			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", MainLightBuffer->GetHandleOffset());
  			ShaderResourceBinding(Primitive);

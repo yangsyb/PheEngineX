@@ -62,8 +62,8 @@ namespace Phe
 		psoDesc->DepthStencilState = PDepthStencilState;
 		psoDesc->BlendState = PBlendState;
 
-		psoDesc->RasterizerState.DepthBias = 100000;
-		psoDesc->RasterizerState.DepthBiasClamp = 0.0f;
+		psoDesc->RasterizerState.DepthBias = 10000;
+		psoDesc->RasterizerState.DepthBiasClamp = 0.f;
 		psoDesc->RasterizerState.SlopeScaledDepthBias = 1.0f;
 	}
 

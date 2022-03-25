@@ -12,17 +12,22 @@ namespace Phe
 
 		bool operator==(const PLight* L) { return this->GetLightName() == L->PLightName; }
 
+		void SetIsDynamic(bool IsDynamic) { PIsDynamic = IsDynamic; }
+		void SetLightPosition(glm::vec3 Position);
+
 		std::string GetLightName() { return PLightName; }
 		Transform GetLightTransform() { return PLightTransform; }
 		float GetLightRadius() { return PLightRaidus; }
 		float GetLightStrength() { return PLightStrength; }
 		PerCameraCBuffer GetPassCBuffer(){ return LightView->GetPassConstant(); }
-
+		bool GetIsDynamic() { return PIsDynamic; }
 	private:
 		std::string PLightName;
 		Transform PLightTransform;
 		float PLightRaidus;
 		float PLightStrength;
+
+		bool PIsDynamic;
 		
 		POrthographicCamera* LightView;
 	};
