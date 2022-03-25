@@ -6,7 +6,7 @@
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), CurrentCameraData(PerCameraCBuffer()), PShadowMap(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), CurrentCameraData(PerCameraCBuffer()), PShadowMap(nullptr), ShadowPipeline(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -137,7 +137,7 @@ namespace Phe
 		{
 			ReleasePtr(PShadowMap);
 		}
-  		PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2048, 2048);
+  		PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2560, 1680);
  		PShadowMap->AddDepthStencilBuffer();
 		PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer());
    		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());

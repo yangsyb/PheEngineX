@@ -64,7 +64,7 @@ namespace Phe
 
 		psoDesc->RasterizerState.DepthBias = 10000;
 		psoDesc->RasterizerState.DepthBiasClamp = 0.f;
-		psoDesc->RasterizerState.SlopeScaledDepthBias = 2.0f;
+		psoDesc->RasterizerState.SlopeScaledDepthBias = 1.0f;
 	}
 
 }
