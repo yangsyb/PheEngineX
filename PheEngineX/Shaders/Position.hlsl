@@ -9,7 +9,7 @@ cbuffer cbPass : register(b1)
 {
 	float4x4 gView;
 	float4x4 gProj;
-	float4x4 gCameraPositionMat;
+	float4x4 gCameraPosition;
 	float4x4 gShadowTransform;
 	float gTime;
 };

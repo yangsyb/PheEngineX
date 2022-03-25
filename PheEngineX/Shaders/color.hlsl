@@ -24,14 +24,14 @@ cbuffer cbPass : register(b1)
 {
 	float4x4 gView;
 	float4x4 gProj;
-	float4x4 gCameraPositionMat;
+	float4x4 gCameraPosition;
 	float4x4 gShadowTransform;
 	float gTime;
 };
 
 cbuffer cbMaterial : register(b2)
 {
-	float4 gDiffuseAlbedo;
+	float4 gBaseColor;
 	float3 gFresnelR0;
 	float  gRoughness;
 }
@@ -61,9 +61,9 @@ float CalcShadowFactor(float4 shadowPosH)
 	uint width, height, numMips;
 	gShadowMap.GetDimensions(0, width, height, numMips);
 
-//	float2 PixelPos = shadowPosH.xy*width;
-//	float depthInMap = gShadowMap.SampleLevel(gsamAnisotropicWrap, shadowPosH.xy, 0).r;
-//	return depth > depthInMap? 0:1;
+	//	float2 PixelPos = shadowPosH.xy*width;
+	//	float depthInMap = gShadowMap.SampleLevel(gsamAnisotropicWrap, shadowPosH.xy, 0).r;
+	//	return depth > depthInMap? 0:1;
 
 	float dx = 1.0f / (float)width;
 
@@ -85,6 +85,7 @@ float CalcShadowFactor(float4 shadowPosH)
 	return percentLit / 9.0f;
 }
 
+
 VertexOut VS(VertexIn vin)
 {
 	VertexOut vout;
@@ -100,17 +101,25 @@ VertexOut VS(VertexIn vin)
 
 	vout.ShadowPos = mul(gShadowTransform, PosWorld);
 
-	
+
 	return vout;
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
-	float4 diffuseAlbedo = gDiffuseMap.Sample(gsamPointWrap, pin.TextCoord) * gDiffuseAlbedo;
-	float4 NormalAlbedo = gNormalMap.Sample(gsamPointWrap, pin.TextCoord) * gDiffuseAlbedo;
+	float4 BaseColor = gDiffuseMap.Sample(gsamPointWrap, pin.TextCoord);
+	BaseColor.rgb *= gBaseColor.rgb;
+//	float Roughness = gRoughness;
+//	float Metallic = 0.f;
+
+//	float FresnelR0 = gFresnelR0;
+//	float AmbientOcclusion = 1.0f;
+
+//	FresnelR0 = lerp(FresnelR0.rrr, BaseColor.rgb, Metallic);
 
 	float Shadow = CalcShadowFactor(pin.ShadowPos);
 
+	float4 NormalAlbedo = gNormalMap.Sample(gsamPointWrap, pin.TextCoord) * gBaseColor;
 
-	return pow(diffuseAlbedo * (Shadow+0.1), 1 / 2.2f);
+	return pow(BaseColor * (Shadow + 0.1), 1 / 2.2f);
 }

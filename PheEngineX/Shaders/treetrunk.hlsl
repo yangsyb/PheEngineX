@@ -24,7 +24,7 @@ cbuffer cbPass : register(b1)
 {
 	float4x4 gView;
 	float4x4 gProj;
-	float4x4 gCameraPositionMat;
+	float4x4 gCameraPosition;
 	float4x4 gShadowTransform;
 	float gTime;
 };
@@ -96,6 +96,7 @@ VertexOut VS(VertexIn vin)
 	if (vin.PosL.z > 5.2)
 	{
 		vout.PosH = float4(TPosH.xyz, 0);
+		//vout.PosH = TPosH;
 	}
 	if (vin.PosL.z <= 5.2)
 	{

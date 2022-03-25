@@ -104,7 +104,7 @@ namespace Phe
 	{
 		CurrentCameraData.Proj = CameraCBuffer.Proj;
 		CurrentCameraData.View = CameraCBuffer.View;
-		CurrentCameraData.CameraLocation = CameraCBuffer.CameraLocation;
+		CurrentCameraData.CameraLocationMat = CameraCBuffer.CameraLocationMat;
 	}
 
 	void PRenderer::ShaderResourceBinding(PPrimitive* Primitive)
@@ -156,6 +156,7 @@ namespace Phe
  			UpdatePrimitiveBuffer(Primitive);
 			auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
 			LightData.Time = PRenderThread::Get()->GetCurrentTotalTime();
+			LightData.ShadowTransform = RenderScene->GetMainLight()->GetVP();
 			PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
 //			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
 			PRHI::Get()->SetGraphicsPipeline(Primitive->GetPipeline());

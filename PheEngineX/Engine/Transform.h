@@ -19,7 +19,7 @@ public:
 
 	glm::mat4 GetRotaionMat()
 	{
-		glm::qua<float> qrotation = glm::qua<float>(glm::radians(-EulerAngles));
+		glm::qua<float> qrotation = glm::qua<float>(glm::radians(glm::vec3(-EulerAngles[0], -EulerAngles[1], EulerAngles[2])));
 		glm::mat4 rotation = glm::toMat4(qrotation);
 		return rotation;
 	}
@@ -32,7 +32,7 @@ public:
 	glm::mat4 GetTransform() const
 	{
 		//		glm::mat4 rotation = glm::toMat4(glm::quat(EulerAngles));
-		glm::qua<float> qrotation = glm::qua<float>(glm::radians(-EulerAngles));
+		glm::qua<float> qrotation = glm::qua<float>(glm::radians(glm::vec3(-EulerAngles[0], -EulerAngles[1], EulerAngles[2])));
 		glm::mat4 rotation = glm::toMat4(qrotation);
 		return glm::translate(glm::mat4(1.f), Translation) * rotation * glm::scale(glm::mat4(1.0f), Scale);
 	}

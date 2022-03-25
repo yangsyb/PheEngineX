@@ -22,6 +22,8 @@ namespace Phe
 		float GetLightStrength() { return PLightStrength; }
 		PerCameraCBuffer GetPassCBuffer(){ return LightView->GetPassConstant(); }
 		bool GetIsDynamic() { return PIsDynamic; }
+
+		glm::mat4 GetVP() { return LightView->GetProjectionViewMatrix();}
 	private:
 		std::string PLightName;
 		Transform PLightTransform;

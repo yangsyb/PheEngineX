@@ -31,7 +31,7 @@ namespace Phe
  	void PCamera::UpdateViewConstant()
  	{
  		PMainPassCB.View = PView;
- 		PMainPassCB.CameraLocation = PTransform.GetPositionMat();
+ 		PMainPassCB.CameraLocationMat = PTransform.GetPositionMat();
 
         NormalizedPProjectionView = PNormalizeMat * PProjectionView;
         PMainPassCB.ShadowTransform = NormalizedPProjectionView;
@@ -40,7 +40,7 @@ namespace Phe
  	void PCamera::UpdateProjectionConstant()
  	{
  		PMainPassCB.Proj = PProjection;
- 		PMainPassCB.CameraLocation = PTransform.GetPositionMat();
+ 		PMainPassCB.CameraLocationMat = PTransform.GetPositionMat();
 
         NormalizedPProjectionView = PNormalizeMat * PProjectionView;
         PMainPassCB.ShadowTransform = NormalizedPProjectionView;

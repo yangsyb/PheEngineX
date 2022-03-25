@@ -26,12 +26,19 @@ namespace Phe
 		void ClearScene();
 		void DestroyRenderScene();
 		
+		void UpdateSceneRadius(glm::vec3 Position);
+
 		PGPUMeshBuffer* GetMeshBuffer(std::string MeshBufferName);
 		std::vector<PPrimitive*> GetPrimitives() { return Primitives; }
 		PGPUCommonBuffer* GetLightCommonBuffer(std::string LightName);
 		PGPUCommonBuffer* GetMainLightBuffer();
 		PLight* GetMainLight();
+		glm::vec3 GetSceneCenter() { return PSceneCenter; }
+		float GetSceneRadius() { return PSceneRadius; }
 	private:
+		glm::vec3 PSceneCenter;
+		float PSceneRadius;
+
 		UINT32 PrimitiveNumber;
 		std::unordered_map<std::string, PGPUMeshBuffer*> PMeshBufferPool;
 		std::unordered_map<std::string, PMaterial*> PMaterialPool;

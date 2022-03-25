@@ -659,7 +659,7 @@ namespace Phe
 			for (auto ColorBuffer : RTColorBuffer)
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE Handle = PRtvHeap->GetCurrentHeap()->GetCPUDescriptorHandleForHeapStart();
-				Handle.ptr += PRtvDescriptorSize * ColorBuffer->PHandleOffset;
+				Handle.ptr += size_t(PRtvDescriptorSize) * ColorBuffer->PHandleOffset;
 				RtvDescriptors.push_back(Handle);
 			}
 		}
@@ -667,7 +667,7 @@ namespace Phe
 		if (RTDSBuffer)
 		{
 			D3D12_CPU_DESCRIPTOR_HANDLE Handle = PDsvHeap->GetCurrentHeap()->GetCPUDescriptorHandleForHeapStart();
-			Handle.ptr += PDsvDescriptorSize * RTDSBuffer->PHandleOffset;
+			Handle.ptr += size_t(PDsvDescriptorSize) * RTDSBuffer->PHandleOffset;
 			Dsv = &Handle;
 		}
 		if (Dsv)
@@ -1008,5 +1008,4 @@ namespace Phe
 
 		return defaultBuffer;
 	}
-
 }

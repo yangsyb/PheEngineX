@@ -9,7 +9,7 @@
 namespace Phe
 {
 
-	PRenderScene::PRenderScene() : PrimitiveNumber(0)
+	PRenderScene::PRenderScene() : PrimitiveNumber(0), PSceneCenter()
 	{
 
 	}
@@ -142,6 +142,11 @@ namespace Phe
 			ReleasePtr(PShaderPool[index]);
 		}
 		Primitives.clear();
+	}
+
+	void PRenderScene::UpdateSceneRadius(glm::vec3 Position)
+	{
+
 	}
 
 	PGPUMeshBuffer* PRenderScene::GetMeshBuffer(std::string MeshBufferName)

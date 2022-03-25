@@ -16,14 +16,14 @@ struct PerCameraCBuffer
 {
 	glm::mat4 View;
 	glm::mat4 Proj;
-	glm::mat4 CameraLocation;
+	glm::mat4 CameraLocationMat;
 	glm::mat4 ShadowTransform;
 	float Time;
 };
 
 struct PerMaterialCBuffer
 {
-	glm::vec4 DiffuseAlbedo;
+	glm::vec4 BaseColor;
 	glm::vec3 FresnelR0;
 	float Roughness;
 };

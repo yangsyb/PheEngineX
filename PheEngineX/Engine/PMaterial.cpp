@@ -7,8 +7,8 @@ namespace Phe
 
 
 
-	PMaterial::PMaterial(std::string MName, std::string SName, std::vector<std::string> TNames, glm::vec4 DiffuseAlbedo /*= glm::vec4(1.f, 1.f, 1.f, 1.f)*/, glm::vec3 FresnelR0 /*= glm::vec3(0.05f, 0.05f, 0.05f)*/, float Roughness /*= 0.2f*/, float Metallic /*= 0.0f*/, float Specular /*= 0.0f*/) :
-		PMaterialName(MName), PShaderName(SName), PTextureNames(TNames), PDiffuseAlbedo(DiffuseAlbedo), PFresnelR0(FresnelR0), PMetallic(Metallic), PSpecular(Specular), PRoughness(Roughness)
+	PMaterial::PMaterial(std::string MName, std::string SName, std::vector<std::string> TNames, glm::vec4 BaseColor /*= glm::vec4(1.f, 1.f, 1.f, 1.f)*/, glm::vec3 FresnelR0 /*= glm::vec3(0.05f, 0.05f, 0.05f)*/, float Roughness /*= 0.2f*/, float Metallic /*= 0.0f*/, float Specular /*= 0.0f*/) :
+		PMaterialName(MName), PShaderName(SName), PTextureNames(TNames), PBaseColor(BaseColor), PFresnelR0(FresnelR0), PMetallic(Metallic), PSpecular(Specular), PRoughness(Roughness)
 	{
 
 	}
@@ -52,7 +52,7 @@ namespace Phe
 	PerMaterialCBuffer PMaterial::GetMaterialBuffer()
 	{
 		PerMaterialCBuffer Ret;
-		Ret.DiffuseAlbedo = PDiffuseAlbedo;
+		Ret.BaseColor = PBaseColor;
 		Ret.FresnelR0 = PFresnelR0;
 		Ret.Roughness = PRoughness;
 		return Ret;
