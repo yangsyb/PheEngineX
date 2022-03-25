@@ -44,22 +44,22 @@ namespace Phe
 
 			if (MainLight->GetIsDynamic())
 			{
-				static bool IsLeft = true;
-				glm::vec3 CurrentPositon = MainLight->GetLightTransform().GetPosition();
-				if(IsLeft)
+				static bool IsUp = true;
+				glm::vec3 CurrentRotation = MainLight->GetLightTransform().GetRotation();
+				if(IsUp)
 				{
-					MainLight->SetLightPosition(glm::vec3(CurrentPositon.x, CurrentPositon.y-0.05, CurrentPositon.z));
-					if(CurrentPositon.y-0.1<-55)
+					MainLight->SetLightRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y+0.05, CurrentRotation.z));
+					if(CurrentRotation.y + 0.02 >-20)
 					{
-						IsLeft = false;
+						IsUp = false;
 					}
 				}
 				else
 				{
-					MainLight->SetLightPosition(glm::vec3(CurrentPositon.x, CurrentPositon.y + 0.05, CurrentPositon.z));
-					if (CurrentPositon.y + 0.1 > 55)
+					MainLight->SetLightRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y - 0.05, CurrentRotation.z));
+					if (CurrentRotation.y - 0.02 <-80)
 					{
-						IsLeft = true;
+						IsUp = true;
 					}
 				}
 			}

@@ -9,7 +9,8 @@
 按1可渲染一个box <br/>
 按2渲染导出的json地图 <br/>
 按3渲染地图加上WPO树 <br/>
-按4开灯
+按4开灯 <br/>
+按5可开关灯是否移动，目前阴影移动起来有失真 <br/>
 
 # Descriptor管理
 在DX12/Descriptor Heap中实现Allocate与DeAllocate，TODO: Dynamic Heap合并提交

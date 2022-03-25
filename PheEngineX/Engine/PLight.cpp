@@ -24,4 +24,10 @@ namespace Phe
 //		LightView->SetDirection(glm::vec3(0,0,0) - Position);
 	}
 
+	void PLight::SetLightRotation(glm::vec3 Rotation)
+	{
+		PLightTransform.EulerAngles = Rotation;
+		LightView->SetTransform(PLightTransform);
+	}
+
 }

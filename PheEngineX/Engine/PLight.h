@@ -14,6 +14,7 @@ namespace Phe
 
 		void SetIsDynamic(bool IsDynamic) { PIsDynamic = IsDynamic; }
 		void SetLightPosition(glm::vec3 Position);
+		void SetLightRotation(glm::vec3 Rotation);
 
 		std::string GetLightName() { return PLightName; }
 		Transform GetLightTransform() { return PLightTransform; }

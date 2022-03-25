@@ -104,7 +104,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	std::function<void()> f4 = [&]() {
 		PLightDataStruct LightData;
 		LightData.Position = glm::vec3(-1.4f, 52.3f, 35.7f);
-		LightData.Rotation = glm::vec3(0.f, -30.f, -90.f);
+		LightData.Rotation = glm::vec3(0.f, -45.f, -90.f);
 		LightData.Scale = glm::vec3(1.f, 1.f, 1.f);
 		LightData.LightRadius = 1.f;
 		LightData.LightStrength = 1.f;
@@ -122,7 +122,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
 	RegisterList.push_back(f4);
 
-//	RegisterList.push_back(f5);
+	RegisterList.push_back(f5);
 
 	Phe::PEditor::GetSingleton().Register(RegisterList);
 	PheEngine->Start();

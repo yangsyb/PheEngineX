@@ -55,4 +55,14 @@ public:
 	{
 		Translation = Position;
 	}
+
+	glm::vec3 GetRotation()
+	{
+		return EulerAngles;
+	}
+
+	void SetRotation(glm::vec3 Rotation)
+	{
+		EulerAngles = Rotation;
+	}
 };
