@@ -4,19 +4,19 @@
 
 namespace Phe
 {
-	PEngine::PEngine(UINT32 width, UINT32 height) : PWidth(width), PHeight(height), IsRunning(false), PCurrentPlatform(Undefined), PMainScene(nullptr), PRender(nullptr)
+	PEngine::PEngine(UINT32 width, UINT32 height) : PWidth(width), PHeight(height), IsRunning(false), PCurrentPlatform(Platform::Undefined), PMainScene(nullptr)
 	{
 #ifdef PlatformWin32
-		PCurrentPlatform = Win32;
+		PCurrentPlatform = Platform::Win32;
 #elif defined(PlatformIOS)
-		PCurrentPlatform = IOS;
+		PCurrentPlatform = Platform::IOS;
 #elif defined(PlatformAndroid)
-		PCurrentPlatform = Android;
+		PCurrentPlatform = Platform::Android;
 #endif
 		PheWindow = PWindow::Create("PheEngine", PWidth, PHeight);
 		PRenderThread::CreateRenderThread();
 		PMainEditor = new PEditor();
-		MainAssetManager = std::make_unique<PAssetManager>();
+		PMainAssetManager = std::make_unique<PAssetManager>();
 		PShaderManager::CreateShaderManager();
 	}
 
@@ -67,12 +67,12 @@ namespace Phe
 
 	void PEngine::EndFrame()
 	{
-		PRenderThread* renderthread = PRenderThread::Get();
-		while (renderthread->GetRenderNum() >= 0)
+		PRenderThread* RenderThread = PRenderThread::Get();
+		while (RenderThread->GetRenderNum() >= 1)
 		{
 			std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 		}
-		renderthread->TriggerRender();
+		RenderThread->TriggerRender();
 	}
 
 }

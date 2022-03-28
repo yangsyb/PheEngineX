@@ -61,9 +61,10 @@ float CalcShadowFactor(float4 shadowPosH)
 	uint width, height, numMips;
 	gShadowMap.GetDimensions(0, width, height, numMips);
 
-	//	float2 PixelPos = shadowPosH.xy*width;
-	//	float depthInMap = gShadowMap.SampleLevel(gsamAnisotropicWrap, shadowPosH.xy, 0).r;
-	//	return depth > depthInMap? 0:1;
+//		float2 PixelPos = shadowPosH.xy*width;
+//		float depthInMap = gShadowMap.SampleLevel(gsamAnisotropicWrap, shadowPosH.xy, 0).r;
+//		float depthInMap = gShadowMap.Load(int3(PixelPos, 0)).r;
+//		return depth > depthInMap? 0:1;
 
 	float dx = 1.0f / (float)width;
 

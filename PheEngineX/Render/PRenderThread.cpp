@@ -70,10 +70,17 @@ namespace Phe
 
 	void PRenderThread::Run()
 	{
-		std::unique_lock<std::mutex> RenderLock(Rendermtx);
-		PRenderNum--;
-		RenderCV.wait(RenderLock);
-		DoTasks();
+// 		std::unique_lock<std::mutex> RenderLock(Rendermtx);
+// 		PRenderNum--;
+// 		RenderCV.wait(RenderLock);
+// 		DoTasks();
+// 		Render();
+		{
+			std::unique_lock<std::mutex> RenderLock(Rendermtx);
+			while (PRenderNum < 0) RenderCV.wait(RenderLock);
+			DoTasks();
+			PRenderNum--;
+		}
 		Render();
 	}
 

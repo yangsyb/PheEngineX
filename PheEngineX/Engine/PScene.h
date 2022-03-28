@@ -27,6 +27,7 @@ namespace Phe
 		void Update();
 
 		void UpdateMainPassBuffer();
+		void UpdateShadowPassBuffer();
 
 	private:
 		std::unordered_map<std::string, std::vector<Transform>> SceneMeshList;

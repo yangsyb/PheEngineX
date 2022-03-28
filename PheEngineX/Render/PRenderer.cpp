@@ -13,8 +13,7 @@ namespace Phe
 
 	PRenderer::~PRenderer()
 	{
-// 		ReleasePtr(PShadowMap);
-// 		ReleasePtr(ShadowPipeline);
+
 	}
 
 	void PRenderer::Initialize()
@@ -57,7 +56,7 @@ namespace Phe
 				else
 				{
 					MainLight->SetLightRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y - 0.05, CurrentRotation.z));
-					if (CurrentRotation.y - 0.02 <-80)
+					if (CurrentRotation.y - 0.02 <-70)
 					{
 						IsUp = true;
 					}
@@ -133,13 +132,12 @@ namespace Phe
 	void PRenderer::PrepareShadowMap(PRenderScene* RenderScene)
 	{
 		PGPUCommonBuffer* MainLightBuffer = RenderScene->GetMainLightBuffer();
-		if(PShadowMap)
+		if(!PShadowMap)
 		{
-			ReleasePtr(PShadowMap);
+			PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2048, 2048);
+			PShadowMap->AddDepthStencilBuffer();
+			PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer());
 		}
-  		PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2560, 1680);
- 		PShadowMap->AddDepthStencilBuffer();
-		PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer());
    		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
 // 		if (!ShadowPipeline)
 // 		{
@@ -150,14 +148,17 @@ namespace Phe
   
   		PRHI::Get()->PrepareBufferHeap();
  		PRHI::Get()->SetRenderTarget(PShadowMap);
+
+		RenderScene->GetMainLight()->GetLightView()->RecalculateOrtho(RenderScene->GetSceneCenter(), RenderScene->GetSceneRadius());
+		auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
+		LightData.Time = PRenderThread::Get()->GetCurrentTotalTime();
+		LightData.ShadowTransform = RenderScene->GetMainLight()->GetVP();
+		PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
+
   		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
    		for (auto Primitive : CurrentDrawPrimitives)
    		{
  			UpdatePrimitiveBuffer(Primitive);
-			auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
-			LightData.Time = PRenderThread::Get()->GetCurrentTotalTime();
-			LightData.ShadowTransform = RenderScene->GetMainLight()->GetVP();
-			PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
 //			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
 			PRHI::Get()->SetGraphicsPipeline(Primitive->GetPipeline());
  			PRHI::Get()->SetMeshBuffer(Primitive->GetMeshBuffer());

@@ -34,11 +34,11 @@ namespace Phe
 			DebugController->EnableDebugLayer();
 		}
 		ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
-		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
-		{
-			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
-			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
-		}
+ 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+ 		{
+ 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+ 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+ 		}
 
 		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&PDXGIFactory)));
 
@@ -539,6 +539,7 @@ namespace Phe
 			CbvDesc.BufferLocation = PerAddress;
 			CbvDesc.SizeInBytes = NewGPUCommonBuffer->GetStructureSizeInBytes();
 			PDevice->CreateConstantBufferView(&CbvDesc, NewGPUCommonBuffer->BufferHandle);
+			
 		}
 		ExecuteCommandList();
 		Flush();
@@ -644,8 +645,11 @@ namespace Phe
 	void PDX12RHI::SetRenderTarget(PGPURenderTarget* RenderTarget)
 	{
 		PDX12GPURenderTarget* InRenderTarget = static_cast<PDX12GPURenderTarget*>(RenderTarget);
-		InRenderTarget->PViewport = { 0.0f, 0.0f, (float)InRenderTarget->GetWidth(), (float)InRenderTarget->GetHeight(), 0.0f, 1.0f };
-		InRenderTarget->PScissorRect = { 0,0,long(InRenderTarget->GetWidth()), long(InRenderTarget->GetHeight()) };
+ 		InRenderTarget->PViewport = { 0.0f, 0.0f, (float)InRenderTarget->GetWidth(), (float)InRenderTarget->GetHeight(), 0.0f, 1.0f };
+ 		InRenderTarget->PScissorRect = { 0,0,long(InRenderTarget->GetWidth()), long(InRenderTarget->GetHeight()) };
+
+//		InRenderTarget->PViewport = { 0.0f, 0.0f, 1920.f, 1080.f, 0.0f, 1.0f };
+//		InRenderTarget->PScissorRect = { 0,0,1920, 1080 };
 
 		PCommandList->RSSetViewports(1, &InRenderTarget->PViewport);
 		PCommandList->RSSetScissorRects(1, &InRenderTarget->PScissorRect);
@@ -676,7 +680,7 @@ namespace Phe
 		}
 
 
-		PCommandList->OMSetRenderTargets(RTColorBuffer.size(), Rtv, false, Dsv);
+		PCommandList->OMSetRenderTargets(UINT(RTColorBuffer.size()), Rtv, false, Dsv);
 
 	}
 

@@ -24,6 +24,7 @@ namespace Phe
 		bool GetIsDynamic() { return PIsDynamic; }
 
 		glm::mat4 GetVP() { return LightView->GetProjectionViewMatrix();}
+		POrthographicCamera* GetLightView() { return LightView; }
 	private:
 		std::string PLightName;
 		Transform PLightTransform;

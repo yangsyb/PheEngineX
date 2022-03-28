@@ -82,8 +82,6 @@ namespace Phe
 	{
 		PMainCameraController->OnUpdate();
 		UpdateMainPassBuffer();
-		std::cout<< "PX:"<<PMainCamera->GetPosition().x << "Y:"<<PMainCamera->GetPosition().y << "Z:"<<PMainCamera->GetPosition().z << std::endl;
-		std::cout<< "RX:"<<PMainCamera->GetRotation().x << "Y:"<<PMainCamera->GetRotation().y << "Z:"<<PMainCamera->GetRotation().z << std::endl;
 	}
 
 	void PScene::UpdateMainPassBuffer()

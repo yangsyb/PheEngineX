@@ -95,16 +95,9 @@ static void DeserilizeActorJsonFile(const std::string FilePath, std::vector<std:
 	}
 }
 
-static glm::vec4 PostionToView(glm::vec3 V, glm::mat4 M)
+static glm::vec4 VectorToMat(glm::vec3 V, glm::mat4 M)
 {
-	glm::vec4 z(V.z);
-	glm::vec4 y(V.y);
-	glm::vec4 x(V.x);
-
-	glm::vec4 fResult = z * M[2] + M[3];
-	fResult = y * M[1] + fResult;
-	fResult = x * M[0] + fResult;
-
-	glm::vec4 w(fResult.w);
-	return fResult / w;
+	glm::vec4 Ret = V.x * M[0] + V.y * M[1] + V.z * M[2] + M[3];
+	glm::vec4 w(Ret.w);
+	return Ret/w;
 }

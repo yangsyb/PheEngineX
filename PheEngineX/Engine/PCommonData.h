@@ -38,8 +38,8 @@ struct PVertex
 struct PMeshDataStruct
 {
 	std::vector<float> Vertices;
-	std::vector<float> Normal;
 	std::vector<UINT16> Indices;
+	std::vector<float> Normal;
 	std::vector<float> UVs;
 };
 

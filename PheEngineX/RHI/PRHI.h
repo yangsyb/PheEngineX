@@ -43,8 +43,6 @@ namespace Phe
 
 		virtual void BeginRenderBackBuffer() = 0;
 		virtual void EndRenderBackBuffer() = 0;
-// 		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget, bool bIsClearRT, bool bIsClearDS) = 0;
-// 		virtual void EndRenderRenderTarget(PGPURenderTarget* RenderTarget) = 0;
 		virtual void BeginRenderRTBuffer(RTBuffer* RtBuffer) = 0;
 		virtual void EndRenderRTBuffer(RTBuffer* RtBuffer) = 0;
 		virtual void PrepareBufferHeap() = 0;

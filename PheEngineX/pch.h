@@ -63,6 +63,7 @@
 #include "glm/gtx/quaternion.hpp"
 #include "Engine/PCommonData.h"
 #include "Engine/PDefines.h"
+#include "Engine/PUtility.h"
 #include <dxgidebug.h>
 #include <iostream>
 

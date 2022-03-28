@@ -51,6 +51,5 @@ namespace Phe
 		PRenderer* PMainRenderer;
 		int PRenderNum = 0;
 		float PTotalTime = 0;
-
 	};
 }

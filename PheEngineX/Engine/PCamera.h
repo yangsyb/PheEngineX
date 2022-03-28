@@ -82,6 +82,36 @@ namespace Phe
 		}
 		virtual void UpdateZNearFar() override;
 
+		void ResetOrtho(float pleft, float pright, float pbottom, float ptop, float pnear, float pfar)
+		{
+			Left = pleft;
+			Right = pright;
+			Bottom = pbottom;
+			Top = ptop;
+			Near = pnear;
+			Far = pfar;
+
+			RecalculateProjectionMatrix();
+			RecalculateViewMatrix();
+		}
+
+		void RecalculateOrtho(glm::vec3 SceneCenter, float SceneRadius)
+		{
+			glm::mat4 PDesiredView = glm::lookAtLH(PPosistion, SceneCenter, PUp);
+			glm::vec4 PSceneSphere = VectorToMat(SceneCenter, PDesiredView);
+// 			Near = PSceneSphere.x - SceneRadius;
+// 			Far = PSceneSphere.x + SceneRadius;
+			Left = PSceneSphere.x - SceneRadius;
+			Right = PSceneSphere.x + SceneRadius;
+			Bottom = PSceneSphere.y - SceneRadius;
+			Top = PSceneSphere.y + SceneRadius;
+			Near = PSceneSphere.z - SceneRadius;
+			Far = PSceneSphere.z + SceneRadius;
+
+			RecalculateProjectionMatrix();
+			RecalculateViewMatrix();
+		}
+
 	protected:
 		virtual glm::mat4 GetPreciseProjectionMatrix() override
 		{
@@ -90,17 +120,22 @@ namespace Phe
 
 		virtual void RecalculateProjectionMatrix() override
 		{
-			PProjection = glm::orthoLH_ZO(-Width, Width, -Width, Width, -Width, Width);
+			PProjection = glm::orthoLH_ZO(Left, Right, Bottom, Top, Near, Far);
 
-			PProjection[3].z = -PProjection[3].z;
-			PProjection[3].b = -PProjection[3].b;
-			PProjection[3].p = -PProjection[3].p;
+			//PProjection[3].z = -PProjection[3].z;
+			//PProjection[3].b = -PProjection[3].b;
+			//PProjection[3].p = -PProjection[3].p;
 			PProjectionView = PProjection * PView;
 			UpdateProjectionConstant();
 		}
 
 		float Width = 30;
-
+		float Left = -30;
+		float Right = 30;
+		float Top = 30;
+		float Bottom = -30;
+		float Near = -30;
+		float Far = 30;
 	};
 
 	class PPerspectiveCamera : public PCamera

@@ -9,7 +9,7 @@
 namespace Phe
 {
 
-	PRenderScene::PRenderScene() : PrimitiveNumber(0), PSceneCenter()
+	PRenderScene::PRenderScene() : PrimitiveNumber(0), PSceneCenter(glm::vec3(0,0,0)), PSceneRadius(35)
 	{
 
 	}

@@ -10,7 +10,7 @@
 
 namespace Phe
 {
-	enum Platform
+	enum class Platform
 	{
 		Win32,
 		IOS,
@@ -40,11 +40,11 @@ namespace Phe
 		Platform PCurrentPlatform;
 
 		PWindow* PheWindow;
-		PRenderThread* PRender;
+//		PRenderThread* PRender;
 
 		PScene* PMainScene;
 		PEditor* PMainEditor;
 		PGameTimer PTimer;
-		std::unique_ptr<PAssetManager> MainAssetManager;
+		std::unique_ptr<PAssetManager> PMainAssetManager;
 	};
 }
