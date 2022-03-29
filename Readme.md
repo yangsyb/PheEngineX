@@ -19,7 +19,7 @@ These are Used for USER to manipulate the Engine <br/>
 e.g. <br/>
 Create A Texture On your ContentBrowser <br/>
 Create An Actor On your ContentBrowser <br/>
-(May not have a Viewable Editor so far but structure are designed) <br/><br/>
+(May not have a Viewable Editor so far but structures are designed) <br/><br/>
 Engine/Scene : MainThread Scene Manager, all NODE are used for Construct MainThreadScene <br/>
 
-Render : RebderThread staff (Renderer, RenderScene, Primitive) <br/>
+Render : RenderThread staff (Renderer, RenderScene, Primitive) <br/>
