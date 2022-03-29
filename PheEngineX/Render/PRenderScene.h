@@ -1,12 +1,12 @@
 #pragma once
 #include "pch.h"
-#include "Engine/Transform.h"
-#include "Engine/PStaticMesh.h"
+#include "Engine/Core/Transform.h"
+#include "Engine/Scene/PStaticMesh.h"
 #include "DX12/PDescriptorHeap.h"
 #include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PGPUCommonBuffer.h"
 #include "PPrimitive.h"
-#include "Engine/PLight.h"
+#include "Engine/Scene/PLight.h"
 
 namespace Phe
 {

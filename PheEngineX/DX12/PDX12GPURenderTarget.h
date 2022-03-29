@@ -42,7 +42,7 @@ namespace Phe
 				DepthStencilDesc.Height = PHeight;
 				DepthStencilDesc.DepthOrArraySize = 1;
 				DepthStencilDesc.MipLevels = 1;
-				DepthStencilDesc.Format = DXGI_FORMAT_R24G8_TYPELESS;
+				DepthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 				//DXGI_FORMAT_D24_UNORM_S8_UINT
 				//DXGI_FORMAT_R24G8_TYPELESS
 				//DXGI_FORMAT_D24_UNORM_S8_UINT

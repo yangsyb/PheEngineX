@@ -1,8 +1,7 @@
 #pragma once
 #include "pch.h"
-#include "Engine/PThread.h"
-#include "Engine/PStaticMesh.h"
-#include "Engine/PTask.h"
+#include "Engine/Core/PThread.h"
+#include "Engine/Core/PTask.h"
 #include "PRenderScene.h"
 #include "PRenderer.h"
 namespace Phe

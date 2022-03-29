@@ -2,7 +2,7 @@
 #include "PRenderer.h"
 #include "RHI/PRHI.h"
 #include "PRenderThread.h"
-#include "Engine/PShaderManager.h"
+#include "Engine/Core/PShaderManager.h"
 
 namespace Phe
 {
@@ -167,6 +167,11 @@ namespace Phe
  			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive->GetMeshBuffer()->GetIndexCount());
    		}
    		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
+		if(NeedExportDepth)
+		{
+			PRHI::Get()->ReadBackRTBuffer(PShadowMap->GetDepthStencilBuffer());
+			NeedExportDepth = false;
+		}
 	}
 
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)

@@ -53,6 +53,9 @@ namespace Phe
 		virtual void DestroyMaterial(PMaterial* Material) override;
 		virtual void DestroyRTBuffer(RTBuffer* RtBuffer) override;
 
+		virtual void ReadBackRTBuffer(RTBuffer* InRTBuffer) override;
+		virtual void ReadBackTexture(PGPUTexture* InTexture) override;
+
 		virtual void Flush() override;
 	private:
 		void ResetCommandList();

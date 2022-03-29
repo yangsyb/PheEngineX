@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "PGPUMeshBuffer.h"
-#include "Engine/PStaticMesh.h"
 
 namespace Phe
 {

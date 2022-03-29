@@ -24,6 +24,8 @@ namespace Phe
 		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
 		void ShaderResourceBinding(PPrimitive* Primitive);
 		void PrepareShadowMap(PRenderScene* RenderScene);
+
+		void SetExportDepth() { NeedExportDepth = true; }
 	private:
 		void RenderCurrentScene(PRenderScene* RenderScene);
 		PGPUCommonBuffer* PerCameraBuffer;
@@ -31,5 +33,8 @@ namespace Phe
 
 		PGPURenderTarget* PShadowMap;
 		PPipeline* ShadowPipeline;
+
+	private:
+		bool NeedExportDepth = false;
 	};
 }

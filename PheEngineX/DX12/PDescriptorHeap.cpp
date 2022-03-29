@@ -39,7 +39,7 @@ namespace Phe
 				if (MapIt.second == HandleCount)
 				{
 					auto RetHandle = CD3DX12_CPU_DESCRIPTOR_HANDLE(PCurrentHeap->GetCPUDescriptorHandleForHeapStart());
-					RetHandle.ptr += MapIt.first * PDescriptorSize;
+					RetHandle.ptr += size_t(MapIt.first) * PDescriptorSize;
 					PFreeSizeMap.erase(MapIt.first);
 					return { RetHandle, MapIt.first };
 				}
@@ -60,7 +60,7 @@ namespace Phe
 
 		CD3DX12_CPU_DESCRIPTOR_HANDLE ret = PCurrentHandle;
 		UINT32 retNum = CurrentOffset;
-		PCurrentHandle.ptr += HandleCount * PDescriptorSize;
+		PCurrentHandle.ptr += size_t(HandleCount) * PDescriptorSize;
 		PRemainingFreeHandles -= HandleCount;
 		CurrentOffset += HandleCount;
 		return { ret, retNum };

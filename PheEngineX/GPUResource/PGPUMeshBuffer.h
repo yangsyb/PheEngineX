@@ -4,7 +4,6 @@
 
 namespace Phe
 {
-	class PStaticMesh;
 	class PGPUMeshBuffer
 	{
 	public:

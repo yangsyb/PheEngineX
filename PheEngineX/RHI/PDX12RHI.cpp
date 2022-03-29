@@ -1,12 +1,13 @@
 #include "pch.h"
 #include "PDX12RHI.h"
-#include "Engine/PEngine.h"
+#include "Engine/Core/PEngine.h"
 #include "DX12/PDX12GPUMeshBuffer.h"
 #include "DX12/PDX12Shader.h"
 #include "DX12/PDX12Pipeline.h"
 #include "DX12/PDX12GPUCommonBuffer.h"
 #include "DX12/PDX12GPUTexture.h"
 #include "DX12/DDSTextureLoader.h"
+#include "DX12/DDSTextureSaver.h"
 #include "DX12/PDX12GPURenderTarget.h"
 
 namespace Phe
@@ -615,6 +616,7 @@ namespace Phe
 
 			auto DsvAllocation = PDsvHeap->Allocate(1);
 			NewRTBuffer->PHandleOffset = DsvAllocation.second;
+
 			PDevice->CreateDepthStencilView(NewRTBuffer->PResource->GetResource().Get(), &dsvDesc, DsvAllocation.first);
 		}
 		return NewRTBuffer;
@@ -878,6 +880,20 @@ namespace Phe
 		}
 	}
 
+	//Please Ensure the RTBuffer State is Generic_Read!!
+	void PDX12RHI::ReadBackRTBuffer(RTBuffer* InRTBuffer)
+	{
+		DX12RTBuffer* InDX12RTBuffer = static_cast<DX12RTBuffer*>(InRTBuffer);
+
+		HRESULT hr = SaveDDSTextureToFile(PCommandQueue.Get(), InDX12RTBuffer->PResource->GetResource().Get(), L"Depth.dds");
+	}
+
+	void PDX12RHI::ReadBackTexture(PGPUTexture* InTexture)
+	{
+		PDX12GPUTexture* InDX12Texture = static_cast<PDX12GPUTexture*>(InTexture);
+		HRESULT hr = SaveDDSTextureToFile(PCommandQueue.Get(), InDX12Texture->GetPResource()->GetResource().Get(), L"Depth.dds");
+	}
+
 	void PDX12RHI::ResetCommandList()
 	{
 		ThrowIfFailed(PCommandList->Reset(PCommandAllocator.Get(), nullptr));
@@ -892,10 +908,11 @@ namespace Phe
 
 	Microsoft::WRL::ComPtr<ID3DBlob> PDX12RHI::CompileShader(const std::wstring& Filename, const D3D_SHADER_MACRO* Defines, const std::string& EntryPoint, const std::string& Target)
 	{
+		UINT compileFlags = D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 		ComPtr<ID3DBlob> ByteCode;
 		ComPtr<ID3DBlob> Errors;
 		D3DCompileFromFile(Filename.c_str(), Defines, D3D_COMPILE_STANDARD_FILE_INCLUDE,
-			EntryPoint.c_str(), Target.c_str(), 0, 0, &ByteCode, &Errors);
+			EntryPoint.c_str(), Target.c_str(), compileFlags, 0, &ByteCode, &Errors);
 		return ByteCode;
 	}
 

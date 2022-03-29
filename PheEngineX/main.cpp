@@ -1,7 +1,7 @@
 #include "pch.h"
-#include "Engine/PEngine.h"
-#include "Engine/PShader.h"
-#include "Engine/PMaterial.h"
+#include "Engine/Core/PEngine.h"
+#include "Engine/Core/PShader.h"
+#include "Engine/Core/PMaterial.h"
 using namespace Phe;
 
 #ifdef PlatformUndef

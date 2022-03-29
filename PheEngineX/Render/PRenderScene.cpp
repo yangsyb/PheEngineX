@@ -1,10 +1,10 @@
 #include "pch.h"
 #include "PRenderScene.h"
 #include "PRenderThread.h"
-#include "Engine/PAssetManager.h"
+#include "Engine/Core/PAssetManager.h"
 #include "RHI/PRHI.h"
-#include "Engine/PMaterial.h"
-#include "Engine/PShaderManager.h"
+#include "Engine/Core/PMaterial.h"
+#include "Engine/Core/PShaderManager.h"
 
 namespace Phe
 {

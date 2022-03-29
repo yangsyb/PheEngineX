@@ -1,10 +1,10 @@
 #pragma once
 #include "pch.h"
-#include "Engine/Transform.h"
+#include "Engine/Core/Transform.h"
 #include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PPipeline.h"
 #include "GPUResource/PGPUCommonBuffer.h"
-#include "Engine/PMaterial.h"
+#include "Engine/Core/PMaterial.h"
 
 namespace Phe
 {

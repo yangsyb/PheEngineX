@@ -12,5 +12,14 @@
 按4开灯 <br/>
 按5可开关灯是否移动，目前阴影移动起来有失真 <br/>
 
-# Descriptor管理
-在DX12/Descriptor Heap中实现Allocate与DeAllocate，TODO: Dynamic Heap合并提交
+# Engine Design
+Engine/Core : Basic Infrastructure Used for Engine Construction <br/><br/>
+Engine/Editor : Like ContentBrowser in UE5 <br/>
+These are Used for USER to manipulate the Engine <br/>
+e.g. <br/>
+Create A Texture On your ContentBrowser <br/>
+Create An Actor On your ContentBrowser <br/>
+(May not have a Viewable Editor so far but structure are designed) <br/><br/>
+Engine/Scene : MainThread Scene Manager, all NODE are used for Construct MainThreadScene <br/>
+
+Render : RebderThread staff (Renderer, RenderScene, Primitive) <br/>

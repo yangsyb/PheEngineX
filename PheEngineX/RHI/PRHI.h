@@ -2,10 +2,10 @@
 #include "pch.h"
 #include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PGPUTexture.h"
-#include "Engine/PShader.h"
+#include "Engine/Core/PShader.h"
 #include "GPUResource/PPipeline.h"
 #include "GPUResource/PGPUCommonBuffer.h"
-#include "Engine/PMaterial.h"
+#include "Engine/Core/PMaterial.h"
 #include "Render/PPrimitive.h"
 #include "GPUResource/PGPURenderTarget.h"
 
@@ -59,6 +59,9 @@ namespace Phe
 		virtual void DestroyMaterial(PMaterial* Material) = 0;
 		virtual void DestroyRTBuffer(RTBuffer* RtBuffer) = 0;
 		
+		//Read Back
+		virtual void ReadBackRTBuffer(RTBuffer* InRTBuffer) = 0;
+		virtual void ReadBackTexture(PGPUTexture* InTexture) = 0;
 
 		virtual void Flush() = 0;
 

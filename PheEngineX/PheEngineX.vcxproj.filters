@@ -78,61 +78,61 @@
     <ClInclude Include="DX12\PDX12ShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PAssetManager.h">
+    <ClInclude Include="Engine\Core\PAssetManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PCamera.h">
+    <ClInclude Include="Engine\Scene\PCamera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PCameraController.h">
+    <ClInclude Include="Engine\Core\PCameraController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\PCommonData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PEditor.h">
+    <ClInclude Include="Engine\Core\PEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PEngine.h">
+    <ClInclude Include="Engine\Core\PEngine.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PGameTimer.h">
+    <ClInclude Include="Engine\Core\PGameTimer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PInput.h">
+    <ClInclude Include="Engine\Core\PInput.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PMaterial.h">
+    <ClInclude Include="Engine\Core\PMaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PScene.h">
+    <ClInclude Include="Engine\Scene\PScene.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PShader.h">
+    <ClInclude Include="Engine\Core\PShader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PShaderManager.h">
+    <ClInclude Include="Engine\Core\PShaderManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PStaticMesh.h">
+    <ClInclude Include="Engine\Scene\PStaticMesh.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PTask.h">
+    <ClInclude Include="Engine\Core\PTask.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PThread.h">
+    <ClInclude Include="Engine\Core\PThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PUtility.h">
+    <ClInclude Include="Engine\Core\PUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PWindow.h">
+    <ClInclude Include="Engine\Core\PWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\Singleton.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\Transform.h">
+    <ClInclude Include="Engine\Core\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="GPUResource\PGPUCommonBuffer.h">
@@ -153,7 +153,7 @@
     <ClInclude Include="Render\PRenderThread.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Engine\PLight.h">
+    <ClInclude Include="Engine\Scene\PLight.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Engine\PDefines.h">
@@ -175,6 +175,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DX12\PDX12GPURenderTarget.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DDSTextureSaver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DX12\DDS.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Engine\Scene\PNode.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -236,49 +245,49 @@
     <ClCompile Include="DX12\PDX12ShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PAssetManager.cpp">
+    <ClCompile Include="Engine\Core\PAssetManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PCamera.cpp">
+    <ClCompile Include="Engine\Scene\PCamera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PCameraController.cpp">
+    <ClCompile Include="Engine\Core\PCameraController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PEditor.cpp">
+    <ClCompile Include="Engine\Core\PEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PEngine.cpp">
+    <ClCompile Include="Engine\Core\PEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PGameTimer.cpp">
+    <ClCompile Include="Engine\Core\PGameTimer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PInput.cpp">
+    <ClCompile Include="Engine\Core\PInput.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PMaterial.cpp">
+    <ClCompile Include="Engine\Core\PMaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PScene.cpp">
+    <ClCompile Include="Engine\Scene\PScene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PShader.cpp">
+    <ClCompile Include="Engine\Core\PShader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PShaderManager.cpp">
+    <ClCompile Include="Engine\Core\PShaderManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PStaticMesh.cpp">
+    <ClCompile Include="Engine\Scene\PStaticMesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PTask.cpp">
+    <ClCompile Include="Engine\Core\PTask.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PThread.cpp">
+    <ClCompile Include="Engine\Core\PThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PWindow.cpp">
+    <ClCompile Include="Engine\Core\PWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GPUResource\PGPUCommonBuffer.cpp">
@@ -299,13 +308,16 @@
     <ClCompile Include="Render\PRenderThread.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Engine\PLight.cpp">
+    <ClCompile Include="Engine\Scene\PLight.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="GPUResource\PGPURenderTarget.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DX12\PDX12GPURenderTarget.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Engine\Scene\PNode.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

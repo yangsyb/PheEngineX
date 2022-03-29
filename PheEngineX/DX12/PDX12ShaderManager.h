@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "Engine/PShaderManager.h"
+#include "Engine/Core/PShaderManager.h"
 #include "PDX12Shader.h"
 namespace Phe
 {
