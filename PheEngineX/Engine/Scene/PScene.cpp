@@ -1,9 +1,11 @@
 #include "pch.h"
 #include "PScene.h"
+#include "PNodeStaticMesh.h"
+#include "PNodeLight.h"
 #include "Engine/Core/PUtility.h"
 #include "Engine/Core/PTask.h"
-#include "Engine/Core/PAssetManager.h"
-
+#include "Engine/Editor/PAssetManager.h"
+#include "Engine/Core/PEngine.h"
 namespace Phe
 {
 	PNodeScene::PNodeScene(PNode* Parent) : PNode(nullptr)
@@ -16,9 +18,9 @@ namespace Phe
 
 	}
 
-	PScene::PScene()
+	PScene::PScene() : PSceneCenter(glm::vec3(0, 0, 0)), PSceneRadius(35), PMainLight(nullptr)
 	{
-		PNodeFactory::CreateNode<PNodeScene>(nullptr);
+		PSceneNode = PNodeFactory::CreateNode<PNodeScene>(nullptr, "MainScene");
 		PMainCamera = std::make_shared<PPerspectiveCamera>(45.0f, 1920.0f, 1080.0f);
 //		PMainCamera = std::make_shared<POrthographicCamera>(1000.0f, 1000.0f);
 		PMainCameraController = std::make_unique<PCameraController>(PMainCamera);
@@ -35,21 +37,14 @@ namespace Phe
 	{
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
-		PMeshDataStruct data = PAssetManager::GetSingleton().GetMeshData(StaticMeshName);
-		if (SceneMeshList.count(StaticMeshName) == 0)
-		{
-			SceneMeshList.insert({ StaticMeshName, std::vector<Transform>{MeshTransform} });
-			PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddMeshBufferAndPrimitive(StaticMeshName, data, MeshTransform, MaterialName));
-			PRender->AddTask(task);
-		}
-		else
-		{
-			auto KVpair = SceneMeshList.find(StaticMeshName);
-			std::vector<Transform>& TransformVec = KVpair->second;
-			TransformVec.push_back(MeshTransform);
-			PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddPrimitive(StaticMeshName, MeshTransform, MaterialName));
-			PRender->AddTask(task);
-		}
+		PStaticMesh* StaticMesh = PAssetManager::GetSingleton().GetMeshData(StaticMeshName);
+		PMaterial* Material = PAssetManager::GetSingleton().GetMaterialData(MaterialName);
+
+		PNodeStaticMesh* NodeStaticMesh = PNodeFactory::CreateNode<PNodeStaticMesh>(PSceneNode);
+		NodeStaticMesh->SetStaticMeshName(StaticMeshName);
+		NodeStaticMesh->SetTransform(MeshTransform);
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddMeshBufferAndPrimitive(NodeStaticMesh, Material, NodeStaticMesh->GetTransformBuffer()));
+		PRender->AddTask(task);
 	}
 
 	// Parse Json File Data
@@ -63,22 +58,39 @@ namespace Phe
 		}
 	}
 
-	void PScene::AddLight(std::string LightName, PLightDataStruct LightData)
+	void PScene::AddLight(std::string LightName, Transform LightTransform)
 	{
-		SceneLightList.insert({LightName, LightData});
-		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(LightName, LightData));
+		//SceneLightList.insert({LightName, LightData});
+		//PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(LightName, LightData));
+		//PRender->AddTask(task);
+		PLight* Light = PAssetManager::GetSingleton().GetLightData(LightName);
+		if (!PRender) PRender = PRenderThread::Get();
+		assert(PRender);
+		PNodeLight* NodeLight = PNodeFactory::CreateNode<PNodeLight>(PSceneNode);
+		if(!PMainLight)
+		{
+			PMainLight = NodeLight;
+		}
+		NodeLight->SetAsLight(Light);
+		Light->BindNodeLight(NodeLight);
+		NodeLight->SetPosition(LightTransform.GetPosition());
+		NodeLight->SetRotation(LightTransform.GetRotation());
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(NodeLight));
 		PRender->AddTask(task);
 	}
+
 
 	void PScene::AddLightFromFile(const std::string FilePath)
 	{
 
 	}
 
-	void PScene::SetLightDynamic(std::string LightName)
+	void PScene::SetLightDynamic()
 	{
-		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->SetLightDynamic(LightName));
-		PRender->AddTask(task);
+		if(PMainLight)
+		{
+			PMainLight->SetIsDynamic(!PMainLight->GetIsDynamic());
+		}
 	}
 
 	void PScene::ClearScene()
@@ -92,16 +104,64 @@ namespace Phe
 	{
 		PMainCameraController->OnUpdate();
 		UpdateMainPassBuffer();
+		if(PMainLight)
+		{
+			if(PMainLight->GetIsDynamic())
+			{
+				static bool IsUp = true;
+				glm::vec3 CurrentRotation = PMainLight->GetLightView()->GetRotation();
+				if (IsUp)
+				{
+					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y + 0.05, CurrentRotation.z));
+					if (CurrentRotation.y + 0.02 > -20)
+					{
+						IsUp = false;
+					}
+				}
+				else
+				{
+					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y - 0.05, CurrentRotation.z));
+					if (CurrentRotation.y - 0.02 < -70)
+					{
+						IsUp = true;
+					}
+				}
+			}
+			UpdateShadowPassBuffer();
+		}
 	}
 
 	void PScene::UpdateMainPassBuffer()
 	{
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
-		PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateCamera(PMainCamera->GetPassConstant()));
+		PerCameraCBuffer* PerCameraBuffer = new PerCameraCBuffer();
+		auto CameraPassConstant = PMainCamera->GetPassConstant();
+		PerCameraBuffer->Time = PEngine::GetSingleton().GetTimer().TotalTime();
+		PerCameraBuffer->View = CameraPassConstant.View;
+		PerCameraBuffer->Proj = CameraPassConstant.Proj;
+		PerCameraBuffer->CameraLocationMat = CameraPassConstant.CameraLocationMat;
+		if(PMainLight)
+		{
+			PerCameraBuffer->ShadowTransform = PMainLight->GetPassCBuffer().ShadowTransform;
+		}
+		PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateCamera(PerCameraBuffer));
 		PRender->AddTask(task);
 	}
 
+	void PScene::UpdateShadowPassBuffer()
+	{
+		if (!PRender) PRender = PRenderThread::Get();
+		assert(PRender);
+		PMainLight->GetLightView()->RecalculateOrtho(PSceneCenter, PSceneRadius);
+		PerCameraCBuffer* PerCameraBuffer = new PerCameraCBuffer();
+		auto LightData = PMainLight->GetPassCBuffer();
+		PerCameraBuffer->Time = PEngine::GetSingleton().GetTimer().TotalTime();
+		PerCameraBuffer->View = LightData.View;
+		PerCameraBuffer->Proj = LightData.Proj;
+		PerCameraBuffer->CameraLocationMat = LightData.CameraLocationMat;
+		PerCameraBuffer->ShadowTransform = PMainLight->GetVP();
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->GetMainRenderLight()->UpdateCameraBuffer(PerCameraBuffer));
+		PRender->AddTask(task);
+	}
 }
-
-

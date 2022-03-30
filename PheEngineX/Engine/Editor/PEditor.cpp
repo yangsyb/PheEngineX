@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "PEditor.h"
-#include "Engine/Scene/PStaticMesh.h"
-#include "PEngine.h"
+#include "Engine/Core/PEngine.h"
 
 namespace Phe
 {

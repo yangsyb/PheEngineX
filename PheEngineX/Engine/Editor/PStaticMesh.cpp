@@ -14,4 +14,9 @@ namespace Phe
 
 	}
 
+	void PStaticMesh::BindNodeStaticMesh(PNodeStaticMesh* NodeStaticMesh)
+	{
+		LinkedNodeStaticMesh.insert({ NodeStaticMesh->GetID(), NodeStaticMesh });
+	}
+
 }

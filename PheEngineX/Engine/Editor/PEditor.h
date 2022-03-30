@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "PInput.h"
+#include "Engine/Core/PInput.h"
 
 namespace Phe
 {

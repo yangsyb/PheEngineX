@@ -2,11 +2,11 @@
 #include "PRenderer.h"
 #include "RHI/PRHI.h"
 #include "PRenderThread.h"
-#include "Engine/Core/PShaderManager.h"
+#include "Engine/Editor/PShaderManager.h"
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), CurrentCameraData(PerCameraCBuffer()), PShadowMap(nullptr), ShadowPipeline(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), ShadowPipeline(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -29,41 +29,12 @@ namespace Phe
 		{
 			PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
 		}
-		CurrentCameraData.Time = PRenderThread::Get()->GetCurrentTotalTime();
 
-		if(RenderScene->GetMainLightBuffer())
+		PRenderLight* MainRenderLight = nullptr;
+		if(MainRenderLight = RenderScene->GetMainRenderLight())
 		{
 			PrepareShadowMap(RenderScene);
 		}
-
-		if (RenderScene->GetMainLight())
-		{
-			PLight* MainLight = RenderScene->GetMainLight();
-			CurrentCameraData.ShadowTransform = RenderScene->GetMainLight()->GetPassCBuffer().ShadowTransform;
-
-			if (MainLight->GetIsDynamic())
-			{
-				static bool IsUp = true;
-				glm::vec3 CurrentRotation = MainLight->GetLightTransform().GetRotation();
-				if(IsUp)
-				{
-					MainLight->SetLightRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y+0.05, CurrentRotation.z));
-					if(CurrentRotation.y + 0.02 >-20)
-					{
-						IsUp = false;
-					}
-				}
-				else
-				{
-					MainLight->SetLightRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y - 0.05, CurrentRotation.z));
-					if (CurrentRotation.y - 0.02 <-70)
-					{
-						IsUp = true;
-					}
-				}
-			}
-		}
-		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, &CurrentCameraData);
 	}
 
 	void PRenderer::RenderFrameEnd(PRenderScene* RenderScene)
@@ -89,8 +60,8 @@ namespace Phe
 	{
 		if(Primitive->GetPerObjBuffer())
 		{
-			auto PerObj = Primitive->GetTransform().GetBufferData();
-			PRHI::Get()->UpdateCommonBuffer(Primitive->GetPerObjBuffer(), &PerObj);
+//			auto PerObj = Primitive->GetTransform().GetBufferData();
+//			PRHI::Get()->UpdateCommonBuffer(Primitive->GetPerObjBuffer(), &PerObj);
 		}
 		if(Primitive->GetPerMatBuffer())
 		{
@@ -99,11 +70,9 @@ namespace Phe
 		}
 	}
 
-	void PRenderer::UpdateCamera(PerCameraCBuffer CameraCBuffer)
+	void PRenderer::UpdateCamera(PerCameraCBuffer* CameraCBuffer)
 	{
-		CurrentCameraData.Proj = CameraCBuffer.Proj;
-		CurrentCameraData.View = CameraCBuffer.View;
-		CurrentCameraData.CameraLocationMat = CameraCBuffer.CameraLocationMat;
+		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, CameraCBuffer);
 	}
 
 	void PRenderer::ShaderResourceBinding(PPrimitive* Primitive)
@@ -131,7 +100,7 @@ namespace Phe
 
 	void PRenderer::PrepareShadowMap(PRenderScene* RenderScene)
 	{
-		PGPUCommonBuffer* MainLightBuffer = RenderScene->GetMainLightBuffer();
+		PGPUCommonBuffer* MainLightBuffer = RenderScene->GetMainRenderLight()->GetCameraBuffer();
 		if(!PShadowMap)
 		{
 			PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2048, 2048);
@@ -149,11 +118,11 @@ namespace Phe
   		PRHI::Get()->PrepareBufferHeap();
  		PRHI::Get()->SetRenderTarget(PShadowMap);
 
-		RenderScene->GetMainLight()->GetLightView()->RecalculateOrtho(RenderScene->GetSceneCenter(), RenderScene->GetSceneRadius());
-		auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
-		LightData.Time = PRenderThread::Get()->GetCurrentTotalTime();
-		LightData.ShadowTransform = RenderScene->GetMainLight()->GetVP();
-		PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
+//		RenderScene->GetMainLight()->GetLightView()->RecalculateOrtho(RenderScene->GetSceneCenter(), RenderScene->GetSceneRadius());
+//		auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
+//		LightData.Time = PRenderThread::Get()->GetCurrentTotalTime();
+//		LightData.ShadowTransform = RenderScene->GetMainLight()->GetVP();
+//		PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
 
   		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
    		for (auto Primitive : CurrentDrawPrimitives)

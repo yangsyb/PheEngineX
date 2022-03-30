@@ -1,5 +1,5 @@
 #pragma once
-#include "Engine/Scene/PCamera.h"
+#include "PCamera.h"
 
 namespace Phe
 {

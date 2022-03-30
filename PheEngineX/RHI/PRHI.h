@@ -2,10 +2,10 @@
 #include "pch.h"
 #include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PGPUTexture.h"
-#include "Engine/Core/PShader.h"
+#include "Engine/Editor/PShader.h"
 #include "GPUResource/PPipeline.h"
 #include "GPUResource/PGPUCommonBuffer.h"
-#include "Engine/Core/PMaterial.h"
+#include "Engine/Editor/PMaterial.h"
 #include "Render/PPrimitive.h"
 #include "GPUResource/PGPURenderTarget.h"
 

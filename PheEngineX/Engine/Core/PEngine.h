@@ -4,9 +4,9 @@
 #include "Render/PRenderThread.h"
 #include "PGameTimer.h"
 #include "Engine/Scene/PScene.h"
-#include "PEditor.h"
-#include "PAssetManager.h"
-#include "PShaderManager.h"
+#include "Engine/Editor/PEditor.h"
+#include "Engine/Editor/PAssetManager.h"
+#include "Engine/Editor/PShaderManager.h"
 
 namespace Phe
 {
@@ -33,6 +33,7 @@ namespace Phe
 
 		PWindow* GetWindow() { return PheWindow; }
 		PScene* GetScene() { return PMainScene; }
+		PGameTimer& GetTimer() { return PTimer; }
 	private:
 		UINT32 PWidth;
 		UINT32 PHeight;

@@ -1,12 +1,15 @@
 #pragma once
 #include "pch.h"
 #include "Engine/Core/Transform.h"
-#include "Engine/Scene/PStaticMesh.h"
+#include "Engine/Editor/PStaticMesh.h"
 #include "DX12/PDescriptorHeap.h"
 #include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PGPUCommonBuffer.h"
 #include "PPrimitive.h"
-#include "Engine/Scene/PLight.h"
+#include "Engine/Editor/PLight.h"
+#include "Engine/Scene/PNodeStaticMesh.h"
+#include "Engine/Scene/PNodeLight.h"
+#include "PRenderLight.h"
 
 namespace Phe
 {
@@ -18,11 +21,11 @@ namespace Phe
 		PRenderScene();
 		~PRenderScene();
 
-		void AddMeshBuffer(std::string StaticMeshName, PMeshDataStruct StaticMeshData);
-		void AddPrimitive(std::string MeshBufferName, Transform MeshTransform, std::string MaterialName);
-		void AddMeshBufferAndPrimitive(std::string StaticMeshName, PMeshDataStruct StaticMeshData, Transform MeshTransform, std::string MaterialName);
-		void AddLight(std::string LightName, PLightDataStruct LightData);
-		void SetLightDynamic(std::string LightName);
+		void AddMeshBuffer(std::string StaticMeshName, PNodeStaticMesh* InNodeStaticMesh);
+//		void AddPrimitive(std::string MeshBufferName, Transform MeshTransform, std::string MaterialName);
+		void AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData);
+		void AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData);
+		void AddLight(PNodeLight* InNodeLight);
 		void ClearScene();
 		void DestroyRenderScene();
 		
@@ -30,14 +33,9 @@ namespace Phe
 
 		PGPUMeshBuffer* GetMeshBuffer(std::string MeshBufferName);
 		std::vector<PPrimitive*> GetPrimitives() { return Primitives; }
-		PGPUCommonBuffer* GetLightCommonBuffer(std::string LightName);
-		PGPUCommonBuffer* GetMainLightBuffer();
-		PLight* GetMainLight();
-		glm::vec3 GetSceneCenter() { return PSceneCenter; }
-		float GetSceneRadius() { return PSceneRadius; }
+		PRenderLight* GetRenderLight(std::string LightName);
+		PRenderLight* GetMainRenderLight();
 	private:
-		glm::vec3 PSceneCenter;
-		float PSceneRadius;
 
 		UINT32 PrimitiveNumber;
 		std::unordered_map<std::string, PGPUMeshBuffer*> PMeshBufferPool;
@@ -46,6 +44,7 @@ namespace Phe
 		std::unordered_map<PLight*, PGPUCommonBuffer*> PLightPool;
 		std::vector<PShader*> PShaderPool;
 		std::vector<PPrimitive*> Primitives;
+		std::vector<PRenderLight*> PRenderLights;
 	private:
 
 	};

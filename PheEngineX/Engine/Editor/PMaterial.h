@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "PShader.h"
+#include "PTexture.h"
 #include "GPUResource/PGPUTexture.h"
 
 namespace Phe
@@ -35,6 +36,9 @@ namespace Phe
 		std::vector<PGPUTexture*> GetGPUTextureBuffer() { return MatTextureBuffer; }
 		void SetGPUTextureBuffer(std::vector<PGPUTexture*> MaterialTexture) { MatTextureBuffer = MaterialTexture; }
 
+		std::vector<PTexture*> GetTextures() { return MatTextures; }
+
+
 	protected:
 		std::string PMaterialName;
 		std::string PShaderName;
@@ -46,6 +50,7 @@ namespace Phe
 		float PSpecular;
 		float PRoughness;
 
+		std::vector<PTexture*> MatTextures;
 		std::vector<PGPUTexture*> MatTextureBuffer;
 	};
 

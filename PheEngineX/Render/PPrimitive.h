@@ -1,10 +1,9 @@
 #pragma once
 #include "pch.h"
-#include "Engine/Core/Transform.h"
-#include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PPipeline.h"
 #include "GPUResource/PGPUCommonBuffer.h"
-#include "Engine/Core/PMaterial.h"
+#include "Engine/Editor/PMaterial.h"
+#include "GPUResource/PGPUMeshBuffer.h"
 
 namespace Phe
 {
@@ -14,23 +13,22 @@ namespace Phe
 		PPrimitive();
 		~PPrimitive();
 
-		void SetPrimitiveRenderData(PGPUMeshBuffer* MeshBuffer, Transform MeshTransform, PGPUCommonBuffer* ObjBuffer, PGPUCommonBuffer* MatBuffer, PMaterial* MaterialBuffer);
+		void SetPrimitiveRenderData(PGPUMeshBuffer* MeshBuffer, PGPUCommonBuffer* ObjBuffer, PGPUCommonBuffer* MatBuffer, PMaterial* MaterialBuffer);
 		void SetPipeline(PPipeline* Pipe) { Pipeline = Pipe; }
 		PGPUMeshBuffer* GetMeshBuffer() { return PMeshBuffer; }
-		Transform GetTransform() { return PTransform; }
 		PPipeline* GetPipeline() { return Pipeline; }
 		PGPUCommonBuffer* GetPerObjBuffer() { return PerObjBuffer; }
 		PGPUCommonBuffer* GetPerMatBuffer() { return PerMatBuffer; }
 		PMaterial* GetMaterial() { return PrimitiveMaterial; }
 
+		void UpdateCommonBuffer(PGPUCommonBuffer* Buffer, void* Data);
+
 		void DestroyPrimitive();
 	private:
 		PGPUMeshBuffer* PMeshBuffer;
-		Transform PTransform;
 		PPipeline* Pipeline;
 		PGPUCommonBuffer* PerObjBuffer;
 		PGPUCommonBuffer* PerMatBuffer;
-
 		PMaterial* PrimitiveMaterial;
 	};
 }

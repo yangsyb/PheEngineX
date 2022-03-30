@@ -27,6 +27,7 @@ namespace Phe
 		{
 			return PFlag;
 		}
+		virtual void ReleaseCurrentData() { ReleasePtr(CurrentData); }
 		virtual void SetHandleOffset(UINT32 Offset) { PHandleOffset = Offset; }
 		virtual UINT32 GetHandleOffset() { return PHandleOffset; }
 
@@ -36,6 +37,6 @@ namespace Phe
 		UINT32 PFlag;
 
 		UINT32 PHandleOffset;
-
+		void* CurrentData;
 	};
 }

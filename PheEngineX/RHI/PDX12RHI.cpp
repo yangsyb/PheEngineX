@@ -754,6 +754,7 @@ namespace Phe
 
 	void PDX12RHI::UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data)
 	{
+		CommonBuffer->ReleaseCurrentData();
 		CommonBuffer->AllocateData(0, Data);
 	}
 
@@ -785,7 +786,7 @@ namespace Phe
 			if (!IsFindInPool)
 			{
 				auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
-				auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData.TFileName);
+				auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData->GetTextureFileName());
 				TextureRefPool.insert({ NewTexture, 1 });
 				RetGPUTextureBuffer.push_back(NewTexture);
 			}
@@ -807,7 +808,7 @@ namespace Phe
 			}
 		}
 		auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
-		auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData.TFileName);
+		auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData->GetTextureFileName());
 		TextureRefPool.insert({ NewTexture, 1 });
 		CurrentTextureBuffer.push_back(NewTexture);
 		return;

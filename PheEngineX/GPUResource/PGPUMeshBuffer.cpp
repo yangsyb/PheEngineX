@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PGPUMeshBuffer.h"
+#include "Engine/Editor/PStaticMesh.h"
 
 namespace Phe
 {
@@ -15,17 +16,20 @@ namespace Phe
 
 	}
 
-	void PGPUMeshBuffer::SetMeshBuffer(std::string Name, PMeshDataStruct RMeshData)
+	void PGPUMeshBuffer::SetMeshBuffer(std::string Name, PStaticMesh* StaticMeshData)
 	{
-		for (size_t index = 0; index < RMeshData.Vertices.size() / 3; index++)
+		auto Vertices = StaticMeshData->GetVertices();
+		auto Normals = StaticMeshData->GetTangents();
+		auto UVs = StaticMeshData->GetUVs();
+		for (size_t index = 0; index < Vertices.size() / 3; index++)
 		{
 			PVertex Vertex;
-			Vertex.Pos = { RMeshData.Vertices[index * 3], RMeshData.Vertices[index * 3 + 1] ,RMeshData.Vertices[index * 3 + 2] };
-			Vertex.Normal = { RMeshData.Normal[index * 3], RMeshData.Normal[index * 3 + 1] ,RMeshData.Normal[index * 3 + 2],1 };
-			Vertex.TextCoord = { RMeshData.UVs[index * 2], RMeshData.UVs[index * 2 + 1] };
+			Vertex.Pos = { Vertices[index * 3], Vertices[index * 3 + 1] ,Vertices[index * 3 + 2] };
+			Vertex.Normal = { Normals[index * 3], Normals[index * 3 + 1] ,Normals[index * 3 + 2],1 };
+			Vertex.TextCoord = { UVs[index * 2], UVs[index * 2 + 1] };
 			PVertexVector.push_back(Vertex);
 		}
-		PIndexVector = RMeshData.Indices;
+		PIndexVector = StaticMeshData->GetIndices();
 		PVertexCount = UINT32(PVertexVector.size());
 		PIndexCount = UINT32(PIndexVector.size());
 

@@ -15,15 +15,19 @@ namespace Phe
 
 	}
 
-	void PPrimitive::SetPrimitiveRenderData(PGPUMeshBuffer* MeshBuffer, Transform MeshTransform, PGPUCommonBuffer* ObjBuffer, PGPUCommonBuffer* MatBuffer, PMaterial* MaterialBuffer)
+	void PPrimitive::SetPrimitiveRenderData(PGPUMeshBuffer* MeshBuffer, PGPUCommonBuffer* ObjBuffer, PGPUCommonBuffer* MatBuffer, PMaterial* MaterialBuffer)
 	{
 		PMeshBuffer = MeshBuffer;
-		PTransform = MeshTransform;
 		PerObjBuffer = ObjBuffer;
 		PerMatBuffer = MatBuffer;
 		PrimitiveMaterial = MaterialBuffer;
 	}
 
+
+	void PPrimitive::UpdateCommonBuffer(PGPUCommonBuffer* Buffer, void* Data)
+	{
+		PRHI::Get()->UpdateCommonBuffer(Buffer, Data);
+	}
 
 	void PPrimitive::DestroyPrimitive()
 	{

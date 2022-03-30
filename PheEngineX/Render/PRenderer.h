@@ -21,7 +21,7 @@ namespace Phe
 		void DestroyRenderer();
 
 		void UpdatePrimitiveBuffer(PPrimitive* Primitive);
-		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
+		void UpdateCamera(PerCameraCBuffer* CameraCBuffer);
 		void ShaderResourceBinding(PPrimitive* Primitive);
 		void PrepareShadowMap(PRenderScene* RenderScene);
 
@@ -29,7 +29,6 @@ namespace Phe
 	private:
 		void RenderCurrentScene(PRenderScene* RenderScene);
 		PGPUCommonBuffer* PerCameraBuffer;
-		PerCameraCBuffer CurrentCameraData;
 
 		PGPURenderTarget* PShadowMap;
 		PPipeline* ShadowPipeline;

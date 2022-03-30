@@ -2,7 +2,7 @@
 #if defined (RenderDeviceDX12)
 #include "PDX12Shader.h"
 #include "PDX12Shadermanager.h"
-#include "Engine/Core/PShaderManager.h"
+#include "Engine/Editor/PShaderManager.h"
 namespace Phe
 {
 	PDX12Shader::PDX12Shader(const std::string ShaderName, const std::wstring FilePath, std::string VS, std::string PS) : 

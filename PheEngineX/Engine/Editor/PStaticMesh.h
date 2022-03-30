@@ -1,7 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "Engine/Core/Transform.h"
-#include "PNode.h"
+#include "Engine/Scene/PNodeStaticMesh.h"
 namespace Phe
 {
 	class PStaticMesh
@@ -9,6 +8,8 @@ namespace Phe
 	public:
 		PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT16> Indices, std::vector<float> Tangents, std::vector<float> UVs);
 		~PStaticMesh();
+
+		void BindNodeStaticMesh(PNodeStaticMesh* NodeStaticMesh);
 
 		std::string GetName() { return PMeshName; }
 		std::vector<float> GetVertices() { return PVertices; }
@@ -21,15 +22,7 @@ namespace Phe
 		std::vector<UINT16> PIndices;
 		std::vector<float> PTangents;
 		std::vector<float> PUVs;
-	};
 
-
-	class PNodeStaticMesh : public PNode
-	{
-		DECLARE_NODE_WITH_CONSTRUCTOR(StaticMesh);
-	public:
-		virtual ~PNodeStaticMesh();
-
-		PStaticMesh* LinkedStaticMesh;
+		std::unordered_multimap<std::string, PNodeStaticMesh*> LinkedNodeStaticMesh;
 	};
 }

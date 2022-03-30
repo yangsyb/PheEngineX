@@ -12,7 +12,7 @@ namespace Phe
 
 	PGPUCommonBuffer::~PGPUCommonBuffer()
 	{
-
+		ReleaseCurrentData();
 	}
 
 }

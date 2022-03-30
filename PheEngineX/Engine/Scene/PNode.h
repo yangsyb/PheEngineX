@@ -41,7 +41,7 @@ namespace Phe
 		virtual void SetPostion(const glm::vec3 InPostion);
 		virtual void SetRotation(const glm::vec3 InRotation);
 		virtual void SetScale(const glm::vec3 InScale);
-
+		virtual void SetTransform(const Transform InTransform);
 
 		virtual PNode* GetNodeByID(const std::string ID);
 		virtual std::string GetID() const { return PNodeID; }
@@ -54,6 +54,7 @@ namespace Phe
 
 		virtual Transform GetTransform() { return PTransform; }
 
+		virtual PerObjectCBuffer* GetTransformBuffer() { return PTransformBufferData; }
 	protected:
 		std::string PNodeID;
 		PNode* PParent;
@@ -64,5 +65,7 @@ namespace Phe
 		glm::vec3 PRelativeScale;
 
 		Transform PTransform;
+
+		PerObjectCBuffer* PTransformBufferData;
 	};
 }

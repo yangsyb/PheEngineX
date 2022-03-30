@@ -68,7 +68,7 @@ namespace Phe
 	void PEngine::EndFrame()
 	{
 		PRenderThread* RenderThread = PRenderThread::Get();
-		while (RenderThread->GetRenderNum() >= 1)
+		while (RenderThread->GetRenderNum() >= 0)
 		{
 			std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 		}

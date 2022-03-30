@@ -1,7 +1,5 @@
 #include "pch.h"
 #include "Engine/Core/PEngine.h"
-#include "Engine/Core/PShader.h"
-#include "Engine/Core/PMaterial.h"
 using namespace Phe;
 
 #ifdef PlatformUndef
@@ -67,7 +65,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Load Test Data To AssetManager
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\InSceneData.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tree.json");
-	PAssetManager::GetSingleton().AddMeshData("box", { StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxUVs });
+	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxUVs);
 	//Texture Data
 	PAssetManager::GetSingleton().AddTextureData("Texture1", L"Textures\\jacket_diff.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture1Normal", L"Textures\\jacket_norm.dds");
@@ -78,6 +76,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().AddMaterialData("DefaultMat", "DefaultShader", std::vector<std::string>{"Texture1", "Texture1Normal"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeLeafMat", "WPOShader", std::vector<std::string>{"Texture2"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeTruckMat", "WPOTrunkShader", std::vector<std::string>{"Texture3", "Texture3Normal"});
+	//Light
+	PAssetManager::GetSingleton().AddLightData("DefaultLight");
 
 	std::function<void()> f1 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
@@ -94,16 +94,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeLeafMat");
 	};
 	std::function<void()> f4 = [&]() {
-		PLightDataStruct LightData;
-		LightData.Position = glm::vec3(-1.4f, 52.3f, 35.7f);
-		LightData.Rotation = glm::vec3(0.f, -45.f, -90.f);
-		LightData.Scale = glm::vec3(1.f, 1.f, 1.f);
-		LightData.LightRadius = 1.f;
-		LightData.LightStrength = 1.f;
-		PEngine::GetSingleton().GetScene()->AddLight("MainLight", LightData);
+		Transform LightTransform(glm::vec3(-1.4f, 52.3f, 35.7f), glm::vec3(0.f, -45.f, -90.f), glm::vec3(1.f, 1.f, 1.f));
+		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", LightTransform);
 	};
 	std::function<void()> f5 = [&]() {
-		PEngine::GetSingleton().GetScene()->SetLightDynamic("MainLight");
+		PEngine::GetSingleton().GetScene()->SetLightDynamic();
 	};
 	//Register Key
 	RegisterList.push_back(f1);

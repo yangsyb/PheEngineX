@@ -1,6 +1,6 @@
 #if defined (RenderDeviceDX12)
 #pragma once
-#include "Engine/Core/PShader.h"
+#include "Engine/Editor/PShader.h"
 namespace Phe
 {
 	enum class ShaderParamType

@@ -18,6 +18,7 @@ namespace Phe
 		{
 			ReleasePtr(Node);
 		}
+		ReleasePtr(PTransformBufferData);
 	}
 
 	void PNode::AddChild(PNode* Child)
@@ -73,6 +74,18 @@ namespace Phe
 	void PNode::SetScale(const glm::vec3 InScale)
 	{
 		PRelativeScale = InScale;
+	}
+
+	void PNode::SetTransform(const Transform InTransform)
+	{
+		PTransform = InTransform;
+		if(!PTransformBufferData)
+		{
+			PTransformBufferData = new PerObjectCBuffer();
+		}
+		PTransformBufferData->Position = PTransform.GetPositionMat();
+		PTransformBufferData->Rotation = PTransform.GetRotaionMat();
+		PTransformBufferData->Scale = PTransform.GetScaleMat();
 	}
 
 	PNode* PNode::GetNodeByID(const std::string ID)

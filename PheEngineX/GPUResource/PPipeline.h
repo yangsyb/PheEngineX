@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "Engine/Core/PShader.h"
+#include "Engine/Editor/PShader.h"
 
 namespace Phe
 {
