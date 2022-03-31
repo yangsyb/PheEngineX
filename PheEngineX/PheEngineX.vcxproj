@@ -186,7 +186,7 @@
     <ClInclude Include="GPUResource\PGPURenderTarget.h" />
     <ClInclude Include="GPUResource\PGPUResource.h" />
     <ClInclude Include="GPUResource\PGPUTexture.h" />
-    <ClInclude Include="GPUResource\PPipeline.h" />
+    <ClInclude Include="Engine\Editor\PPipeline.h" />
     <ClInclude Include="Json\json\json-forwards.h" />
     <ClInclude Include="Json\json\json.h" />
     <ClInclude Include="pch.h" />
@@ -242,7 +242,7 @@
     <ClCompile Include="GPUResource\PGPURenderTarget.cpp" />
     <ClCompile Include="GPUResource\PGPUResource.cpp" />
     <ClCompile Include="GPUResource\PGPUTexture.cpp" />
-    <ClCompile Include="GPUResource\PPipeline.cpp" />
+    <ClCompile Include="Engine\Editor\PPipeline.cpp" />
     <ClCompile Include="Json\jsoncpp.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

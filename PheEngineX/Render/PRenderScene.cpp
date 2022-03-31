@@ -79,8 +79,9 @@ namespace Phe
 		std::string MaterialName = StaticMeshMaterial->GetName();
 		if (PMaterialPool.count(MaterialName) == 0)
 		{
-			StaticMeshMaterial->CompileMaterial();
-			PMaterialPool.insert({ MaterialName , StaticMeshMaterial });
+/*			PMaterialPool.insert({ MaterialName , StaticMeshMaterial });*/
+//			StaticMeshMaterial->CompileMaterial();
+			AddMaterial(StaticMeshMaterial);
 		}
 		auto ptr = GetMeshBuffer(InNodeStaticMesh->GetStaticMeshName());
 		if (ptr)
@@ -132,6 +133,31 @@ namespace Phe
 		PRenderLight* NewRenderLight = new PRenderLight();
 		InNodeLight->SetLinkedLight(NewRenderLight);
 		PRenderLights.push_back(NewRenderLight);
+	}
+
+	void PRenderScene::AddTexture(PTexture* Texture)
+	{
+		std::string TextureName = Texture->GetTextureName();
+		if(PTexturePool.count(TextureName) == 0)
+		{
+			PGPUTexture* NewGPUTexture = PRHI::Get()->CreateTexture(TextureName, Texture->GetTextureFileName());
+			Texture->BindGPUTexture(NewGPUTexture);
+			PTexturePool.insert({ TextureName, NewGPUTexture });
+		}
+	}
+
+	void PRenderScene::AddMaterial(PMaterial* Material)
+	{
+		if(PMaterialPool.count(Material->GetName()) == 0)
+		{
+			auto Textures = Material->GetTextures();
+			for(auto& Texture : Textures)
+			{
+				AddTexture(Texture.second);
+				Texture.second->BindMaterial(Material);
+			}
+			PMaterialPool.insert( {Material->GetName(), Material} );
+		}
 	}
 
 	void PRenderScene::ClearScene()

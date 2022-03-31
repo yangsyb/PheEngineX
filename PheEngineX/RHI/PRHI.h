@@ -3,7 +3,7 @@
 #include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PGPUTexture.h"
 #include "Engine/Editor/PShader.h"
-#include "GPUResource/PPipeline.h"
+#include "Engine/Editor/PPipeline.h"
 #include "GPUResource/PGPUCommonBuffer.h"
 #include "Engine/Editor/PMaterial.h"
 #include "Render/PPrimitive.h"

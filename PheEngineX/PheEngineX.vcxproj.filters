@@ -138,7 +138,7 @@
     <ClInclude Include="GPUResource\PGPUCommonBuffer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GPUResource\PPipeline.h">
+    <ClInclude Include="Engine\Editor\PPipeline.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Render\PPrimitive.h">
@@ -305,7 +305,7 @@
     <ClCompile Include="GPUResource\PGPUCommonBuffer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="GPUResource\PPipeline.cpp">
+    <ClCompile Include="Engine\Editor\PPipeline.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Render\PPrimitive.cpp">

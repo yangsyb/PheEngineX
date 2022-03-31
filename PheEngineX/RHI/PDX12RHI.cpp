@@ -768,77 +768,77 @@ namespace Phe
 
 	void PDX12RHI::CompileMaterial(PMaterial* Material)
 	{
-		std::vector<PGPUTexture*> RetGPUTextureBuffer;
-		auto TextureNameVector = Material->GetTextureName();
-		for (auto TextureName : TextureNameVector)
-		{
-			bool IsFindInPool = false;
-			for (auto T : TextureRefPool)
-			{
-				if (T.first->GetTextureName() == TextureName)
-				{
-					T.second += 1;
-					RetGPUTextureBuffer.push_back(T.first);
-					IsFindInPool = true;
-					break;
-				}
-			}
-			if (!IsFindInPool)
-			{
-				auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
-				auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData->GetTextureFileName());
-				TextureRefPool.insert({ NewTexture, 1 });
-				RetGPUTextureBuffer.push_back(NewTexture);
-			}
-
-		}
-		Material->SetGPUTextureBuffer(RetGPUTextureBuffer);
+// 		std::vector<PGPUTexture*> RetGPUTextureBuffer;
+// 		auto TextureNameVector = Material->GetTextureName();
+// 		for (auto TextureName : TextureNameVector)
+// 		{
+// 			bool IsFindInPool = false;
+// 			for (auto T : TextureRefPool)
+// 			{
+// 				if (T.first->GetTextureName() == TextureName)
+// 				{
+// 					T.second += 1;
+// 					RetGPUTextureBuffer.push_back(T.first);
+// 					IsFindInPool = true;
+// 					break;
+// 				}
+// 			}
+// 			if (!IsFindInPool)
+// 			{
+// 				auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
+// 				auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData->GetTextureFileName());
+// 				TextureRefPool.insert({ NewTexture, 1 });
+// 				RetGPUTextureBuffer.push_back(NewTexture);
+// 			}
+// 
+// 		}
+// 		Material->SetGPUTextureBuffer(RetGPUTextureBuffer);
 	}
 
 	void PDX12RHI::AddTextureToMaterial(PMaterial* Material, std::string TextureName)
 	{
-		auto CurrentTextureBuffer = Material->GetGPUTextureBuffer();
-		for (auto T : TextureRefPool)
-		{
-			if (T.first->GetTextureName() == TextureName)
-			{
-				T.second += 1;
-				CurrentTextureBuffer.push_back(T.first);
-				return;
-			}
-		}
-		auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
-		auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData->GetTextureFileName());
-		TextureRefPool.insert({ NewTexture, 1 });
-		CurrentTextureBuffer.push_back(NewTexture);
-		return;
+// 		auto CurrentTextureBuffer = Material->GetGPUTextureBuffer();
+// 		for (auto T : TextureRefPool)
+// 		{
+// 			if (T.first->GetTextureName() == TextureName)
+// 			{
+// 				T.second += 1;
+// 				CurrentTextureBuffer.push_back(T.first);
+// 				return;
+// 			}
+// 		}
+// 		auto TextureData = PAssetManager::GetSingleton().GetTextureData(TextureName);
+// 		auto NewTexture = PRHI::Get()->CreateTexture(TextureName, TextureData->GetTextureFileName());
+// 		TextureRefPool.insert({ NewTexture, 1 });
+// 		CurrentTextureBuffer.push_back(NewTexture);
+// 		return;
 	}
 
 	void PDX12RHI::DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName)
 	{
-		for (auto T : TextureRefPool)
-		{
-			if (T.first->GetTextureName() == TextureName)
-			{
-				T.second -= 1;
-				if (T.second == 0)
-				{
-					TextureRefPool.erase(T.first);
-					DestroyTexture(T.first);
-				}
-				break;
-			}
-		}
-		auto CurrentTextureBuffer = Material->GetGPUTextureBuffer();
-
-		for (auto it = CurrentTextureBuffer.begin(); it != CurrentTextureBuffer.end(); it++)
-		{
-			if ((*it)->GetTextureName() == TextureName)
-			{
-				CurrentTextureBuffer.erase(it);
-				return;
-			}
-		}
+// 		for (auto T : TextureRefPool)
+// 		{
+// 			if (T.first->GetTextureName() == TextureName)
+// 			{
+// 				T.second -= 1;
+// 				if (T.second == 0)
+// 				{
+// 					TextureRefPool.erase(T.first);
+// 					DestroyTexture(T.first);
+// 				}
+// 				break;
+// 			}
+// 		}
+// 		auto CurrentTextureBuffer = Material->GetGPUTextureBuffer();
+// 
+// 		for (auto it = CurrentTextureBuffer.begin(); it != CurrentTextureBuffer.end(); it++)
+// 		{
+// 			if ((*it)->GetTextureName() == TextureName)
+// 			{
+// 				CurrentTextureBuffer.erase(it);
+// 				return;
+// 			}
+// 		}
 	}
 
 	void PDX12RHI::DestroyPrimitive(PPrimitive* Primitive)

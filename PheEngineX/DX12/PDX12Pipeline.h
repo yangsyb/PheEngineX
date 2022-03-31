@@ -1,7 +1,7 @@
 #if defined (RenderDeviceDX12)
 #pragma once
 #include "pch.h"
-#include "GPUResource/PPipeline.h"
+#include "Engine/Editor/PPipeline.h"
 
 namespace Phe
 {

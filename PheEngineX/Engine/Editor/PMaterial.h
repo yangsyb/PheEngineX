@@ -15,7 +15,7 @@ namespace Phe
 
 		std::string GetName() { return PMaterialName; }
 		std::string GetShaderName() { return PShaderName; }
-		std::vector<std::string> GetTextureName() { return PTextureNames; }
+//		std::vector<std::string> GetTextureName() { return PTextureNames; }
 		glm::vec4 GetBaseColor() { return PBaseColor; }
 		glm::vec3 GetPFresnelR0() { return PFresnelR0; }
 		float GetMetallic() { return PMetallic; }
@@ -24,25 +24,25 @@ namespace Phe
 
 		void AddTexture(std::string TextureName);
 		void DeleteTextre(std::string TextureName);
-		void SetBaseColor(glm::vec4 BC) { PBaseColor = BC; }
-		void SetFresnelR0(glm::vec3 FR) { PFresnelR0 = FR; }
-		void SetMetallic(float M) { PMetallic = M; }
-		void SetSpecular(float S) { PSpecular = S; }
-		void SetRoughness(float R) { PRoughness = R; }
+		void SetBaseColor(glm::vec4 BaseColor) { PBaseColor = BaseColor; }
+		void SetFresnelR0(glm::vec3 FresnelR0) { PFresnelR0 = FresnelR0; }
+		void SetMetallic(float Metallic) { PMetallic = Metallic; }
+		void SetSpecular(float Specular) { PSpecular = Specular; }
+		void SetRoughness(float Roughness) { PRoughness = Roughness; }
 
 		void CompileMaterial();
-
+		UINT32 GetHandleOffset();
 		PerMaterialCBuffer GetMaterialBuffer();
-		std::vector<PGPUTexture*> GetGPUTextureBuffer() { return MatTextureBuffer; }
-		void SetGPUTextureBuffer(std::vector<PGPUTexture*> MaterialTexture) { MatTextureBuffer = MaterialTexture; }
+//		std::vector<PGPUTexture*> GetGPUTextureBuffer() { return MatTextureBuffer; }
+//		void SetGPUTextureBuffer(std::vector<PGPUTexture*> MaterialTexture) { MatTextureBuffer = MaterialTexture; }
 
-		std::vector<PTexture*> GetTextures() { return MatTextures; }
+		std::unordered_map<std::string, PTexture*> GetTextures() { return MatTextures; }
 
 
 	protected:
 		std::string PMaterialName;
 		std::string PShaderName;
-		std::vector<std::string> PTextureNames;
+//		std::vector<std::string> PTextureNames;
 
 		glm::vec4 PBaseColor;
 		glm::vec3 PFresnelR0;
@@ -50,8 +50,9 @@ namespace Phe
 		float PSpecular;
 		float PRoughness;
 
-		std::vector<PTexture*> MatTextures;
-		std::vector<PGPUTexture*> MatTextureBuffer;
+		std::unordered_map<std::string, PTexture*> MatTextures;
+//		std::vector<PGPUTexture*> MatTextureBuffer;
+		
 	};
 
 }

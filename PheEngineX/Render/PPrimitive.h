@@ -1,6 +1,6 @@
 #pragma once
 #include "pch.h"
-#include "GPUResource/PPipeline.h"
+#include "Engine/Editor/PPipeline.h"
 #include "GPUResource/PGPUCommonBuffer.h"
 #include "Engine/Editor/PMaterial.h"
 #include "GPUResource/PGPUMeshBuffer.h"

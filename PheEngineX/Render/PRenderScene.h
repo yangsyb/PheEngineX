@@ -26,6 +26,8 @@ namespace Phe
 		void AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData);
 		void AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData);
 		void AddLight(PNodeLight* InNodeLight);
+		void AddTexture(PTexture* Texture);
+		void AddMaterial(PMaterial* Material);
 		void ClearScene();
 		void DestroyRenderScene();
 		
@@ -42,6 +44,7 @@ namespace Phe
 		std::unordered_map<std::string, PMaterial*> PMaterialPool;
 		std::unordered_map<std::string, PPipeline*> PPipelinePool;
 		std::unordered_map<PLight*, PGPUCommonBuffer*> PLightPool;
+		std::unordered_map<std::string, PGPUTexture*> PTexturePool;
 		std::vector<PShader*> PShaderPool;
 		std::vector<PPrimitive*> Primitives;
 		std::vector<PRenderLight*> PRenderLights;
