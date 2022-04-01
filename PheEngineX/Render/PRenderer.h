@@ -30,6 +30,7 @@ namespace Phe
 		void RenderCurrentScene(PRenderScene* RenderScene);
 		PGPUCommonBuffer* PerCameraBuffer;
 
+		PPipeline* PCurrentPipeline;
 		PGPURenderTarget* PShadowMap;
 		PPipeline* ShadowPipeline;
 

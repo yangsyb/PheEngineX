@@ -129,7 +129,11 @@ namespace Phe
    		{
  			UpdatePrimitiveBuffer(Primitive.second);
 //			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
-			PRHI::Get()->SetGraphicsPipeline(Primitive.second->GetPipeline());
+			auto PrimitivePipeline = Primitive.second->GetPipeline();
+			if(PrimitivePipeline != PCurrentPipeline)
+			{
+				PRHI::Get()->SetGraphicsPipeline(PrimitivePipeline);
+			}
  			PRHI::Get()->SetMeshBuffer(Primitive.second->GetMeshBuffer());
 			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", MainLightBuffer->GetHandleOffset());
  			ShaderResourceBinding(Primitive.second);
@@ -150,7 +154,11 @@ namespace Phe
 		for(auto Primitive : CurrentDrawPrimitives)
 		{
 			UpdatePrimitiveBuffer(Primitive.second);
-			PRHI::Get()->SetGraphicsPipeline(Primitive.second->GetPipeline());
+			auto PrimitivePipeline = Primitive.second->GetPipeline();
+			if (PrimitivePipeline != PCurrentPipeline)
+			{
+				PRHI::Get()->SetGraphicsPipeline(PrimitivePipeline);
+			}
 			PRHI::Get()->SetMeshBuffer(Primitive.second->GetMeshBuffer());
 			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerCameraBuffer->GetHandleOffset());
 			ShaderResourceBinding(Primitive.second);

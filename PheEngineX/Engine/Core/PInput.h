@@ -80,7 +80,6 @@ public:
 	virtual void OnMouseDown(KeyCode MouseBtnCode) = 0;
 	virtual void OnMouseUp(KeyCode MouseBtnCode) = 0;
 
-
 protected:
 	virtual void UpdateKeyState(KeyCode keyCode, int windowsKeyCode) = 0;
 	virtual void UpdateMouseState() = 0;

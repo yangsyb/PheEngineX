@@ -109,4 +109,5 @@ void PInputWin32::OnMouseMove(int x, int y)
 {
 	PMousePosition = std::pair<float, float>(float(x), float(y));
 }
+
 #endif
