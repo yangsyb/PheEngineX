@@ -51,8 +51,8 @@ namespace Phe
 		virtual void SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset) = 0;
 		virtual void DrawPrimitiveIndexedInstanced(UINT DrawIndexCount) = 0;
 
-		virtual void CompileMaterial(PMaterial* Material) = 0;
-		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) = 0;
+// 		virtual void CompileMaterial(PMaterial* Material) = 0;
+// 		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) = 0;
 		virtual void DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName) = 0;
 		virtual void DestroyPrimitive(PPrimitive* Primitive) = 0;
 		virtual void DestroyTexture(PGPUTexture* Texture, bool CheckMap = false) = 0;

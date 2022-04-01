@@ -12,9 +12,7 @@ namespace Phe
 		void Register(PHashMap<KeyCode, PFunc<void()>> KeyEvents);
 		void Register(KeyCode Key, PFunc<void()> KeyEvent);
 		void Update();
-
 	private:
-		std::vector<std::function<void()>> EditorEvent;
 		PHashMap<KeyCode, PFunc<void()>> EditorEventTable;
 	};
 }

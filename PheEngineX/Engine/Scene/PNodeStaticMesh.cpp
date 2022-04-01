@@ -5,7 +5,7 @@
 #include "Render/PRenderThread.h"
 namespace Phe
 {
-	PNodeStaticMesh::PNodeStaticMesh(PNode* Parent) : PNode(nullptr), PLinkedPrimitive(nullptr)
+	PNodeStaticMesh::PNodeStaticMesh(PNode* Parent) : PNode(nullptr), PLinkedPrimitive(nullptr), PLinkedStaticMesh(nullptr), PStaticMeshName()
 	{
 
 	}

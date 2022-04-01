@@ -6,7 +6,7 @@
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), ShadowPipeline(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), ShadowPipeline(nullptr), PCurrentPipeline(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -21,12 +21,12 @@ namespace Phe
 		PRHI::Get()->InitGraphicsPipeline();
 		PRHI::Get()->ResizeWindow(1920, 1080);
 		PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
-
 	}
 
 	
 	void PRenderer::RenderFrameBegin(PRenderScene* RenderScene)
 	{
+		PRHI::Get()->BeginFrame();
 		PRenderLight* MainRenderLight = nullptr;
 		if(MainRenderLight = RenderScene->GetMainRenderLight())
 		{
@@ -38,7 +38,7 @@ namespace Phe
 
 	void PRenderer::RenderFrameEnd(PRenderScene* RenderScene)
 	{
-
+		PRHI::Get()->EndFrame();
 	}
 
 	void PRenderer::Render(PRenderScene* RenderScene)
@@ -57,16 +57,7 @@ namespace Phe
 
 	void PRenderer::UpdatePrimitiveBuffer(PPrimitive* Primitive)
 	{
-		if(Primitive->GetPerObjBuffer())
-		{
-//			auto PerObj = Primitive->GetTransform().GetBufferData();
-//			PRHI::Get()->UpdateCommonBuffer(Primitive->GetPerObjBuffer(), &PerObj);
-		}
-		if(Primitive->GetPerMatBuffer())
-		{
-			auto PerMat = Primitive->GetMaterial()->GetMaterialBuffer();
-			PRHI::Get()->UpdateCommonBuffer(Primitive->GetPerMatBuffer(), &PerMat);
-		}
+
 	}
 
 	void PRenderer::UpdateCamera(PerCameraCBuffer* CameraCBuffer)
@@ -115,19 +106,12 @@ namespace Phe
 // 			PRHI::Get()->UpdatePipeline(ShadowPipeline, PShadowMap);
 //   		}
   
-  		PRHI::Get()->PrepareBufferHeap();
  		PRHI::Get()->SetRenderTarget(PShadowMap);
-
-//		RenderScene->GetMainLight()->GetLightView()->RecalculateOrtho(RenderScene->GetSceneCenter(), RenderScene->GetSceneRadius());
-//		auto LightData = RenderScene->GetMainLight()->GetPassCBuffer();
-//		LightData.Time = PRenderThread::Get()->GetCurrentTotalTime();
-//		LightData.ShadowTransform = RenderScene->GetMainLight()->GetVP();
-//		PRHI::Get()->UpdateCommonBuffer(MainLightBuffer, &LightData);
 
   		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
    		for (auto Primitive : CurrentDrawPrimitives)
    		{
- 			UpdatePrimitiveBuffer(Primitive.second);
+// 			UpdatePrimitiveBuffer(Primitive.second);
 //			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
 			auto PrimitivePipeline = Primitive.second->GetPipeline();
 			if(PrimitivePipeline != PCurrentPipeline)
@@ -149,11 +133,10 @@ namespace Phe
 
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)
 	{
-		PRHI::Get()->PrepareBufferHeap();
 		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
 		for(auto Primitive : CurrentDrawPrimitives)
 		{
-			UpdatePrimitiveBuffer(Primitive.second);
+//			UpdatePrimitiveBuffer(Primitive.second);
 			auto PrimitivePipeline = Primitive.second->GetPipeline();
 			if (PrimitivePipeline != PCurrentPipeline)
 			{

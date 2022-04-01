@@ -109,7 +109,9 @@ namespace Phe
   			}
   			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
   			auto Mat = PRHI::Get()->CreateCommonBuffer(sizeof(PerMaterialCBuffer), 1);
+			PerMaterialCBuffer* MatData = new PerMaterialCBuffer(StaticMeshMaterial->GetMaterialBuffer());
   			PRHI::Get()->UpdateCommonBuffer(Obj, TransformData);
+			PRHI::Get()->UpdateCommonBuffer(Mat, MatData);
   			NewPrimitive->SetPrimitiveRenderData(ptr, Obj, Mat, PMaterialPool.at(MaterialName));
   			PPrimitivePool.insert({ InNodeStaticMesh->GetID(), NewPrimitive});
  		}

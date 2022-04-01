@@ -123,12 +123,20 @@ namespace Phe
 
 	void PDX12RHI::BeginFrame()
 	{
-
+		PCommandAllocator->Reset();
+		ResetCommandList();
+		PrepareBufferHeap();
 	}
 
 	void PDX12RHI::EndFrame()
 	{
+		ExecuteCommandList();
 
+		ThrowIfFailed(PSwapChain->Present(1, 0));
+
+		PCurrBackBuffer = (PCurrBackBuffer + 1) % SwapChainBufferCount;
+
+		Flush();
 	}
 
 	void PDX12RHI::Flush()
@@ -351,8 +359,6 @@ namespace Phe
 
 	void PDX12RHI::BeginRenderBackBuffer()
 	{
-		PCommandAllocator->Reset();
-		ResetCommandList();
 
 		PCommandList->RSSetViewports(1, &PViewport);
 		PCommandList->RSSetScissorRects(1, &PScissorRect);
@@ -376,50 +382,31 @@ namespace Phe
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 		PCommandList->ResourceBarrier(1, &PresourceBarrier);
 
-		ExecuteCommandList();
-
-
-		ThrowIfFailed(PSwapChain->Present(1, 0));
-
-		PCurrBackBuffer = (PCurrBackBuffer + 1) % SwapChainBufferCount;
-
-		Flush();
+// 		ExecuteCommandList();
+// 
+// 
+// 		ThrowIfFailed(PSwapChain->Present(1, 0));
+// 
+// 		PCurrBackBuffer = (PCurrBackBuffer + 1) % SwapChainBufferCount;
+// 
+// 		Flush();
 	}
 
 	void PDX12RHI::BeginRenderRTBuffer(RTBuffer* RtBuffer)
 	{
-		ResetCommandList();
+//		ResetCommandList();
 		DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RtBuffer);
-		// 		D3D12_RESOURCE_BARRIER barrier;
-		//  		memset(&barrier, 0, sizeof(barrier));
-		// 		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		// 		barrier.Transition.pResource = InRtBuffer->PResource->GetResource().Get();
-		// 		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		// 		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-		// 		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		// 		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 		CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_GENERIC_READ, InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE);
 		PCommandList->ResourceBarrier(1, &ResourceBarrier);
-		//		ExecuteCommandList();
-		//		Flush();
 	}
 
 	void PDX12RHI::EndRenderRTBuffer(RTBuffer* RtBuffer)
 	{
-		//		ResetCommandList();
 		DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RtBuffer);
-		// 		D3D12_RESOURCE_BARRIER barrier;
-		//  		memset(&barrier, 0, sizeof(barrier));
-		//  		barrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-		//  		barrier.Transition.pResource = InRtBuffer->PResource->GetResource().Get();
-		//  		barrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-		//  		barrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-		//  		barrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PIXEL_SHADER_RESOURCE | D3D12_RESOURCE_STATE_NON_PIXEL_SHADER_RESOURCE;
-		//  		barrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
 		CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 		PCommandList->ResourceBarrier(1, &ResourceBarrier);
-		ExecuteCommandList();
-		Flush();
+//		ExecuteCommandList();
+//		Flush();
 	}
 
 	void PDX12RHI::SetGraphicsPipeline(PPipeline* Pipeline)
@@ -575,7 +562,7 @@ namespace Phe
 
 	Phe::PGPUTexture* PDX12RHI::CreateTexture(std::string TextureName, RTBuffer* InRTBuffer)
 	{
-		ResetCommandList();
+//		ResetCommandList();
 		PDX12GPUTexture* NewGPUTexture = new PDX12GPUTexture(TextureName);
 		DX12RTBuffer* InDX12RTBuffer = static_cast<DX12RTBuffer*>(InRTBuffer);
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -590,8 +577,8 @@ namespace Phe
 		NewGPUTexture->SetHandleOffset(Pair.second);
 		PDevice->CreateShaderResourceView(InDX12RTBuffer->PResource->GetResource().Get(), &srvDesc, Pair.first);
 //		TextureRefPool.insert({ NewGPUTexture, 1 });
-		ExecuteCommandList();
-		Flush();
+//		ExecuteCommandList();
+//		Flush();
 		return NewGPUTexture;
 	}
 
@@ -771,8 +758,8 @@ namespace Phe
 		PCommandList->SetGraphicsRootDescriptorTable(DX12ShaderManager->PropertyToID(PropertyName), CbvHandle);
 	}
 
-	void PDX12RHI::CompileMaterial(PMaterial* Material)
-	{
+// 	void PDX12RHI::CompileMaterial(PMaterial* Material)
+// 	{
 // 		std::vector<PGPUTexture*> RetGPUTextureBuffer;
 // 		auto TextureNameVector = Material->GetTextureName();
 // 		for (auto TextureName : TextureNameVector)
@@ -798,10 +785,10 @@ namespace Phe
 // 
 // 		}
 // 		Material->SetGPUTextureBuffer(RetGPUTextureBuffer);
-	}
+//	}
 
-	void PDX12RHI::AddTextureToMaterial(PMaterial* Material, std::string TextureName)
-	{
+// 	void PDX12RHI::AddTextureToMaterial(PMaterial* Material, std::string TextureName)
+// 	{
 // 		auto CurrentTextureBuffer = Material->GetGPUTextureBuffer();
 // 		for (auto T : TextureRefPool)
 // 		{
@@ -817,7 +804,7 @@ namespace Phe
 // 		TextureRefPool.insert({ NewTexture, 1 });
 // 		CurrentTextureBuffer.push_back(NewTexture);
 // 		return;
-	}
+//	}
 
 	void PDX12RHI::DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName)
 	{

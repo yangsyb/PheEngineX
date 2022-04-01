@@ -45,8 +45,8 @@ namespace Phe
 		virtual void SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset) override;
 		virtual void DrawPrimitiveIndexedInstanced(UINT DrawIndexCount) override;
 
-		virtual void CompileMaterial(PMaterial* Material) override;
-		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) override;
+// 		virtual void CompileMaterial(PMaterial* Material) override;
+// 		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) override;
 		virtual void DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName) override;
 		virtual void DestroyPrimitive(PPrimitive* Primitive) override;
 		virtual void DestroyTexture(PGPUTexture* Texture, bool CheckMap = false) override;
