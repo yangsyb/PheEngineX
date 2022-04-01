@@ -28,27 +28,26 @@ namespace Phe
 		void AddLight(PNodeLight* InNodeLight);
 		void AddTexture(PTexture* Texture);
 		void AddMaterial(PMaterial* Material);
-		void ClearScene();
+
 		void DestroyRenderScene();
 		
-		void UpdateSceneRadius(glm::vec3 Position);
+		void DestroyScenePrimitive(std::string PrimitiveId);
+		void DestroySceneLight(std::string SceneLightId);
+		void DestroySceneMaterial(std::string MaterialName);
+		void DestroySceneTexture(std::string TextureName);
 
 		PGPUMeshBuffer* GetMeshBuffer(std::string MeshBufferName);
-		std::vector<PPrimitive*> GetPrimitives() { return Primitives; }
+		PHashMap<std::string, PPrimitive*> GetPrimitives() { return PPrimitivePool; }
 		PRenderLight* GetRenderLight(std::string LightName);
 		PRenderLight* GetMainRenderLight();
 	private:
-
 		UINT32 PrimitiveNumber;
-		std::unordered_map<std::string, PGPUMeshBuffer*> PMeshBufferPool;
-		std::unordered_map<std::string, PMaterial*> PMaterialPool;
-		std::unordered_map<std::string, PPipeline*> PPipelinePool;
-		std::unordered_map<PLight*, PGPUCommonBuffer*> PLightPool;
-		std::unordered_map<std::string, PGPUTexture*> PTexturePool;
-		std::vector<PShader*> PShaderPool;
-		std::vector<PPrimitive*> Primitives;
-		std::vector<PRenderLight*> PRenderLights;
-	private:
-
+		PHashMap<std::string, PGPUMeshBuffer*> PMeshBufferPool;
+		PHashMap<std::string, PMaterial*> PMaterialPool;
+		PHashMap<std::string, PPipeline*> PPipelinePool;
+		PHashMap<std::string, PGPUTexture*> PTexturePool;
+		PHashMap<std::string, PPrimitive*> PPrimitivePool;
+		PHashMap<std::string, PRenderLight*> PRenderLightPool;
+		PVector<PShader*> PShaderPool;
 	};
 }

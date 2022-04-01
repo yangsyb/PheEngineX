@@ -46,13 +46,10 @@ namespace Phe
 
 		PNodeScene* PSceneNode;
 		PNodeLight* PMainLight;
-		std::unordered_map<std::string, std::vector<Transform>> SceneMeshList;
-		std::unordered_map<std::string, PLightDataStruct> SceneLightList;
+
 		PRenderThread* PRender;
 		std::shared_ptr<PPerspectiveCamera> PMainCamera;
 //		std::shared_ptr<POrthographicCamera> PMainCamera;
 		std::unique_ptr<PCameraController> PMainCameraController;
-
-		
 	};
 }

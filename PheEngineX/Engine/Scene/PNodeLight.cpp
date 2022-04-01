@@ -2,12 +2,12 @@
 #include "PNodeLight.h"
 #include "Render/PRenderLight.h"
 #include "Engine/Editor/PLight.h"
+#include "Render/PRenderThread.h"
 namespace Phe
 {
 	PNodeLight::PNodeLight(PNode* Parent) : PNode(nullptr), PLinkedRenderLight(nullptr)
 	{
 		LightView = new POrthographicCamera(4096.f, 4096.f);
-//		LightView->SetTransform(PLightTransform);
 	}
 
 	void PNodeLight::SetAsLight(PLight* Light)
@@ -53,8 +53,23 @@ namespace Phe
 		LightView->SetRotation(Rotation);
 	}
 
+	void PNodeLight::BindLinkedLight(PLight* Light)
+	{
+		PLinkedLight = Light;
+	}
+
+	void PNodeLight::BindRenderLight(PRenderLight* RenderLight)
+	{
+		PLinkedRenderLight = RenderLight;
+	}
+
+
 	PNodeLight::~PNodeLight()
 	{
-		ReleasePtr(PLinkedRenderLight);
+		PLinkedLight->UnBindNodeLight(this);
+		ReleasePtr(LightView);
+		PString NodeId = GetID();
+		PTask* Task = CreateTask(PTask, PRenderThread::Get()->GetRenderScene()->DestroySceneLight(NodeId));
+		PRenderThread::Get()->AddTask(Task);
 	}
 }

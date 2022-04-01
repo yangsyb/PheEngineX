@@ -4,7 +4,8 @@
 namespace Phe
 {
 
-	PNode::PNode(PNode* Parent) : PParent(nullptr), PRelativePostion(glm::vec3(0, 0, 0)), PRelativeRotation(glm::vec3(0, 0, 0)), PRelativeScale(glm::vec3(1, 1, 1))
+	PNode::PNode(PNode* Parent) : PParent(nullptr), PRelativePostion(glm::vec3(0, 0, 0)), PRelativeRotation(glm::vec3(0, 0, 0)), PRelativeScale(glm::vec3(1, 1, 1)),
+		PTransformBufferData(nullptr)
 	{
 		if(Parent)
 		{
@@ -42,15 +43,27 @@ namespace Phe
 	void PNode::RemoveChild(PNode* Child)
 	{
 		auto NodeIt = PChildren.begin();
-		for(;NodeIt < PChildren.end(); NodeIt++)
+		for(;NodeIt < PChildren.end(); ++NodeIt)
 		{
 			if(*NodeIt == Child)
 			{
 				(*NodeIt)->PParent = nullptr;
+				ReleasePtr(*NodeIt);
 				PChildren.erase(NodeIt);
 				return;
 			}
 		}
+	}
+
+	void PNode::RemoveAllChild()
+	{
+		auto NodeIt = PChildren.begin();
+		for(; NodeIt < PChildren.end(); ++NodeIt)
+		{
+			(*NodeIt)->PParent = nullptr;
+			ReleasePtr(*NodeIt);
+		}
+		PChildren.clear();
 	}
 
 	void PNode::Tick()
@@ -104,6 +117,15 @@ namespace Phe
 		}
 
 		return nullptr;
+	}
+
+	std::string PNode::GetLastChildID()
+	{
+		if(PChildren.size() > 0)
+		{
+			return PChildren.at(PChildren.size()-1)->GetID();
+		}
+		return "0";
 	}
 
 }

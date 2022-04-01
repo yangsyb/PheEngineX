@@ -33,6 +33,7 @@ namespace Phe
 		virtual void AddChild(PNode* Child);
 		virtual void Remove();
 		virtual void RemoveChild(PNode* Child);
+		virtual void RemoveAllChild();
 
 		virtual void Tick();
 		
@@ -51,6 +52,7 @@ namespace Phe
 		virtual glm::vec3 GetRelativePosition() { return PRelativePostion; }
 		virtual glm::vec3 GetRelativeRotaion() { return PRelativeRotation; }
 		virtual glm::vec3 GetRelativeScale() { return PRelativeScale; }
+		virtual std::string GetLastChildID();
 
 		virtual Transform GetTransform() { return PTransform; }
 

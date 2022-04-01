@@ -14,18 +14,22 @@ namespace Phe
 
 	PAssetManager::~PAssetManager()
 	{
-		for (auto Mesh : MeshData)
+		for (auto& Mesh : MeshData)
 		{
 			ReleasePtr(Mesh.second);
 		}
-		for (auto Texture : TextureData)
+		for (auto& Light : LightData)
+		{
+			ReleasePtr(Light.second);
+		}
+		for (auto& Material : MaterialData)
+		{
+			ReleasePtr(Material.second);
+		}
+		for (auto& Texture : TextureData)
 		{
 			ReleasePtr(Texture.second);
 		}
-		// 		for(auto Material : MaterialData)
-		// 		{
-		// 			ReleasePtr(Material.second);
-		// 		}
 	}
 
 	void PAssetManager::LoadJsonFile(const std::string FileName)

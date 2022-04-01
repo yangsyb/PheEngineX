@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "PStaticMesh.h"
+#include "Engine/Scene/PNodeStaticMesh.h"
 namespace Phe
 {
 	// Raw StaticMesh Data2
@@ -11,7 +12,10 @@ namespace Phe
 
 	PStaticMesh::~PStaticMesh()
 	{
-
+		for(auto& LinkedNode : LinkedNodeStaticMesh)
+		{
+			ReleasePtr(LinkedNode.second);
+		}
 	}
 
 	void PStaticMesh::BindNodeStaticMesh(PNodeStaticMesh* NodeStaticMesh)
@@ -19,4 +23,11 @@ namespace Phe
 		LinkedNodeStaticMesh.insert({ NodeStaticMesh->GetID(), NodeStaticMesh });
 	}
 
+	void PStaticMesh::UnBindNodeStaticMesh(PNodeStaticMesh* NodeStaticMesh)
+	{
+		if(LinkedNodeStaticMesh.count(NodeStaticMesh->GetID()) > 0)
+		{
+			LinkedNodeStaticMesh.erase(NodeStaticMesh->GetID());
+		}
+	}
 }

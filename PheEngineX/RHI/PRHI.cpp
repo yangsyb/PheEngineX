@@ -13,11 +13,11 @@ namespace Phe
 
 	PRHI::~PRHI()
 	{
- 		for(auto it : TextureRefPool)
- 		{
- 			delete it.first;
- 		}
-		TextureRefPool.clear();
+//  		for(auto it : TextureRefPool)
+//  		{
+//  			delete it.first;
+//  		}
+// 		TextureRefPool.clear();
 	}
 
 	PRHI* PRHI::Get()

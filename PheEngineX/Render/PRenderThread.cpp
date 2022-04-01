@@ -77,11 +77,14 @@ namespace Phe
 // 		Render();
 		{
 			std::unique_lock<std::mutex> RenderLock(Rendermtx);
-			while (PRenderNum < 0) RenderCV.wait(RenderLock);
+			while (PRenderNum <= 0) RenderCV.wait(RenderLock);
 			DoTasks();
 			PRenderNum--;
 		}
-		Render();
+		if(IsRunning)
+		{
+			Render();
+		}
 	}
 
 	void PRenderThread::OnThreadStart()
@@ -91,7 +94,6 @@ namespace Phe
 		PRHI::CreateRHI();
 		PMainRenderer = new PRenderer();
 		PRScene = new PRenderScene();
-		PRenderNum = 0;
 		PMainRenderer->Initialize();
 	}
 
@@ -122,11 +124,6 @@ namespace Phe
 		++PRenderNum;
 		NextFrameIndex = (NextFrameIndex + 1) % 2;
 		RenderCV.notify_one();
-	}
-
-	void PRenderThread::SetCurrentTotalTime(float TotalTime)
-	{
-		PTotalTime = TotalTime;
 	}
 
 	void PRenderThread::Render()

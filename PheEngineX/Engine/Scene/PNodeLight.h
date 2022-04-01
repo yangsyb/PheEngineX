@@ -18,6 +18,8 @@ namespace Phe
 		void SetLinkedLight(PRenderLight* LinkedLight);
 		void SetPosition(glm::vec3 Position);
 		void SetRotation(glm::vec3 Rotation);
+		void BindLinkedLight(PLight* Light);
+		void BindRenderLight(PRenderLight* RenderLight);
 		PRenderLight* GetLinkedRenderLight() { return PLinkedRenderLight; }
 		virtual ~PNodeLight();
 
@@ -33,6 +35,7 @@ namespace Phe
 
 		POrthographicCamera* LightView;
 
+		PLight* PLinkedLight;
 		PRenderLight* PLinkedRenderLight;
 	};
 }

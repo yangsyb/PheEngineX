@@ -20,21 +20,20 @@ namespace Phe
 	{
 		PRHI::Get()->InitGraphicsPipeline();
 		PRHI::Get()->ResizeWindow(1920, 1080);
+		PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
+
 	}
 
 	
 	void PRenderer::RenderFrameBegin(PRenderScene* RenderScene)
 	{
-		if(!PerCameraBuffer)
-		{
-			PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
-		}
-
 		PRenderLight* MainRenderLight = nullptr;
 		if(MainRenderLight = RenderScene->GetMainRenderLight())
 		{
 			PrepareShadowMap(RenderScene);
+			return;
 		}
+		ReleasePtr(PShadowMap);
 	}
 
 	void PRenderer::RenderFrameEnd(PRenderScene* RenderScene)
@@ -128,13 +127,13 @@ namespace Phe
   		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
    		for (auto Primitive : CurrentDrawPrimitives)
    		{
- 			UpdatePrimitiveBuffer(Primitive);
+ 			UpdatePrimitiveBuffer(Primitive.second);
 //			PRHI::Get()->SetGraphicsPipeline(ShadowPipeline);
-			PRHI::Get()->SetGraphicsPipeline(Primitive->GetPipeline());
- 			PRHI::Get()->SetMeshBuffer(Primitive->GetMeshBuffer());
+			PRHI::Get()->SetGraphicsPipeline(Primitive.second->GetPipeline());
+ 			PRHI::Get()->SetMeshBuffer(Primitive.second->GetMeshBuffer());
 			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", MainLightBuffer->GetHandleOffset());
- 			ShaderResourceBinding(Primitive);
- 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive->GetMeshBuffer()->GetIndexCount());
+ 			ShaderResourceBinding(Primitive.second);
+ 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
    		}
    		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
 		if(NeedExportDepth)
@@ -150,16 +149,16 @@ namespace Phe
 		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
 		for(auto Primitive : CurrentDrawPrimitives)
 		{
-			UpdatePrimitiveBuffer(Primitive);
-			PRHI::Get()->SetGraphicsPipeline(Primitive->GetPipeline());
-			PRHI::Get()->SetMeshBuffer(Primitive->GetMeshBuffer());
+			UpdatePrimitiveBuffer(Primitive.second);
+			PRHI::Get()->SetGraphicsPipeline(Primitive.second->GetPipeline());
+			PRHI::Get()->SetMeshBuffer(Primitive.second->GetMeshBuffer());
 			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerCameraBuffer->GetHandleOffset());
-			ShaderResourceBinding(Primitive);
+			ShaderResourceBinding(Primitive.second);
    			if(PShadowMap)
   			{
    				PRHI::Get()->SetRenderResourceTable("ShadowTexture", PShadowMap->GetDepthStencilBuffer()->PRTTexture->GetHandleOffset());
    			}
-			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive->GetMeshBuffer()->GetIndexCount());
+			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
 		}
 	}
 }

@@ -589,7 +589,7 @@ namespace Phe
 		auto Pair = PCbvSrvUavHeap->Allocate(1);
 		NewGPUTexture->SetHandleOffset(Pair.second);
 		PDevice->CreateShaderResourceView(InDX12RTBuffer->PResource->GetResource().Get(), &srvDesc, Pair.first);
-		TextureRefPool.insert({ NewGPUTexture, 1 });
+//		TextureRefPool.insert({ NewGPUTexture, 1 });
 		ExecuteCommandList();
 		Flush();
 		return NewGPUTexture;
@@ -668,6 +668,7 @@ namespace Phe
 				Handle.ptr += size_t(PRtvDescriptorSize) * ColorBuffer->PHandleOffset;
 				RtvDescriptors.push_back(Handle);
 			}
+			Rtv = &RtvDescriptors[0];
 		}
 		const D3D12_CPU_DESCRIPTOR_HANDLE* Dsv = nullptr;
 		if (RTDSBuffer)
@@ -675,6 +676,10 @@ namespace Phe
 			D3D12_CPU_DESCRIPTOR_HANDLE Handle = PDsvHeap->GetCurrentHeap()->GetCPUDescriptorHandleForHeapStart();
 			Handle.ptr += size_t(PDsvDescriptorSize) * RTDSBuffer->PHandleOffset;
 			Dsv = &Handle;
+		}
+		if(RtvDescriptors.size()>0)
+		{
+//			PCommandList->ClearRenderTargetView(*Rtv)
 		}
 		if (Dsv)
 		{
@@ -851,17 +856,17 @@ namespace Phe
 
 	void PDX12RHI::DestroyTexture(PGPUTexture* Texture, bool CheckMap)
 	{
-		PCbvSrvUavHeap->Deallocate(Texture->GetHandleOffset(), 1);
-
- 		TextureRefPool.at(Texture)--;
- 		if(CheckMap)
- 		{
- 			if (TextureRefPool.at(Texture) == 0)
- 			{
- 				TextureRefPool.erase(Texture);
- 				ReleasePtr(Texture);
- 			}
- 		}
+// 		PCbvSrvUavHeap->Deallocate(Texture->GetHandleOffset(), 1);
+// 
+//  		TextureRefPool.at(Texture)--;
+//  		if(CheckMap)
+//  		{
+//  			if (TextureRefPool.at(Texture) == 0)
+//  			{
+//  				TextureRefPool.erase(Texture);
+//  				ReleasePtr(Texture);
+//  			}
+//  		}
 	}
 
 	void PDX12RHI::DestroyMaterial(PMaterial* Material)

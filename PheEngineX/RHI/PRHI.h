@@ -71,6 +71,5 @@ namespace Phe
 
 	protected:
 		static PGPURenderTarget* ScreenRT;
-		std::unordered_map<PGPUTexture*, UINT32> TextureRefPool;
 	};
 }

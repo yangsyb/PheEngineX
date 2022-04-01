@@ -31,7 +31,6 @@ namespace Phe
 		std::unordered_map<std::string, PStaticMesh*> MeshData;
 		std::unordered_map<std::string, PTexture*> TextureData;
 		std::unordered_map<std::string, PMaterial*> MaterialData;
-
 		std::unordered_map<std::string, PLight*> LightData;
 	};
 }

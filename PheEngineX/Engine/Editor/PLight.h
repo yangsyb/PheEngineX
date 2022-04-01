@@ -11,6 +11,7 @@ namespace Phe
 		~PLight();
 
 		void BindNodeLight(PNodeLight* NodeLight);
+		void UnBindNodeLight(PNodeLight* NodeLight);
 
 		void UpdateLightName(std::string LightName);
 		void UpdateLightRadius(float LightRadius);
@@ -27,6 +28,6 @@ namespace Phe
 		float PLightStrength;
 		bool PIsDynamic;
 		
-		std::unordered_multimap<std::string, PNodeLight*> LinkedNodeLight;
+		std::unordered_map<std::string, PNodeLight*> LinkedNodeLight;
 	};
 }

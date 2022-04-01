@@ -77,46 +77,42 @@ namespace Phe
 	void PRenderScene::AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData)
 	{
 		std::string MaterialName = StaticMeshMaterial->GetName();
-		if (PMaterialPool.count(MaterialName) == 0)
-		{
-/*			PMaterialPool.insert({ MaterialName , StaticMeshMaterial });*/
-//			StaticMeshMaterial->CompileMaterial();
-			AddMaterial(StaticMeshMaterial);
-		}
-		auto ptr = GetMeshBuffer(InNodeStaticMesh->GetStaticMeshName());
-		if (ptr)
-		{
-			PPrimitive* NewPrimitive = new PPrimitive();
-			InNodeStaticMesh->SetLinkedPrimitive(NewPrimitive);
-			if (PPipelinePool.count(StaticMeshMaterial->GetShaderName()) > 0)
-			{
-				NewPrimitive->SetPipeline(PPipelinePool.at(StaticMeshMaterial->GetShaderName()));
-			}
-			else
-			{
-				auto Shader = PShaderManager::Get()->GetShaderByName(StaticMeshMaterial->GetShaderName());
-				PShader* NewShader;
-				std::string ShaderName = StaticMeshMaterial->GetShaderName();
-				if (!Shader)
-				{
-					NewShader = PRHI::Get()->CreateShader(ShaderName, L"Shaders\\color.hlsl");
-				}
-				else
-				{
-					NewShader = PRHI::Get()->CreateShader(ShaderName, Shader->GetShaderFilePath());
-				}
-				PPipeline* NewPipeline = PRHI::Get()->CreatePipeline(NewShader);
-				PRHI::Get()->UpdatePipeline(NewPipeline);
-				PPipelinePool.insert({ ShaderName, NewPipeline });
-				NewPrimitive->SetPipeline(NewPipeline);
-				PShaderPool.push_back(NewShader);
-			}
-			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
-			auto Mat = PRHI::Get()->CreateCommonBuffer(sizeof(PerMaterialCBuffer), 1);
-			PRHI::Get()->UpdateCommonBuffer(Obj, TransformData);
-			NewPrimitive->SetPrimitiveRenderData(ptr, Obj, Mat, PMaterialPool.at(MaterialName));
-			Primitives.push_back(NewPrimitive);
-		}
+		AddMaterial(StaticMeshMaterial);
+
+  		auto ptr = GetMeshBuffer(InNodeStaticMesh->GetStaticMeshName());
+  		if (ptr)
+  		{
+  			PPrimitive* NewPrimitive = new PPrimitive();
+  			InNodeStaticMesh->SetLinkedPrimitive(NewPrimitive);
+  			if (PPipelinePool.count(StaticMeshMaterial->GetShaderName()) > 0)
+  			{
+  				NewPrimitive->SetPipeline(PPipelinePool.at(StaticMeshMaterial->GetShaderName()));
+  			}
+  			else
+  			{
+  				auto Shader = PShaderManager::Get()->GetShaderByName(StaticMeshMaterial->GetShaderName());
+  				PShader* NewShader;
+  				std::string ShaderName = StaticMeshMaterial->GetShaderName();
+  				if (!Shader)
+  				{
+  					NewShader = PRHI::Get()->CreateShader(ShaderName, L"Shaders\\color.hlsl");
+  				}
+  				else
+  				{
+  					NewShader = PRHI::Get()->CreateShader(ShaderName, Shader->GetShaderFilePath());
+  				}
+  				PPipeline* NewPipeline = PRHI::Get()->CreatePipeline(NewShader);
+  				PRHI::Get()->UpdatePipeline(NewPipeline);
+  				PPipelinePool.insert({ ShaderName, NewPipeline });
+  				NewPrimitive->SetPipeline(NewPipeline);
+  				PShaderPool.push_back(NewShader);
+  			}
+  			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
+  			auto Mat = PRHI::Get()->CreateCommonBuffer(sizeof(PerMaterialCBuffer), 1);
+  			PRHI::Get()->UpdateCommonBuffer(Obj, TransformData);
+  			NewPrimitive->SetPrimitiveRenderData(ptr, Obj, Mat, PMaterialPool.at(MaterialName));
+  			PPrimitivePool.insert({ InNodeStaticMesh->GetID(), NewPrimitive});
+ 		}
 		PrimitiveNumber++;
 	}
 
@@ -132,7 +128,7 @@ namespace Phe
 	{
 		PRenderLight* NewRenderLight = new PRenderLight();
 		InNodeLight->SetLinkedLight(NewRenderLight);
-		PRenderLights.push_back(NewRenderLight);
+		PRenderLightPool.insert( {InNodeLight->GetID(), NewRenderLight} );
 	}
 
 	void PRenderScene::AddTexture(PTexture* Texture)
@@ -150,64 +146,83 @@ namespace Phe
 	{
 		if(PMaterialPool.count(Material->GetName()) == 0)
 		{
+//			PMaterial* NewMaterial = new PMaterial(Material);
 			auto Textures = Material->GetTextures();
 			for(auto& Texture : Textures)
 			{
 				AddTexture(Texture.second);
 				Texture.second->BindMaterial(Material);
 			}
-			PMaterialPool.insert( {Material->GetName(), Material} );
+			PMaterialPool.insert( {Material->GetName(), Material } );
 		}
-	}
-
-	void PRenderScene::ClearScene()
-	{
-		for (int index = 0; index < Primitives.size(); index++)
-		{
-			Primitives[index]->DestroyPrimitive();
-			ReleasePtr(Primitives[index]);
-		}
-		Primitives.clear();
 	}
 
 	void PRenderScene::DestroyRenderScene()
 	{
-		for(auto it : PMeshBufferPool)
+		for(auto& it : PMeshBufferPool)
 		{
 			ReleasePtr(it.second);
 		}
 		PMeshBufferPool.clear();
- 		for(auto it : PMaterialPool)
- 		{
-
-			ReleasePtr(it.second);
- 		}
- 		PMaterialPool.clear();
-		for(auto it : PPipelinePool)
+		for(auto& it : PPipelinePool)
 		{
 			ReleasePtr(it.second);
 		}
 		PPipelinePool.clear();
-		for(int index = 0; index < Primitives.size(); index++)
-		{
-			Primitives[index]->DestroyPrimitive();
-			ReleasePtr(Primitives[index]);
-		}
-		for(auto it : PLightPool)
-		{
-			delete it.first;
-			ReleasePtr(it.second);
-		}
+
+// 		for(auto& it : PPrimitivePool)
+// 		{
+// 			it.second->DestroyPrimitive();
+// 			ReleasePtr(it.second);
+// 		}
+// 		PPrimitivePool.clear();
+
+
 		for(int index = 0; index < PShaderPool.size(); index++)
 		{
 			ReleasePtr(PShaderPool[index]);
 		}
-		Primitives.clear();
+		PShaderPool.clear();
 	}
 
-	void PRenderScene::UpdateSceneRadius(glm::vec3 Position)
-	{
 
+	void PRenderScene::DestroyScenePrimitive(std::string PrimitiveId)
+	{
+		if(PPrimitivePool.count(PrimitiveId))
+		{
+			PPrimitivePool.at(PrimitiveId)->DestroyPrimitive();
+			PPrimitivePool.erase(PrimitiveId);
+			return;
+		}
+	}
+
+	void PRenderScene::DestroySceneLight(std::string SceneLightId)
+	{
+		if(PRenderLightPool.count(SceneLightId))
+		{
+			PRenderLightPool.at(SceneLightId)->DestroyRenderLight();
+			PRenderLightPool.erase(SceneLightId);
+			return;
+		}
+	}
+
+	void PRenderScene::DestroySceneMaterial(std::string MaterialName)
+	{
+		if(PMaterialPool.count(MaterialName) > 0)
+		{
+			PMaterialPool.erase(MaterialName);
+			return;
+		}
+	}
+
+	void PRenderScene::DestroySceneTexture(std::string TextureName)
+	{
+		if(PTexturePool.count(TextureName) > 0)
+		{
+			ReleasePtr(PTexturePool.at(TextureName));
+			PTexturePool.erase(TextureName);
+			return;
+		}
 	}
 
 	PGPUMeshBuffer* PRenderScene::GetMeshBuffer(std::string MeshBufferName)
@@ -226,9 +241,9 @@ namespace Phe
 
 	PRenderLight* PRenderScene::GetMainRenderLight()
 	{
-		if(PRenderLights.size())
+		if(PRenderLightPool.size())
 		{
-			return PRenderLights[0];
+			return PRenderLightPool.begin()->second;
 		}
 		return nullptr;
 	}

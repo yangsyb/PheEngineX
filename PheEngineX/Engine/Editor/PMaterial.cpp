@@ -18,9 +18,22 @@ namespace Phe
 		}
 	}
 
+	PMaterial::PMaterial(PMaterial* Material)
+	{
+		PMaterialName = Material->PMaterialName;
+		PShaderName = Material->PShaderName;
+		PBaseColor = Material->PBaseColor;
+		PFresnelR0 = Material->PFresnelR0;
+		PMetallic = Material->PMetallic;
+		PSpecular = Material->PSpecular;
+		PRoughness = Material->PRoughness;
+
+		MatTextures = Material->MatTextures;
+	}
+
 	PMaterial::~PMaterial()
 	{
-
+		
 	}
 
 	void PMaterial::AddTexture(std::string TextureName)
@@ -29,12 +42,10 @@ namespace Phe
 		{
 			MatTextures.insert({TextureName, PAssetManager::GetSingleton().GetTextureData(TextureName)});
 		}
-//		PRHI::Get()->AddTextureToMaterial(this, TextureName);
 	}
 
 	void PMaterial::DeleteTextre(std::string TextureName)
 	{
-//		PRHI::Get()->DeleteTexturefromMaterial(this, TextureName);
 		if(MatTextures.count(TextureName)>0)
 		{
 			MatTextures.erase(TextureName);
@@ -43,13 +54,12 @@ namespace Phe
 
 	void PMaterial::CompileMaterial()
 	{
-		for(auto& Texture : MatTextures)
-		{
-			Texture.second->BindMaterial(this);
-		}
-		PTask* task = CreateTask(PTask, PRenderThread::Get()->GetRenderScene()->AddMaterial(this));
-		PRenderThread::Get()->AddTask(task);
-	//	PRHI::Get()->CompileMaterial(this);
+// 		for(auto& Texture : MatTextures)
+// 		{
+// 			Texture.second->BindMaterial(this);
+// 		}
+// 		PTask* task = CreateTask(PTask, PRenderThread::Get()->GetRenderScene()->AddMaterial(this));
+// 		PRenderThread::Get()->AddTask(task);
 	}
 
 	UINT32 PMaterial::GetHandleOffset()
@@ -66,4 +76,10 @@ namespace Phe
 		return Ret;
 	}
 
+	void PMaterial::DestroyMaterial()
+	{
+		std::string MaterialName = PMaterialName;
+		PTask* task = CreateTask(PTask, PRenderThread::Get()->GetRenderScene()->DestroySceneMaterial(MaterialName));
+		PRenderThread::Get()->AddTask(task);
+	}
 }

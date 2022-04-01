@@ -43,11 +43,12 @@ namespace Phe
 
 	void PEngine::Shutdown()
 	{
-		PRenderThread::Get()->Stop();
 		PWindow::DestroyWindow(PheWindow);
-		PShaderManager::DestroyShaderManager();
 		ReleasePtr(PMainEditor);
 		ReleasePtr(PMainScene);
+		PMainAssetManager = nullptr;
+		PShaderManager::DestroyShaderManager();
+		PRenderThread::Get()->Stop();
 	}
 
 	void PEngine::Tick()
@@ -59,8 +60,6 @@ namespace Phe
 	void PEngine::BeginFrame()
 	{
 		PTimer.Tick();
-		PTask* task = CreateTask(PTask, PRenderThread::Get()->SetCurrentTotalTime(PTimer.TotalTime()));
-		PRenderThread::Get()->AddTask(task);
 		PMainEditor->Update();
 		PMainScene->Update();
 	}
@@ -68,11 +67,11 @@ namespace Phe
 	void PEngine::EndFrame()
 	{
 		PRenderThread* RenderThread = PRenderThread::Get();
-		while (RenderThread->GetRenderNum() >= 0)
+		RenderThread->TriggerRender();
+		while (RenderThread->GetRenderNum() > 0)
 		{
 			std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 		}
-		RenderThread->TriggerRender();
 	}
 
 }

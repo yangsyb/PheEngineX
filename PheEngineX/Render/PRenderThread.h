@@ -26,9 +26,6 @@ namespace Phe
 		int GetRenderNum() { return PRenderNum; }
 		PRenderScene* GetRenderScene() { return PRScene; }
 		PRenderer* GetRenderer() { return PMainRenderer; }
-
-		void SetCurrentTotalTime(float TotalTime);
-		float GetCurrentTotalTime() { return PTotalTime; }
 	public:
 		void Render();
 
@@ -49,6 +46,5 @@ namespace Phe
 		PRenderScene* PRScene;
 		PRenderer* PMainRenderer;
 		int PRenderNum = 0;
-		float PTotalTime = 0;
 	};
 }

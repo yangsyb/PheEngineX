@@ -15,7 +15,7 @@ namespace Phe
 
 	PNodeScene::~PNodeScene()
 	{
-
+	
 	}
 
 	PScene::PScene() : PSceneCenter(glm::vec3(0, 0, 0)), PSceneRadius(35), PMainLight(nullptr)
@@ -28,7 +28,9 @@ namespace Phe
 
 	PScene::~PScene()
 	{
+		PSceneNode->RemoveAllChild();
 		PRender = nullptr;
+		ReleasePtr(PSceneNode);
 	}
 
 	// Add Mesh Data To MainThread Scene
@@ -40,7 +42,10 @@ namespace Phe
 		PStaticMesh* StaticMesh = PAssetManager::GetSingleton().GetMeshData(StaticMeshName);
 		PMaterial* Material = PAssetManager::GetSingleton().GetMaterialData(MaterialName);
 
-		PNodeStaticMesh* NodeStaticMesh = PNodeFactory::CreateNode<PNodeStaticMesh>(PSceneNode);
+		PNodeStaticMesh* NodeStaticMesh = PNodeFactory::CreateNode<PNodeStaticMesh>(PSceneNode, GetIncrementID(PSceneNode->GetLastChildID()));
+		PSceneNode->AddChild(NodeStaticMesh);
+		StaticMesh->BindNodeStaticMesh(NodeStaticMesh);
+		NodeStaticMesh->BindLinkedStaticMesh(StaticMesh);
 		NodeStaticMesh->SetStaticMeshName(StaticMeshName);
 		NodeStaticMesh->SetTransform(MeshTransform);
 		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddMeshBufferAndPrimitive(NodeStaticMesh, Material, NodeStaticMesh->GetTransformBuffer()));
@@ -60,19 +65,19 @@ namespace Phe
 
 	void PScene::AddLight(std::string LightName, Transform LightTransform)
 	{
-		//SceneLightList.insert({LightName, LightData});
-		//PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(LightName, LightData));
-		//PRender->AddTask(task);
 		PLight* Light = PAssetManager::GetSingleton().GetLightData(LightName);
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
-		PNodeLight* NodeLight = PNodeFactory::CreateNode<PNodeLight>(PSceneNode);
+
+		PNodeLight* NodeLight = PNodeFactory::CreateNode<PNodeLight>(PSceneNode, GetIncrementID(PSceneNode->GetLastChildID()));
+		PSceneNode->AddChild(NodeLight);
 		if(!PMainLight)
 		{
 			PMainLight = NodeLight;
 		}
 		NodeLight->SetAsLight(Light);
 		Light->BindNodeLight(NodeLight);
+		NodeLight->BindLinkedLight(Light);
 		NodeLight->SetPosition(LightTransform.GetPosition());
 		NodeLight->SetRotation(LightTransform.GetRotation());
 		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(NodeLight));
@@ -95,9 +100,8 @@ namespace Phe
 
 	void PScene::ClearScene()
 	{
-		SceneMeshList.clear();
-		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->ClearScene());
-		PRender->AddTask(task);
+		PSceneNode->RemoveAllChild();
+		PMainLight = nullptr;
 	}
 
 	void PScene::Update()

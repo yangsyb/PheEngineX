@@ -3,7 +3,7 @@
 
 namespace Phe
 {
-	
+
 	PLight::PLight(std::string LightName) : PLightName(LightName), PLightRadius(0), PLightStrength(0)
 	{
 
@@ -12,19 +12,30 @@ namespace Phe
 
 	PLight::~PLight()
 	{
-		
+		for (auto LinkedNode : LinkedNodeLight)
+		{
+			ReleasePtr(LinkedNode.second);
+		}
 	}
 
 	void PLight::BindNodeLight(PNodeLight* NodeLight)
 	{
-		LinkedNodeLight.insert({NodeLight->GetID(), NodeLight});
+		LinkedNodeLight.insert({ NodeLight->GetID(), NodeLight });
 	}
 
+
+	void PLight::UnBindNodeLight(PNodeLight* NodeLight)
+	{
+		if (LinkedNodeLight.count(NodeLight->GetID()) > 0)
+		{
+			LinkedNodeLight.erase(NodeLight->GetID());
+		}
+	}
 
 	void PLight::UpdateLightName(std::string LightName)
 	{
 		PLightName = LightName;
-		for(auto NodeLight: LinkedNodeLight)
+		for (auto NodeLight : LinkedNodeLight)
 		{
 			NodeLight.second->SetLightName(PLightName);
 		}

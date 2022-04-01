@@ -101,3 +101,16 @@ static glm::vec4 VectorToMat(glm::vec3 V, glm::mat4 M)
 	glm::vec4 w(Ret.w);
 	return Ret/w;
 }
+
+static std::string GetIncrementID(std::string ID)
+{
+	UINT32 NumID;
+	std::stringstream ss;
+	std::stringstream ss1;
+	ss << ID;
+	ss >> NumID;
+	NumID++;
+	ss1 << NumID;
+	std::string test = ss1.str();
+	return ss1.str();
+}

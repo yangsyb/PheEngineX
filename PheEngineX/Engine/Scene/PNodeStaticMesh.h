@@ -5,6 +5,7 @@
 
 namespace Phe
 {
+	class PStaticMesh;
 	class PPrimitive;
 	class PNodeStaticMesh : public PNode
 	{
@@ -13,11 +14,15 @@ namespace Phe
 	public:
 		void SetLinkedPrimitive(PPrimitive* LinkedPrimitive);
 		void SetStaticMeshName(std::string StaticMeshName);
+		void BindLinkedStaticMesh(PStaticMesh* StaticMesh);
+		void BindLinkedPrimitive(PPrimitive* LinkedPrimitive);
 		std::string GetStaticMeshName() { return PStaticMeshName;}
 		PPrimitive* GetLinkedPrimitive() { return PLinkedPrimitive; }
 		virtual ~PNodeStaticMesh();
 	private:
 		std::string PStaticMeshName;
+
+		PStaticMesh* PLinkedStaticMesh;
 		PPrimitive* PLinkedPrimitive;
 	};
 }
