@@ -3,6 +3,7 @@
 #include "PDX12Shader.h"
 #include "PDX12Shadermanager.h"
 #include "Engine/Editor/PShaderManager.h"
+#include "PDX12Converter.h"
 namespace Phe
 {
 	PDX12Shader::PDX12Shader(const std::string ShaderName, const std::wstring FilePath, std::string VS, std::string PS) : 
@@ -30,12 +31,24 @@ namespace Phe
   		ParamMap[DX12ShaderManager->PropertyToID(shadowTexture.name)] = UINT(Params.size());
   		Params.push_back(shadowTexture);
 
-		PRasterizerState = CD3DX12_RASTERIZER_DESC(D3D12_DEFAULT);
-		PBlendState = CD3DX12_BLEND_DESC(D3D12_DEFAULT);
+		MakeDX12RasterizerState(RasterizerDesc, PRasterizerState);
+		MakeDX12BlendState(BlendState, PBlendState);
 		PDepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
 	}
 
 
+
+	void PDX12Shader::SetRasterizerDesc(P_RasterizerDesc Raster)
+	{
+		RasterizerDesc = Raster;
+		MakeDX12RasterizerState(RasterizerDesc, PRasterizerState);
+	}
+
+	void PDX12Shader::SetBlendState(P_BlendState Blend)
+	{
+		BlendState = Blend;
+		MakeDX12BlendState(BlendState, PBlendState);
+	}
 
 	void PDX12Shader::SetPSODesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC* psoDesc)
 	{
@@ -58,13 +71,9 @@ namespace Phe
 
 		psoDesc->pRootSignature = PRootSignature.Get();
 		psoDesc->RasterizerState = PRasterizerState;
-		psoDesc->RasterizerState.FrontCounterClockwise = TRUE;
+		psoDesc->RasterizerState.FrontCounterClockwise = true;
 		psoDesc->DepthStencilState = PDepthStencilState;
 		psoDesc->BlendState = PBlendState;
-
-		psoDesc->RasterizerState.DepthBias = 10000;
-		psoDesc->RasterizerState.DepthBiasClamp = 0.f;
-		psoDesc->RasterizerState.SlopeScaledDepthBias = 1.0f;
 	}
 
 }

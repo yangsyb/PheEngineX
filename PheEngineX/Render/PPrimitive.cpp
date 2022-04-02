@@ -5,9 +5,9 @@
 namespace Phe
 {
 
-	PPrimitive::PPrimitive() : PMeshBuffer(nullptr), PerMatBuffer(nullptr), PerObjBuffer(nullptr), Pipeline(nullptr), PrimitiveMaterial(nullptr)
+	PPrimitive::PPrimitive() : PMeshBuffer(nullptr), PerMatBuffer(nullptr), PerObjBuffer(nullptr), PrimitiveMaterial(nullptr)
 	{
-
+		PPipelines.resize(static_cast<int>(PipelineType::PipelineCount));
 	}
 
 	PPrimitive::~PPrimitive()
@@ -23,6 +23,11 @@ namespace Phe
 		PrimitiveMaterial = MaterialBuffer;
 	}
 
+
+	void PPrimitive::SetPipeline(PipelineType PType, PPipeline* Pipeline)
+	{
+		PPipelines[static_cast<int>(PType)] = Pipeline;
+	}
 
 	void PPrimitive::UpdateCommonBuffer(PGPUCommonBuffer* Buffer, void* Data)
 	{

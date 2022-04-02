@@ -44,7 +44,8 @@ namespace Phe
 		UINT32 PrimitiveNumber;
 		PHashMap<std::string, PGPUMeshBuffer*> PMeshBufferPool;
 		PHashMap<std::string, PMaterial*> PMaterialPool;
-		PHashMap<std::string, PPipeline*> PPipelinePool;
+//		PHashMap<std::string, PPipeline*> PPipelinePool;
+		PHashMap<std::string, PVector<PPipeline*>> PPipelinePool;
 		PHashMap<std::string, PGPUTexture*> PTexturePool;
 		PHashMap<std::string, PPrimitive*> PPrimitivePool;
 		PHashMap<std::string, PRenderLight*> PRenderLightPool;

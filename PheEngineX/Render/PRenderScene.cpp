@@ -90,22 +90,28 @@ namespace Phe
   			}
   			else
   			{
+				PVector<PPipeline*> RetPipelines;
+				RetPipelines.resize(static_cast<int>(PipelineType::PipelineCount));
   				auto Shader = PShaderManager::Get()->GetShaderByName(StaticMeshMaterial->GetShaderName());
-  				PShader* NewShader;
-  				std::string ShaderName = StaticMeshMaterial->GetShaderName();
-  				if (!Shader)
-  				{
-  					NewShader = PRHI::Get()->CreateShader(ShaderName, L"Shaders\\color.hlsl");
-  				}
-  				else
-  				{
-  					NewShader = PRHI::Get()->CreateShader(ShaderName, Shader->GetShaderFilePath());
-  				}
-  				PPipeline* NewPipeline = PRHI::Get()->CreatePipeline(NewShader);
-  				PRHI::Get()->UpdatePipeline(NewPipeline);
-  				PPipelinePool.insert({ ShaderName, NewPipeline });
-  				NewPrimitive->SetPipeline(NewPipeline);
-  				PShaderPool.push_back(NewShader);
+				std::string ShaderName = StaticMeshMaterial->GetShaderName();
+				for(int size = 0; size < static_cast<int>(PipelineType::PipelineCount); size++)
+				{
+					PShader* NewShader = PRHI::Get()->CreateShader(ShaderName, Shader ? Shader->GetShaderFilePath() : L"Shaders\\color.hlsl");
+					PPipeline* NewPipeline = PRHI::Get()->CreatePipeline(NewShader);
+					switch (size)
+					{
+					case static_cast<int>(PipelineType::BasePipeline):
+						break;
+					case static_cast<int>(PipelineType::ShadowPipeline):
+						NewShader->SetRasterizerDesc(P_RasterizerDesc(ShadowRasterizerDesc));
+						break;
+					}
+					PRHI::Get()->UpdatePipeline(NewPipeline);
+					RetPipelines[size] = NewPipeline;
+					PShaderPool.push_back(NewShader);
+				}
+  				PPipelinePool.insert({ ShaderName, RetPipelines });
+  				NewPrimitive->SetPipeline(RetPipelines);
   			}
   			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
   			auto Mat = PRHI::Get()->CreateCommonBuffer(sizeof(PerMaterialCBuffer), 1);
@@ -168,7 +174,10 @@ namespace Phe
 		PMeshBufferPool.clear();
 		for(auto& it : PPipelinePool)
 		{
-			ReleasePtr(it.second);
+			for(auto& it2 : it.second)
+			{
+				ReleasePtr(it2);
+			}
 		}
 		PPipelinePool.clear();
 

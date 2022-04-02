@@ -148,6 +148,7 @@
     <ClInclude Include="DX12\DDSTextureSaver.h" />
     <ClInclude Include="DX12\DxException.h" />
     <ClInclude Include="DX12\PDescriptorHeap.h" />
+    <ClInclude Include="DX12\PDX12Converter.h" />
     <ClInclude Include="DX12\PDX12GPUCommonBuffer.h" />
     <ClInclude Include="DX12\PDX12GPUMeshBuffer.h" />
     <ClInclude Include="DX12\PDX12GPURenderTarget.h" />

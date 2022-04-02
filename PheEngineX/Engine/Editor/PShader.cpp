@@ -4,8 +4,8 @@
 
 namespace Phe
 {
-
-	PShader::PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS, std::string PS) : PFilePath(FilePath), PVSEntry(VS), PPSEntry(PS), PShaderName(ShaderName)
+	PShader::PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS, std::string PS, P_RasterizerDesc Raster, P_BlendState Blend) : PFilePath(FilePath), PVSEntry(VS), PPSEntry(PS), PShaderName(ShaderName)
+		, RasterizerDesc(Raster), BlendState(Blend)
 	{
 
 	}

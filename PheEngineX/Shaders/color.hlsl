@@ -11,6 +11,7 @@ SamplerState gsamAnisotropicWrap : register(s4);
 SamplerState gsamAnisotropicClamp : register(s5);
 SamplerComparisonState gsamShadow : register(s6);
 
+#define PI 3.1415927
 
 cbuffer cbPerObject : register(b0)
 {

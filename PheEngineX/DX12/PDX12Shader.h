@@ -41,9 +41,11 @@ namespace Phe
 		void SetRootSignature(ComPtr<ID3D12RootSignature>& RootSignature) { PRootSignature = RootSignature; }
 		void SetVS(ComPtr<ID3DBlob>& VS) { PVS = VS; }
 		void SetPS(ComPtr<ID3DBlob>& PS) { PPS = PS; }
-		void SetRasterizerState(D3D12_RASTERIZER_DESC RasterizerState) { PRasterizerState = RasterizerState; }
-		void SetDepthStencilState(D3D12_DEPTH_STENCIL_DESC DepthStencilState) { PDepthStencilState = DepthStencilState; }
-		void SetBlendState(D3D12_BLEND_DESC BlendState) { PBlendState = BlendState; }
+// 		void SetRasterizerState(D3D12_RASTERIZER_DESC RasterizerState) { PRasterizerState = RasterizerState; }
+// 		void SetDepthStencilState(D3D12_DEPTH_STENCIL_DESC DepthStencilState) { PDepthStencilState = DepthStencilState; }
+// 		void SetBlendState(D3D12_BLEND_DESC BlendState) { PBlendState = BlendState; }
+		virtual void SetRasterizerDesc(P_RasterizerDesc Raster) override;
+		virtual void SetBlendState(P_BlendState Blend) override;
 
 		void SetPSODesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC* psoDesc);
 		std::unordered_map<UINT, UINT> GetParamMap() { return ParamMap; }
