@@ -41,6 +41,7 @@ namespace Phe
 			if(PEngine::GetSingleton().GetWindow()->GetInput()->GetKeyDown(Event.first))
 			{
 				Event.second();
+				return;
 			}
 		}
 	}

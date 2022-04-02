@@ -31,6 +31,7 @@ namespace Phe
 
 	void PDX12GPUCommonBuffer::AllocateData(int DataIndex, void* data)
 	{
+		CurrentData = data;
 		memcpy(&PMappedData[DataIndex * PStructureSizeInBytes], data, SizeofStructByteSize);
 	}
 

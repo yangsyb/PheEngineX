@@ -30,7 +30,7 @@ PWindow::PWindow(UINT32 Width, UINT32 Height) : PWidth(Width), PHeight(Height)
 
 PWindow::~PWindow()
 {
-
+	ReleasePtr(PInput);
 }
 
 
@@ -144,7 +144,7 @@ PWindowWin32::PWindowWin32(UINT32 Width, UINT32 Height, void* Handle, const std:
 
 PWindowWin32::~PWindowWin32()
 {
-	PInput = nullptr;
+	ReleasePtr(PInput);
 	PWin32 = nullptr;
 }
 
