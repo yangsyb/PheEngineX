@@ -32,7 +32,6 @@ namespace Phe
 
 		PPipeline* PCurrentPipeline;
 		PGPURenderTarget* PShadowMap;
-		PPipeline* ShadowPipeline;
 
 	private:
 		bool NeedExportDepth = false;

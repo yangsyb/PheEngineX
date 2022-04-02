@@ -7,13 +7,6 @@
 
 namespace Phe
 {
-	enum class PipelineType
-	{
-		BasePipeline,
-		ShadowPipeline,
-
-		PipelineCount
-	};
 
 	class PPrimitive
 	{

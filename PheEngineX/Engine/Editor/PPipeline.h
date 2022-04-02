@@ -4,6 +4,14 @@
 
 namespace Phe
 {
+	enum class PipelineType
+	{
+		BasePipeline,
+		ShadowPipeline,
+
+		PipelineCount
+	};
+
 	class PPipeline
 	{
 	public:
