@@ -18,13 +18,13 @@ namespace Phe
 
 	PDX12GPUCommonBuffer::~PDX12GPUCommonBuffer()
 	{
-		if(PBufferResource)
-		{
-			if (PBufferResource->GetResource())
-			{
-				PBufferResource->GetResource()->Unmap(0, nullptr);
-			}
-		}
+ 		if(PBufferResource)
+ 		{
+ 			if (PBufferResource->GetResource())
+ 			{
+ 				PBufferResource->GetResource()->Unmap(0, nullptr);
+ 			}
+ 		}
 		PMappedData = nullptr;
 		ReleasePtr(PBufferResource);
 	}

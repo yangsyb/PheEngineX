@@ -61,7 +61,6 @@ int main()
 #elif defined(PlatformWin32)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-
 	PHashMap<KeyCode, PFunc<void()>> RegisterList;
 	std::unique_ptr<PEngine> PheEngine = std::make_unique<PEngine>();
 	//Load Test Data To AssetManager
