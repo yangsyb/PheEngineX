@@ -7,8 +7,9 @@ namespace Phe
 	
 	PRenderLight::PRenderLight()
 	{
-		TransformBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
+/*		TransformBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);*/
 		CameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
+		PerLightBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerLightCBuffer), 1);
 	}
 
 	PRenderLight::~PRenderLight()
@@ -22,6 +23,13 @@ namespace Phe
 		UpdateCommonBuffer(CameraBuffer, CameraData);
 	}
 
+
+	void PRenderLight::UpdatePerLightBuffer(PerLightCBuffer Data)
+	{
+		std::shared_ptr<void> LightData = std::make_shared<PerLightCBuffer>(Data);
+		UpdateCommonBuffer(PerLightBuffer, LightData);
+	}
+
 	void PRenderLight::UpdateCommonBuffer(PGPUCommonBuffer* Buffer, std::shared_ptr<void> Data)
 	{
 		PRHI::Get()->UpdateCommonBuffer(Buffer, Data);
@@ -29,8 +37,9 @@ namespace Phe
 
 	void PRenderLight::DestroyRenderLight()
 	{
-		ReleasePtr(TransformBuffer);
+/*		ReleasePtr(TransformBuffer);*/
 		ReleasePtr(CameraBuffer);
+		ReleasePtr(PerLightBuffer);
 	}
 
 }

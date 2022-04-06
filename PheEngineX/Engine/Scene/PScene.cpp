@@ -141,7 +141,8 @@ namespace Phe
 		PerCameraBuffer.Time = PEngine::GetSingleton().GetTimer().TotalTime();
 		PerCameraBuffer.View = CameraPassConstant.View;
 		PerCameraBuffer.Proj = CameraPassConstant.Proj;
-		PerCameraBuffer.CameraLocationMat = CameraPassConstant.CameraLocationMat;
+		PerCameraBuffer.CameraLocation = CameraPassConstant.CameraLocation;
+//		PerCameraBuffer.CameraLocationMat = CameraPassConstant.CameraLocationMat;
 		if(PMainLight)
 		{
 			PerCameraBuffer.ShadowTransform = PMainLight->GetPassCBuffer().ShadowTransform;
@@ -160,7 +161,8 @@ namespace Phe
 		PerCameraBuffer.Time = PEngine::GetSingleton().GetTimer().TotalTime();
 		PerCameraBuffer.View = LightData.View;
 		PerCameraBuffer.Proj = LightData.Proj;
-		PerCameraBuffer.CameraLocationMat = LightData.CameraLocationMat;
+		PerCameraBuffer.CameraLocation = LightData.CameraLocation;
+//		PerCameraBuffer.CameraLocationMat = LightData.CameraLocationMat;
 		PerCameraBuffer.ShadowTransform = PMainLight->GetVP();
 		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->GetMainRenderLight()->UpdateCameraBuffer(PerCameraBuffer));
 		PRender->AddTask(task);

@@ -129,9 +129,9 @@ namespace Phe
 
 	void PRenderer::BRDFPass(PRenderScene* RenderScene)
 	{
-		PShadowMap = PRHI::Get()->CreateRenderTarget("BRDF", 1024, 1024);
-		PShadowMap->AddColorBuffer(1);
-		PShadowMap->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetColorBuffer(1));
+		PBRDFRenderTarget = PRHI::Get()->CreateRenderTarget("BRDF", 1024, 1024);
+		PBRDFRenderTarget->AddColorBuffer(1);
+		PBRDFRenderTarget->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("BRDFTexture", PBRDFRenderTarget->GetColorBuffer(1));
 		PRHI::Get()->BeginRenderRTBuffer(PBRDFRenderTarget->GetColorBuffer(1));
 		PRHI::Get()->SetRenderTarget(PBRDFRenderTarget);
 
@@ -156,6 +156,7 @@ namespace Phe
    			if(PShadowMap)
   			{
    				PRHI::Get()->SetRenderResourceTable("ShadowTexture", PShadowMap->GetDepthStencilBuffer()->PRTTexture->GetHandleOffset());
+				PRHI::Get()->SetRenderResourceTable("PerLightBuffer", RenderScene->GetMainRenderLight()->GetPerLightBuffer()->GetHandleOffset());
    			}
 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
 		}

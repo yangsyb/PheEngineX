@@ -27,6 +27,10 @@ namespace Phe
 		ParamMap[DX12ShaderManager->PropertyToID(perMaterial.name)] = UINT(Params.size());
 		Params.push_back(perMaterial);
 
+		ShaderParameter perLight("PerLightBuffer", ShaderParamType::CBVDescriptorHeap, 1, 3, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(perLight.name)] = UINT(Params.size());
+		Params.push_back(perLight);
+
   		ShaderParameter shadowTexture("ShadowTexture", ShaderParamType::SRVDescriptorHeap, 1, 2, 0);
   		ParamMap[DX12ShaderManager->PropertyToID(shadowTexture.name)] = UINT(Params.size());
   		Params.push_back(shadowTexture);

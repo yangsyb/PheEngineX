@@ -95,6 +95,7 @@ namespace Phe
 	{
   		PRenderLight* NewRenderLight = new PRenderLight();
   		InNodeLight->SetLinkedLight(NewRenderLight);
+		NewRenderLight->UpdatePerLightBuffer(InNodeLight->GetPerLightCBuffer());
   		PRenderLightPool.insert( {InNodeLight->GetID(), NewRenderLight} );
 	}
 

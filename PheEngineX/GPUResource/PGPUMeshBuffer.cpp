@@ -19,12 +19,14 @@ namespace Phe
 	void PGPUMeshBuffer::SetMeshBuffer(std::string Name, PStaticMesh* StaticMeshData)
 	{
 		auto Vertices = StaticMeshData->GetVertices();
-		auto Normals = StaticMeshData->GetTangents();
+		auto Tangents = StaticMeshData->GetTangents();
+		auto Normals = StaticMeshData->GetNormals();
 		auto UVs = StaticMeshData->GetUVs();
 		for (size_t index = 0; index < Vertices.size() / 3; index++)
 		{
 			PVertex Vertex;
 			Vertex.Pos = { Vertices[index * 3], Vertices[index * 3 + 1] ,Vertices[index * 3 + 2] };
+			Vertex.Tangent = { Tangents[index * 3], Tangents[index * 3 + 1], Tangents[index * 3 + 2], 0 };
 			Vertex.Normal = { Normals[index * 3], Normals[index * 3 + 1] ,Normals[index * 3 + 2],1 };
 			Vertex.TextCoord = { UVs[index * 2], UVs[index * 2 + 1] };
 			PVertexVector.push_back(Vertex);

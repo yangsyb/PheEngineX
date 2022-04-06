@@ -1,7 +1,6 @@
 #include "pch.h"
 #include "Engine/Core/PEngine.h"
 using namespace Phe;
-
 #ifdef PlatformUndef
 int main()
 {
@@ -70,7 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Load Test Data To AssetManager
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\InSceneData.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tree.json");
-	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxUVs);
+	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxTangent, StandardBoxUVs);
 	//Texture Data
 	PAssetManager::GetSingleton().AddTextureData("Texture1", L"Textures\\jacket_diff.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture1Normal", L"Textures\\jacket_norm.dds");

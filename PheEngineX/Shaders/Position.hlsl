@@ -9,8 +9,8 @@ cbuffer cbPass : register(b1)
 {
 	float4x4 gView;
 	float4x4 gProj;
-	float4x4 gCameraPosition;
 	float4x4 gShadowTransform;
+	float3 gCameraPosition;
 	float gTime;
 };
 
@@ -18,6 +18,7 @@ struct VertexIn
 {
 	float3 PosL  : POSITION;
 	float4 Normal : NORMAL;
+	float4 Tangent : TANGENT;
 	float2 TextCoord : TEXTCOORD;
 };
 

@@ -45,6 +45,7 @@ namespace Phe
 				std::vector<float> Vertices;
 				std::vector<UINT16> Indices;
 				std::vector<float> TangentZs;
+				std::vector<float> TangentXs;
 				std::vector<float> UVs;
 
 				MeshName = it["StaticMeshName"].asString();
@@ -60,9 +61,14 @@ namespace Phe
 						Indices.push_back(iIndex.asInt());
 					}
 
-					for (auto iTangent : it["TangentZ"])
+					for (auto iNormal : it["TangentZ"])
 					{
-						TangentZs.push_back(iTangent.asFloat());
+						TangentZs.push_back(iNormal.asFloat());
+					}
+
+					for(auto iTangent : it["TangentX"])
+					{
+						TangentXs.push_back(iTangent.asFloat());
 					}
 
 					for (auto uv : it["UV"])
@@ -70,7 +76,7 @@ namespace Phe
 						UVs.push_back(uv.asFloat());
 					}
 
-					PStaticMesh* Mesh = new PStaticMesh(MeshName, Vertices, Indices, TangentZs, UVs);
+					PStaticMesh* Mesh = new PStaticMesh(MeshName, Vertices, Indices, TangentZs, TangentXs, UVs);
 					MeshData.insert({ MeshName, Mesh });
 				}
 			}
@@ -86,11 +92,11 @@ namespace Phe
 		}
 	}
 
-	void PAssetManager::AddMeshData(const std::string MeshName, std::vector<float> PVertices, std::vector<UINT16> PIndices, std::vector<float> PTangents, std::vector<float> PUVs)
+	void PAssetManager::AddMeshData(const std::string MeshName, std::vector<float> PVertices, std::vector<UINT16> PIndices, std::vector<float> PNormals, std::vector<float> PTangents, std::vector<float> PUVs)
 	{
 		if (MeshData.count(MeshName) == 0)
 		{
-			PStaticMesh* Mesh = new PStaticMesh(MeshName, PVertices, PIndices, PTangents, PUVs);
+			PStaticMesh* Mesh = new PStaticMesh(MeshName, PVertices, PIndices, PNormals, PTangents, PUVs);
 			MeshData.insert({ MeshName, Mesh });
 		}
 	}
