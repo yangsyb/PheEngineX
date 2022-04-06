@@ -11,6 +11,7 @@
 
 namespace Phe
 {
+	static UINT32 ScreenFrameNumber = 3;
 	class PRHI
 	{
 	public:
@@ -39,7 +40,7 @@ namespace Phe
 		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) = 0;
 		virtual void UpdatePipeline(PPipeline* Pipeline) = 0;
 		virtual void UpdatePipeline(PPipeline* Pipeline, PGPURenderTarget* RenderTarget) = 0;
-		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data) = 0;
+		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, std::shared_ptr<void> Data) = 0;
 
 		virtual void BeginRenderBackBuffer() = 0;
 		virtual void EndRenderBackBuffer() = 0;

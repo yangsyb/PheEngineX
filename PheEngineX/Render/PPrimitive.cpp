@@ -29,7 +29,7 @@ namespace Phe
 		PPipelines[static_cast<int>(PType)] = Pipeline;
 	}
 
-	void PPrimitive::UpdateCommonBuffer(PGPUCommonBuffer* Buffer, void* Data)
+	void PPrimitive::UpdateCommonBuffer(PGPUCommonBuffer* Buffer, std::shared_ptr<void> Data)
 	{
 		PRHI::Get()->UpdateCommonBuffer(Buffer, Data);
 	}

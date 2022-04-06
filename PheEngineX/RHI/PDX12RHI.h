@@ -33,7 +33,7 @@ namespace Phe
 		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) override;
 		virtual void UpdatePipeline(PPipeline* Pipeline) override;
 		virtual void UpdatePipeline(PPipeline* Pipeline, PGPURenderTarget* RenderTarget) override;
-		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data) override;
+		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, std::shared_ptr<void> Data) override;
 
 		virtual void BeginRenderBackBuffer() override;
 		virtual void EndRenderBackBuffer() override;

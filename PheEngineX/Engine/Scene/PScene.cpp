@@ -48,7 +48,7 @@ namespace Phe
 		NodeStaticMesh->BindLinkedStaticMesh(StaticMesh);
 		NodeStaticMesh->SetStaticMeshName(StaticMeshName);
 		NodeStaticMesh->SetTransform(MeshTransform);
-		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddMeshBufferAndPrimitive(NodeStaticMesh, Material, NodeStaticMesh->GetTransformBuffer()));
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddMeshBufferAndPrimitive(NodeStaticMesh, Material, NodeStaticMesh->GetTransform()));
 		PRender->AddTask(task);
 	}
 
@@ -71,17 +71,14 @@ namespace Phe
 
 		PNodeLight* NodeLight = PNodeFactory::CreateNode<PNodeLight>(PSceneNode, GetIncrementID(PSceneNode->GetLastChildID()));
 		PSceneNode->AddChild(NodeLight);
-		if(!PMainLight)
-		{
-			PMainLight = NodeLight;
-		}
+		if(!PMainLight) PMainLight = NodeLight;
 		NodeLight->SetAsLight(Light);
 		Light->BindNodeLight(NodeLight);
 		NodeLight->BindLinkedLight(Light);
 		NodeLight->SetPosition(LightTransform.GetPosition());
 		NodeLight->SetRotation(LightTransform.GetRotation());
-		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(NodeLight));
-		PRender->AddTask(task);
+ 		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(NodeLight));
+ 		PRender->AddTask(task);
 	}
 
 
@@ -139,15 +136,15 @@ namespace Phe
 	{
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
-		PerCameraCBuffer* PerCameraBuffer = new PerCameraCBuffer();
+		PerCameraCBuffer PerCameraBuffer;
 		auto CameraPassConstant = PMainCamera->GetPassConstant();
-		PerCameraBuffer->Time = PEngine::GetSingleton().GetTimer().TotalTime();
-		PerCameraBuffer->View = CameraPassConstant.View;
-		PerCameraBuffer->Proj = CameraPassConstant.Proj;
-		PerCameraBuffer->CameraLocationMat = CameraPassConstant.CameraLocationMat;
+		PerCameraBuffer.Time = PEngine::GetSingleton().GetTimer().TotalTime();
+		PerCameraBuffer.View = CameraPassConstant.View;
+		PerCameraBuffer.Proj = CameraPassConstant.Proj;
+		PerCameraBuffer.CameraLocationMat = CameraPassConstant.CameraLocationMat;
 		if(PMainLight)
 		{
-			PerCameraBuffer->ShadowTransform = PMainLight->GetPassCBuffer().ShadowTransform;
+			PerCameraBuffer.ShadowTransform = PMainLight->GetPassCBuffer().ShadowTransform;
 		}
 		PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateCamera(PerCameraBuffer));
 		PRender->AddTask(task);
@@ -158,13 +155,13 @@ namespace Phe
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
 		PMainLight->GetLightView()->RecalculateOrtho(PSceneCenter, PSceneRadius);
-		PerCameraCBuffer* PerCameraBuffer = new PerCameraCBuffer();
+		PerCameraCBuffer PerCameraBuffer;
 		auto LightData = PMainLight->GetPassCBuffer();
-		PerCameraBuffer->Time = PEngine::GetSingleton().GetTimer().TotalTime();
-		PerCameraBuffer->View = LightData.View;
-		PerCameraBuffer->Proj = LightData.Proj;
-		PerCameraBuffer->CameraLocationMat = LightData.CameraLocationMat;
-		PerCameraBuffer->ShadowTransform = PMainLight->GetVP();
+		PerCameraBuffer.Time = PEngine::GetSingleton().GetTimer().TotalTime();
+		PerCameraBuffer.View = LightData.View;
+		PerCameraBuffer.Proj = LightData.Proj;
+		PerCameraBuffer.CameraLocationMat = LightData.CameraLocationMat;
+		PerCameraBuffer.ShadowTransform = PMainLight->GetVP();
 		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->GetMainRenderLight()->UpdateCameraBuffer(PerCameraBuffer));
 		PRender->AddTask(task);
 	}

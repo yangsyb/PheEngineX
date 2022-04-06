@@ -9,7 +9,7 @@ namespace Phe
 		PGPUCommonBuffer(UINT32 StructByteSize, UINT32 ElementsNum, UINT32 Flag);
 		virtual ~PGPUCommonBuffer();
 
-		virtual void AllocateData(int DataIndex, void* data) = 0;
+		virtual void AllocateData(int DataIndex, std::shared_ptr<void> Data) = 0;
 
 		virtual UINT32 GetTotalBufferSize() const
 		{
@@ -27,7 +27,7 @@ namespace Phe
 		{
 			return PFlag;
 		}
-		virtual void ReleaseCurrentData() { ReleasePtr(CurrentData); }
+		virtual void ReleaseCurrentData() { CurrentData = nullptr; }
 		virtual void SetHandleOffset(UINT32 Offset) { PHandleOffset = Offset; }
 		virtual UINT32 GetHandleOffset() { return PHandleOffset; }
 
@@ -37,6 +37,6 @@ namespace Phe
 		UINT32 PFlag;
 
 		UINT32 PHandleOffset;
-		void* CurrentData;
+		std::shared_ptr<void> CurrentData;
 	};
 }

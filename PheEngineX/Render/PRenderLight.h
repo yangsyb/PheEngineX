@@ -13,8 +13,8 @@ namespace Phe
 		PGPUCommonBuffer* GetTransformBuffer() { return TransformBuffer; }
 		PGPUCommonBuffer* GetCameraBuffer() { return CameraBuffer; }
 
-		void UpdateCameraBuffer(void* Data);
-		void UpdateCommonBuffer(PGPUCommonBuffer* Buffer, void* Data);
+		void UpdateCameraBuffer(PerCameraCBuffer Data);
+		void UpdateCommonBuffer(PGPUCommonBuffer* Buffer, std::shared_ptr<void> Data);
 		void DestroyRenderLight();
 
 	private:

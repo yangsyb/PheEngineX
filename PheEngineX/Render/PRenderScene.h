@@ -2,7 +2,6 @@
 #include "pch.h"
 #include "Engine/Core/Transform.h"
 #include "Engine/Editor/PStaticMesh.h"
-#include "DX12/PDescriptorHeap.h"
 #include "GPUResource/PGPUMeshBuffer.h"
 #include "GPUResource/PGPUCommonBuffer.h"
 #include "PPrimitive.h"
@@ -23,8 +22,8 @@ namespace Phe
 
 		void AddMeshBuffer(std::string StaticMeshName, PNodeStaticMesh* InNodeStaticMesh);
 //		void AddPrimitive(std::string MeshBufferName, Transform MeshTransform, std::string MaterialName);
-		void AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData);
-		void AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData);
+		void AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, Transform TransformData);
+		void AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, Transform TransformData);
 		void AddLight(PNodeLight* InNodeLight);
 		void AddTexture(PTexture* Texture);
 		void AddMaterial(PMaterial* Material);

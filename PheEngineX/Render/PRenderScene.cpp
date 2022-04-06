@@ -32,7 +32,7 @@ namespace Phe
 	}
 
 
-	void PRenderScene::AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData)
+	void PRenderScene::AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, Transform TransformData)
 	{
 		std::string MaterialName = StaticMeshMaterial->GetName();
 		AddMaterial(StaticMeshMaterial);
@@ -73,16 +73,17 @@ namespace Phe
   			}
   			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
   			auto Mat = PRHI::Get()->CreateCommonBuffer(sizeof(PerMaterialCBuffer), 1);
-			PerMaterialCBuffer* MatData = new PerMaterialCBuffer(StaticMeshMaterial->GetMaterialBuffer());
-  			PRHI::Get()->UpdateCommonBuffer(Obj, TransformData);
+			std::shared_ptr<void> TransData = std::make_shared<PerObjectCBuffer>(TransformData.GetPositionMat(), TransformData.GetRotaionMat(), TransformData.GetScaleMat());
+			std::shared_ptr<void> MatData = std::make_shared<PerMaterialCBuffer>(StaticMeshMaterial->GetMaterialBuffer());
+  			PRHI::Get()->UpdateCommonBuffer(Obj, TransData);
 			PRHI::Get()->UpdateCommonBuffer(Mat, MatData);
   			NewPrimitive->SetPrimitiveRenderData(ptr, Obj, Mat, PMaterialPool.at(MaterialName));
   			PPrimitivePool.insert({ InNodeStaticMesh->GetID(), NewPrimitive});
+			PrimitiveNumber++;
  		}
-		PrimitiveNumber++;
 	}
 
-	void PRenderScene::AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, void* TransformData)
+	void PRenderScene::AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, Transform TransformData)
 	{
 		auto StaticMeshName = InNodeStaticMesh->GetStaticMeshName();
 		AddMeshBuffer(StaticMeshName, InNodeStaticMesh);
@@ -92,9 +93,9 @@ namespace Phe
 
 	void PRenderScene::AddLight(PNodeLight* InNodeLight)
 	{
-		PRenderLight* NewRenderLight = new PRenderLight();
-		InNodeLight->SetLinkedLight(NewRenderLight);
-		PRenderLightPool.insert( {InNodeLight->GetID(), NewRenderLight} );
+  		PRenderLight* NewRenderLight = new PRenderLight();
+  		InNodeLight->SetLinkedLight(NewRenderLight);
+  		PRenderLightPool.insert( {InNodeLight->GetID(), NewRenderLight} );
 	}
 
 	void PRenderScene::AddTexture(PTexture* Texture)
@@ -139,13 +140,6 @@ namespace Phe
 		}
 		PPipelinePool.clear();
 
-// 		for(auto& it : PPrimitivePool)
-// 		{
-// 			it.second->DestroyPrimitive();
-// 			ReleasePtr(it.second);
-// 		}
-// 		PPrimitivePool.clear();
-
 
 		for(int index = 0; index < PShaderPool.size(); index++)
 		{
@@ -160,6 +154,7 @@ namespace Phe
 		if(PPrimitivePool.count(PrimitiveId))
 		{
 			PPrimitivePool.at(PrimitiveId)->DestroyPrimitive();
+			ReleasePtr(PPrimitivePool.at(PrimitiveId));
 			PPrimitivePool.erase(PrimitiveId);
 			return;
 		}
@@ -170,6 +165,7 @@ namespace Phe
 		if(PRenderLightPool.count(SceneLightId))
 		{
 			PRenderLightPool.at(SceneLightId)->DestroyRenderLight();
+			ReleasePtr(PRenderLightPool.at(SceneLightId));
 			PRenderLightPool.erase(SceneLightId);
 			return;
 		}
@@ -188,8 +184,10 @@ namespace Phe
 	{
 		if(PTexturePool.count(TextureName) > 0)
 		{
-			ReleasePtr(PTexturePool.at(TextureName));
+/*			ReleasePtr(PTexturePool.at(TextureName));*/
+			PRHI::Get()->DestroyTexture(PTexturePool.at(TextureName));
 			PTexturePool.erase(TextureName);
+			
 			return;
 		}
 	}

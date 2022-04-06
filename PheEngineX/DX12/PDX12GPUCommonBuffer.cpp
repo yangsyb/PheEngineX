@@ -29,10 +29,10 @@ namespace Phe
 		ReleasePtr(PBufferResource);
 	}
 
-	void PDX12GPUCommonBuffer::AllocateData(int DataIndex, void* data)
+	void PDX12GPUCommonBuffer::AllocateData(int DataIndex, std::shared_ptr<void> Data)
 	{
-		CurrentData = data;
-		memcpy(&PMappedData[DataIndex * PStructureSizeInBytes], data, SizeofStructByteSize);
+		CurrentData = Data;
+		memcpy(&PMappedData[DataIndex * PStructureSizeInBytes], Data.get(), SizeofStructByteSize);
 	}
 
 }

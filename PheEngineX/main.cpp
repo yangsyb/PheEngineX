@@ -5,6 +5,8 @@ using namespace Phe;
 #ifdef PlatformUndef
 int main()
 {
+	//	_CrtSetBreakAlloc(108599);
+//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	PHashMap<KeyCode, PFunc<void()>> RegisterList;
 	std::unique_ptr<PEngine> PheEngine = std::make_unique<PEngine>();
 	//Load Test Data To AssetManager
@@ -39,7 +41,7 @@ int main()
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeLeafMat");
 	};
 	PFunc<void()> f4 = [&]() {
-		Transform LightTransform(glm::vec3(-1.4f, 52.3f, 35.7f), glm::vec3(0.f, -45.f, -90.f), glm::vec3(1.f, 1.f, 1.f));
+		Transform LightTransform(glm::vec3(-2.f, 55.f, 36.f), glm::vec3(0.f, -45.f, -90.f), glm::vec3(1.f, 1.f, 1.f));
 		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", LightTransform);
 	};
 	PFunc<void()> f5 = [&]() {
@@ -61,6 +63,8 @@ int main()
 #elif defined(PlatformWin32)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+	//	_CrtSetBreakAlloc(108599);
+	//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	PHashMap<KeyCode, PFunc<void()>> RegisterList;
 	std::unique_ptr<PEngine> PheEngine = std::make_unique<PEngine>();
 	//Load Test Data To AssetManager

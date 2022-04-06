@@ -56,7 +56,7 @@ namespace Phe
 
 		virtual Transform GetTransform() { return PTransform; }
 
-		virtual PerObjectCBuffer* GetTransformBuffer() { return PTransformBufferData; }
+//		virtual PerObjectCBuffer* GetTransformBuffer() { return PTransformBufferData; }
 	protected:
 		std::string PNodeID;
 		PNode* PParent;
@@ -68,6 +68,6 @@ namespace Phe
 
 		Transform PTransform;
 
-		PerObjectCBuffer* PTransformBufferData;
+//		PerObjectCBuffer* PTransformBufferData;
 	};
 }

@@ -15,9 +15,9 @@ namespace Phe
 
 	}
 
-	void PDX12GPURenderTarget::AddColorBuffer()
+	void PDX12GPURenderTarget::AddColorBuffer(UINT32 BufferNum)
 	{
-		for(size_t index = 0; index < 3; index++)
+		for(size_t index = 0; index < BufferNum; index++)
 		{
 			auto NewColorBuffer = PRHI::Get()->CreateRTBuffer(RTBufferType::RTColorBuffer, PWidth, PHeight);
 			PRenderTargetColorBuffer.push_back(NewColorBuffer);

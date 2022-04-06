@@ -117,7 +117,7 @@ namespace Phe
 		// 			&dsvHeapDesc, IID_PPV_ARGS(PDsvHeap.GetAddressOf())));
 
 		ScreenRT = CreateRenderTarget("BackBuffer");
-		ScreenRT->AddColorBuffer();
+		ScreenRT->AddColorBuffer(ScreenFrameNumber);
 		ScreenRT->AddDepthStencilBuffer();
 	}
 
@@ -744,7 +744,7 @@ namespace Phe
 		InDX12Pipeline->SetPipelineState(PSO);
 	}
 
-	void PDX12RHI::UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, void* Data)
+	void PDX12RHI::UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, std::shared_ptr<void> Data)
 	{
 		CommonBuffer->ReleaseCurrentData();
 		CommonBuffer->AllocateData(0, Data);
@@ -843,17 +843,9 @@ namespace Phe
 
 	void PDX12RHI::DestroyTexture(PGPUTexture* Texture, bool CheckMap)
 	{
-// 		PCbvSrvUavHeap->Deallocate(Texture->GetHandleOffset(), 1);
-// 
-//  		TextureRefPool.at(Texture)--;
-//  		if(CheckMap)
-//  		{
-//  			if (TextureRefPool.at(Texture) == 0)
-//  			{
-//  				TextureRefPool.erase(Texture);
-//  				ReleasePtr(Texture);
-//  			}
-//  		}
+		PCbvSrvUavHeap->Deallocate(Texture->GetHandleOffset(), 1);
+
+ 		ReleasePtr(Texture);
 	}
 
 	void PDX12RHI::DestroyMaterial(PMaterial* Material)

@@ -13,7 +13,7 @@ namespace Phe
 	PGPUCommonBuffer::~PGPUCommonBuffer()
 	{
 //		ReleasePtr(CurrentData);
-//		ReleaseCurrentData();
+		ReleaseCurrentData();
 	}
 
 }

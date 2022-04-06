@@ -21,9 +21,10 @@ namespace Phe
 		void DestroyRenderer();
 
 		void UpdatePrimitiveBuffer(PPrimitive* Primitive);
-		void UpdateCamera(PerCameraCBuffer* CameraCBuffer);
+		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
 		void ShaderResourceBinding(PPrimitive* Primitive);
-		void PrepareShadowMap(PRenderScene* RenderScene);
+		void ShadowPass(PRenderScene* RenderScene);
+		void BRDFPass(PRenderScene* RenderScene);
 
 		void SetExportDepth() { NeedExportDepth = true; }
 	private:
@@ -32,6 +33,7 @@ namespace Phe
 
 		PPipeline* PCurrentPipeline;
 		PGPURenderTarget* PShadowMap;
+		PGPURenderTarget* PBRDFRenderTarget;
 
 	private:
 		bool NeedExportDepth = false;

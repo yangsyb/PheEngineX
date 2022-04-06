@@ -76,7 +76,7 @@ namespace Phe
 		PDX12GPURenderTarget(std::string RenderTargetName, UINT32 Width, UINT32 Height);
 		virtual ~PDX12GPURenderTarget();
 
-		virtual void AddColorBuffer() override;
+		virtual void AddColorBuffer(UINT32 BufferNum) override;
 		virtual void AddDepthStencilBuffer() override;
 
 	protected:

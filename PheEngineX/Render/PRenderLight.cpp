@@ -16,12 +16,13 @@ namespace Phe
 
 	}
 
-	void PRenderLight::UpdateCameraBuffer(void* Data)
+	void PRenderLight::UpdateCameraBuffer(PerCameraCBuffer Data)
 	{
-		UpdateCommonBuffer(CameraBuffer, Data);
+		std::shared_ptr<void> CameraData = std::make_shared<PerCameraCBuffer>(Data);
+		UpdateCommonBuffer(CameraBuffer, CameraData);
 	}
 
-	void PRenderLight::UpdateCommonBuffer(PGPUCommonBuffer* Buffer, void* Data)
+	void PRenderLight::UpdateCommonBuffer(PGPUCommonBuffer* Buffer, std::shared_ptr<void> Data)
 	{
 		PRHI::Get()->UpdateCommonBuffer(Buffer, Data);
 	}

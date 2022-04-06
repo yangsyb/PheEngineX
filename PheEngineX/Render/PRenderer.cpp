@@ -6,7 +6,7 @@
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PBRDFRenderTarget(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -31,7 +31,7 @@ namespace Phe
 		PRenderLight* MainRenderLight = nullptr;
 		if(MainRenderLight = RenderScene->GetMainRenderLight())
 		{
-			PrepareShadowMap(RenderScene);
+			ShadowPass(RenderScene);
 			return;
 		}
 		ReleasePtr(PShadowMap);
@@ -60,9 +60,10 @@ namespace Phe
 
 	}
 
-	void PRenderer::UpdateCamera(PerCameraCBuffer* CameraCBuffer)
+	void PRenderer::UpdateCamera(PerCameraCBuffer CameraCBuffer)
 	{
-		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, CameraCBuffer);
+		std::shared_ptr<void> CameraData = std::make_shared<PerCameraCBuffer>(CameraCBuffer);
+		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, CameraData);
 	}
 
 	void PRenderer::ShaderResourceBinding(PPrimitive* Primitive)
@@ -89,7 +90,7 @@ namespace Phe
 		PRHI::Get()->SetRenderResourceTable("PerMaterialBuffer", Primitive->GetPerMatBuffer()->GetHandleOffset());
 	}
 
-	void PRenderer::PrepareShadowMap(PRenderScene* RenderScene)
+	void PRenderer::ShadowPass(PRenderScene* RenderScene)
 	{
 		PGPUCommonBuffer* MainLightBuffer = RenderScene->GetMainRenderLight()->GetCameraBuffer();
 		if(!PShadowMap)
@@ -123,6 +124,18 @@ namespace Phe
 			PRHI::Get()->ReadBackRTBuffer(PShadowMap->GetDepthStencilBuffer());
 			NeedExportDepth = false;
 		}
+	}
+
+
+	void PRenderer::BRDFPass(PRenderScene* RenderScene)
+	{
+		PShadowMap = PRHI::Get()->CreateRenderTarget("BRDF", 1024, 1024);
+		PShadowMap->AddColorBuffer(1);
+		PShadowMap->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetColorBuffer(1));
+		PRHI::Get()->BeginRenderRTBuffer(PBRDFRenderTarget->GetColorBuffer(1));
+		PRHI::Get()->SetRenderTarget(PBRDFRenderTarget);
+
+		PRHI::Get()->EndRenderRTBuffer(PBRDFRenderTarget->GetColorBuffer(1));
 	}
 
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)

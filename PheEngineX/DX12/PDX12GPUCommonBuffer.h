@@ -12,7 +12,7 @@ namespace Phe
 		PDX12GPUCommonBuffer(UINT32 StructByteSize, UINT32 ElementsNum, UINT32 Flag);
 		virtual ~PDX12GPUCommonBuffer();
 
-		virtual void AllocateData(int DataIndex, void* data);
+		virtual void AllocateData(int DataIndex, std::shared_ptr<void> Data);
 
 		PDX12GPUResource* GetResource()
 		{

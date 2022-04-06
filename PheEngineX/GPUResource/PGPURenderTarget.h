@@ -32,14 +32,15 @@ namespace Phe
 		PGPURenderTarget(std::string RenderTargetName, UINT32 Width = 1920, UINT32 Height = 1080);
 		virtual ~PGPURenderTarget();
 
-		virtual void AddColorBuffer() = 0;
+		virtual void AddColorBuffer(UINT32 BufferNum) = 0;
 		virtual void AddDepthStencilBuffer() = 0;
 
 		virtual UINT32 GetWidth() { return PWidth; }
 		virtual UINT32 GetHeight() { return PHeight; }
 
-		std::vector<RTBuffer*> GetColorBuffer() { return PRenderTargetColorBuffer; }
-		RTBuffer* GetDepthStencilBuffer() { return PRenderTargetDepthStencilBuffer; }
+		virtual std::vector<RTBuffer*> GetColorBuffer() { return PRenderTargetColorBuffer; }
+		virtual RTBuffer* GetColorBuffer(UINT32 Index) { return PRenderTargetColorBuffer.size() > Index ? PRenderTargetColorBuffer[Index] : nullptr; }
+		virtual RTBuffer* GetDepthStencilBuffer() { return PRenderTargetDepthStencilBuffer; }
 	protected:
 		std::string PRenderTargetName;
 		UINT32 PWidth;

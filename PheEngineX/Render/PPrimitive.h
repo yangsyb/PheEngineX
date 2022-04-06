@@ -25,7 +25,7 @@ namespace Phe
 		PGPUCommonBuffer* GetPerMatBuffer() { return PerMatBuffer; }
 		PMaterial* GetMaterial() { return PrimitiveMaterial; }
 
-		void UpdateCommonBuffer(PGPUCommonBuffer* Buffer, void* Data);
+		void UpdateCommonBuffer(PGPUCommonBuffer* Buffer, std::shared_ptr<void> Data);
 
 		void DestroyPrimitive();
 	private:

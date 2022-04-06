@@ -10,6 +10,10 @@ struct PerObjectCBuffer
 	glm::mat4 Position;
 	glm::mat4 Rotation;
 	glm::mat4 Scale;
+	PerObjectCBuffer(){}
+	PerObjectCBuffer(glm::mat4 P, glm::mat4 R, glm::mat4 S) :
+		Position(P), Rotation(R), Scale(S)
+	{}
 };
 
 struct PerCameraCBuffer
