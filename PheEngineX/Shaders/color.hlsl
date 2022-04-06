@@ -60,6 +60,7 @@ struct VertexOut
 	float4 ShadowPos : POSITION0;
 	float3 WorldPos : POSITION1;
 	float3 Norm : NORMAL;
+	float3 TangentW : TANGENT;
 };
 
 float CalcShadowFactor(float4 shadowPosH)
@@ -165,6 +166,8 @@ VertexOut VS(VertexIn vin)
 
 	vout.Norm = mul(gWorld, float4(vin.Normal.xyz,0)).xyz;
 
+	vout.TangentW = mul((float3x3)gWorld, normalize(vin.Tangent.xyz));
+
 	return vout;
 }
 
@@ -178,13 +181,15 @@ float4 PS(VertexOut pin) : SV_Target
 
 	float Shadow = CalcShadowFactor(pin.ShadowPos);
 
-	float4 NormalAlbedo = gNormalMap.Sample(gsamAnisotropicWrap, pin.TextCoord) * gBaseColor;
+	float4 NormalMapSample = gNormalMap.Sample(gsamAnisotropicWrap, pin.TextCoord);
+	float3 bumpedNormalW = NormalSampleToWorldSpace(NormalMapSample.rgb, pin.Norm, pin.TangentW);
+
 	BaseColor.rgb *= gBaseColor.rgb;
 
 	float Roughness = gRoughness;
 	float Metallic = gFresnelR0;
 	float F0 = 0.04f;
-	float AO = 10.0f;
+	float AO = 20.0f;
 	F0 = lerp(F0.rrr, BaseColor.rgb, Metallic);
 
 	//Light
@@ -197,8 +202,8 @@ float4 PS(VertexOut pin) : SV_Target
 		float FallOff = distance(PointLightPos, WPos);
 		FallOff = LightRadius / (FallOff * FallOff);
 		float3 V = normalize(gCameraPosition - pin.WorldPos);
-//		float3 N = normalize(pin.Color.xyz);
-		float3 N = normalize(pin.Norm);
+		float3 N = bumpedNormalW;
+//		float3 N = normalize(pin.Norm);
 		float3 L = normalize(PointLightPos - WPos);
 		float3 H = normalize(V + L);
 		float3 R = -reflect(V, N);
@@ -216,25 +221,13 @@ float4 PS(VertexOut pin) : SV_Target
 		float G = Vis_SmithJointApprox(a2, NoV, NoL);
 		float F = FSchlick(VoH, F0);
 		float3 Specular = D * G * F;
-		Output.rgb += (Diffuse + Specular) * NoL * Shadow * (FallOff * LightStrenth) * 500;
+		Output.rgb += (Diffuse + Specular) * NoL * Shadow * (FallOff * LightStrenth) * 300;
+//		Output.rgb += Specular * 50;
+//		Output.rgb += Diffuse * 3;
 	}
-	float3 V = normalize(gCameraPosition - pin.WorldPos);
-	float3 N = normalize(pin.Color.xyz);
-	float3 L = float3(-0.8, 1, 0.5);
-	float3 H = normalize(V + L);
-	float3 R = -reflect(V, N);
-	float NoL = saturate(dot(L, N));
-	float NoH = saturate(dot(N, H));
-	float NoV = saturate(dot(N, V));
-	float VoH = saturate(dot(V, H));
-	float NoR = saturate(dot(N, R));
-	float F = FSchlick(VoH, F0);
 
-	float LevelFrom1x1 = 1 - 1.2 * log2(Roughness);
-	float lod = 11 - 1 - LevelFrom1x1;
+	Output.rgb += 0.03f * BaseColor.rgb * AO;
+	return Output;
 
-//	Output.rgb += 0.03f * BaseColor.rgb * AO;
-//	return Output;
-
-	return pow(BaseColor * (Shadow + 0.1), 1 / 2.2f);
+//	return pow(BaseColor * (Shadow + 0.1), 1 / 2.2f);
 }
