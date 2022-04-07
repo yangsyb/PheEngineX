@@ -41,6 +41,8 @@ namespace Phe
 		const glm::mat4& GetViewMatrix() const { return PView; }
 		const glm::mat4& GetProjectionViewMatrix() const { return PProjectionView; }
 
+		const glm::vec3 GetFront() const { return PFront; }
+
 	protected:
 		float PWidth;
 		float PHeight;
@@ -72,6 +74,7 @@ namespace Phe
 
 	class POrthographicCamera : public PCamera
 	{
+	public:
 	public:
 		POrthographicCamera(float Width, float Height) : PCamera()
 		{

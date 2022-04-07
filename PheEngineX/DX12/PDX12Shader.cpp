@@ -11,9 +11,13 @@ namespace Phe
 	{
 		PDX12Shadermanager* DX12ShaderManager = dynamic_cast<PDX12Shadermanager*>(PShaderManager::Get());
 
-		ShaderParameter perText("Texture", ShaderParamType::SRVDescriptorHeap, 2, 0, 0);
+		ShaderParameter perText("Texture", ShaderParamType::SRVDescriptorHeap, 4, 0, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(perText.name)] = UINT(Params.size());
 		Params.push_back(perText);
+
+		ShaderParameter shadowTexture("ShadowTexture", ShaderParamType::SRVDescriptorHeap, 1, 4, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(shadowTexture.name)] = UINT(Params.size());
+		Params.push_back(shadowTexture);
 
 		ShaderParameter perObject("PerObjectBuffer", ShaderParamType::CBVDescriptorHeap, 1, 0, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(perObject.name)] = UINT(Params.size());
@@ -30,10 +34,6 @@ namespace Phe
 		ShaderParameter perLight("PerLightBuffer", ShaderParamType::CBVDescriptorHeap, 1, 3, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(perLight.name)] = UINT(Params.size());
 		Params.push_back(perLight);
-
-  		ShaderParameter shadowTexture("ShadowTexture", ShaderParamType::SRVDescriptorHeap, 1, 2, 0);
-  		ParamMap[DX12ShaderManager->PropertyToID(shadowTexture.name)] = UINT(Params.size());
-  		Params.push_back(shadowTexture);
 
 		MakeDX12RasterizerState(RasterizerDesc, PRasterizerState);
 		MakeDX12BlendState(BlendState, PBlendState);

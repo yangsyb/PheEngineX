@@ -4,7 +4,7 @@
 namespace Phe
 {
 
-	PLight::PLight(std::string LightName) : PLightName(LightName), PLightRadius(8), PLightStrength(10), PIsDynamic(false)
+	PLight::PLight(std::string LightName) : PLightName(LightName), PLightRadius(8), PLightStrength(10), PIsDynamic(false), PLightColor(glm::vec3(1.f, 1.f, 1.f))
 	{
 
 	}

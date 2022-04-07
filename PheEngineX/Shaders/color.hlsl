@@ -1,6 +1,8 @@
+#include "BRDF.hlsli"
+
 Texture2D    gDiffuseMap : register(t0);
 Texture2D    gNormalMap : register(t1);
-Texture2D    gShadowMap : register(t2);
+Texture2D    gShadowMap : register(t4);
 
 
 SamplerState gsamPointWrap : register(s0);
@@ -11,7 +13,7 @@ SamplerState gsamAnisotropicWrap : register(s4);
 SamplerState gsamAnisotropicClamp : register(s5);
 SamplerComparisonState gsamShadow : register(s6);
 
-#define PI 3.1415927
+//#define PI 3.1415927
 
 cbuffer cbPerObject : register(b0)
 {
@@ -41,6 +43,7 @@ cbuffer cbLight : register(b3)
 {
 	float3 gLightPosition;
 	float gLightIntensity;
+	float3 gLightColor;
 	float gLightRadius;
 }
 
@@ -97,53 +100,23 @@ float CalcShadowFactor(float4 shadowPosH)
 	return percentLit / 9.0f;
 }
 
-float Pow5(float val)
-{
-	return val * val * val * val * val;
-}
-
-float3 Diffuse_Burley(float3 DiffuseColor, float Roughness, float NoV, float NoL, float VoH)
-{
-	float FD90 = 0.5 + 2 * VoH * VoH * Roughness;
-	float FdV = 1 + (FD90 - 1) * Pow5(1 - NoV);
-	float FdL = 1 + (FD90 - 1) * Pow5(1 - NoL);
-	return DiffuseColor * ((1 / PI) * FdV * FdL);
-}
-
-float D_GGX(float a2, float NoH)
-{
-	float d = (NoH * a2 - NoH) * NoH + 1; // 2 mad
-	return a2 / (PI * d * d); // 4 mul, 1 rcp
-}
-
-float Vis_SmithJointApprox(float a2, float NoV, float NoL)
-{
-	float a = sqrt(a2);
-	float Vis_SmithV = NoL * (NoV * (1 - a) + a);
-	float Vis_SmithL = NoV * (NoL * (1 - a) + a);
-	return 0.5 * rcp(Vis_SmithV + Vis_SmithL);
-}
-
-float3 FSchlick(float cosTheta, float3 F0)
-{
-	return F0 + (1.0 - F0) * pow(1.0 - cosTheta, 5.0);
-}
+//float D_GGX(float a2, float NoH)
+//{
+//	float d = (NoH * a2 - NoH) * NoH + 1; // 2 mad
+//	return a2 / (PI * d * d); // 4 mul, 1 rcp
+//}
 
 float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
 {
-	// Uncompress each component from [0,1] to [-1,1].
 	float3 normalT = 2.0f * normalMapSample - 1.0f;
 
-	// Build orthonormal basis.
 	float3 N = normalize(unitNormalW);
 	float3 T = normalize(tangentW - dot(tangentW, N) * N);
 	float3 B = normalize(cross(N, T));
 
 	float3x3 TBN = float3x3(T, B, N);
 
-	// Transform from tangent space to world space.
 	float3 bumpedNormalW = mul(normalT, TBN);
-
 	return bumpedNormalW;
 }
 
@@ -222,8 +195,6 @@ float4 PS(VertexOut pin) : SV_Target
 		float F = FSchlick(VoH, F0);
 		float3 Specular = D * G * F;
 		Output.rgb += (Diffuse + Specular) * NoL * Shadow * (FallOff * LightStrenth) * 300;
-//		Output.rgb += Specular * 50;
-//		Output.rgb += Diffuse * 3;
 	}
 
 	Output.rgb += 0.03f * BaseColor.rgb * AO;

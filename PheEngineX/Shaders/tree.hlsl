@@ -1,6 +1,6 @@
 Texture2D    gDiffuseMap : register(t0);
 Texture2D    gNormalMap : register(t1);
-Texture2D    gShadowMap : register(t2);
+Texture2D    gShadowMap : register(t4);
 
 
 SamplerState gsamPointWrap : register(s0);
@@ -32,6 +32,14 @@ cbuffer cbMaterial : register(b2)
 	float4 gDiffuseAlbedo;
 	float3 gFresnelR0;
 	float  gRoughness;
+}
+
+cbuffer cbLight : register(b3)
+{
+	float3 gLightDirection;
+	float3 gLightColor;
+	float gLightIntensity;
+	float gLightRadius;
 }
 
 struct VertexIn

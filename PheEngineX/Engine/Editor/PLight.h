@@ -21,11 +21,14 @@ namespace Phe
 		std::string GetLightName() { return PLightName; }
 		float GetLightRadius() { return PLightRadius; }
 		float GetLightStrength() { return PLightStrength; }
+		glm::vec3 GetLightColor() { return PLightColor; }
 		bool GetIsDynamic() { return PIsDynamic; }
 	private:
 		std::string PLightName;
 		float PLightRadius;
 		float PLightStrength;
+		glm::vec3 PLightColor;
+
 		bool PIsDynamic;
 		
 		std::unordered_map<std::string, PNodeLight*> LinkedNodeLight;

@@ -108,26 +108,38 @@ namespace Phe
 		if(PMainLight)
 		{
 			if(PMainLight->GetIsDynamic())
-			{
-				static bool IsUp = true;
-				glm::vec3 CurrentRotation = PMainLight->GetLightView()->GetRotation();
-				if (IsUp)
-				{
-					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y + 0.05, CurrentRotation.z));
-					if (CurrentRotation.y + 0.02 > -20)
-					{
-						IsUp = false;
-					}
-				}
-				else
-				{
-					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y - 0.05, CurrentRotation.z));
-					if (CurrentRotation.y - 0.02 < -70)
-					{
-						IsUp = true;
-					}
-				}
-			}
+ 			{
+// 				static bool IsUp = true;
+// 				glm::vec3 CurrentRotation = PMainLight->GetLightView()->GetRotation();
+// 				if (IsUp)
+// 				{
+// 					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y + 0.05, CurrentRotation.z));
+// 					if (CurrentRotation.y + 0.02 > -20)
+// 					{
+// 						IsUp = false;
+// 					}
+// 					PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
+// 					PRender->AddTask(task);
+// 				}
+// 				else
+// 				{
+// 					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y - 0.05, CurrentRotation.z));
+// 					if (CurrentRotation.y - 0.02 < -70)
+// 					{
+// 						IsUp = true;
+// 					}
+// 					PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
+// 					PRender->AddTask(task);
+// 				}
+//				glm::vec3 CurrentPosition = PMainLight->GetLightView()->GetPosition();
+//				glm::vec3 CurrentRotation = PMainLight->GetLightView()->GetRotation();
+//				PMainLight->SetPosition((glm::vec3(CurrentPosition.x, -CurrentPosition.y, CurrentPosition.z)));
+//				PMainLight->SetRotation((glm::vec3(-CurrentRotation.x, -CurrentRotation.y, -CurrentRotation.z)));
+//				PMainLight->SetIsDynamic(false);
+//				PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
+//				PRender->AddTask(task);
+ 			}
+
 			UpdateShadowPassBuffer();
 		}
 	}

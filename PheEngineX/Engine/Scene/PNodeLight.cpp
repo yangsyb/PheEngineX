@@ -5,7 +5,7 @@
 #include "Render/PRenderThread.h"
 namespace Phe
 {
-	PNodeLight::PNodeLight(PNode* Parent) : PNode(nullptr), PLinkedRenderLight(nullptr), PIsDynamic(false), PLightRaidus(0.f), PLightStrength(0.f), PLinkedLight(nullptr), PLightName()
+	PNodeLight::PNodeLight(PNode* Parent) : PNode(nullptr), PLinkedRenderLight(nullptr), PIsDynamic(false), PLightRaidus(0.f), PLightStrength(0.f), PLinkedLight(nullptr), PLightName(), PLightColor(glm::vec3(1.f, 1.f, 1.f))
 	{
 		LightView = new POrthographicCamera(4096.f, 4096.f);
 	}
@@ -15,6 +15,7 @@ namespace Phe
 		PLightName = Light->GetLightName();
 		PLightRaidus = Light->GetLightRadius();
 		PLightStrength = Light->GetLightStrength();
+		PLightColor = Light->GetLightColor();
 		PIsDynamic = Light->GetIsDynamic();
 	}
 

@@ -6,7 +6,7 @@
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PBRDFRenderTarget(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -64,6 +64,12 @@ namespace Phe
 	{
 		std::shared_ptr<void> CameraData = std::make_shared<PerCameraCBuffer>(CameraCBuffer);
 		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, CameraData);
+	}
+
+
+	void PRenderer::UpdateLight(PRenderLight* RenderLight, PerLightCBuffer LightCBuffer)
+	{
+		RenderLight->UpdatePerLightBuffer(LightCBuffer);
 	}
 
 	void PRenderer::ShaderResourceBinding(PPrimitive* Primitive)
@@ -127,15 +133,15 @@ namespace Phe
 	}
 
 
-	void PRenderer::BRDFPass(PRenderScene* RenderScene)
+	void PRenderer::IBLBRDFPass(PRenderScene* RenderScene)
 	{
-		PBRDFRenderTarget = PRHI::Get()->CreateRenderTarget("BRDF", 1024, 1024);
-		PBRDFRenderTarget->AddColorBuffer(1);
-		PBRDFRenderTarget->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("BRDFTexture", PBRDFRenderTarget->GetColorBuffer(1));
-		PRHI::Get()->BeginRenderRTBuffer(PBRDFRenderTarget->GetColorBuffer(1));
-		PRHI::Get()->SetRenderTarget(PBRDFRenderTarget);
+		PIBLBRDFRenderTarget = PRHI::Get()->CreateRenderTarget("IBLBRDF", 1024, 1024);
+		PIBLBRDFRenderTarget->AddColorBuffer(1);
+		PIBLBRDFRenderTarget->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("IBLBRDFTexture", PIBLBRDFRenderTarget->GetColorBuffer(1));
+		PRHI::Get()->BeginRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
+		PRHI::Get()->SetRenderTarget(PIBLBRDFRenderTarget);
 
-		PRHI::Get()->EndRenderRTBuffer(PBRDFRenderTarget->GetColorBuffer(1));
+		PRHI::Get()->EndRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
 	}
 
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)

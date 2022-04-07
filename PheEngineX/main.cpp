@@ -5,13 +5,13 @@ using namespace Phe;
 int main()
 {
 	//	_CrtSetBreakAlloc(108599);
-//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	PHashMap<KeyCode, PFunc<void()>> RegisterList;
 	std::unique_ptr<PEngine> PheEngine = std::make_unique<PEngine>();
 	//Load Test Data To AssetManager
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\InSceneData.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tree.json");
-	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxUVs);
+	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxTangent, StandardBoxUVs);
 	//Texture Data
 	PAssetManager::GetSingleton().AddTextureData("Texture1", L"Textures\\jacket_diff.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture1Normal", L"Textures\\jacket_norm.dds");
@@ -69,6 +69,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	//Load Test Data To AssetManager
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\InSceneData.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tree.json");
+	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tower.json");
 	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxTangent, StandardBoxUVs);
 	//Texture Data
 	PAssetManager::GetSingleton().AddTextureData("Texture1", L"Textures\\jacket_diff.dds");
@@ -76,10 +77,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().AddTextureData("Texture2", L"Textures\\grass.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture3", L"Textures\\TreeTrunk.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture3Normal", L"Textures\\TreeTrunkNormal.dds");
+	PAssetManager::GetSingleton().AddTextureData("TextureTower", L"Textures\\T_Tower_BaseColor.dds");
+	PAssetManager::GetSingleton().AddTextureData("TextureTowerNormal", L"Textures\\T_Tower_Normal.dds");
+	PAssetManager::GetSingleton().AddTextureData("TextureTowerRM", L"Textures\\T_Tower_OcclusionRoughnessMetallic.dds");
+	PAssetManager::GetSingleton().AddTextureData("TextureTowerEmissive", L"Textures\\T_Tower_Emissive.dds");
 	//Material
 	PAssetManager::GetSingleton().AddMaterialData("DefaultMat", "DefaultShader", std::vector<std::string>{"Texture1", "Texture1Normal"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeLeafMat", "WPOShader", std::vector<std::string>{"Texture2"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeTruckMat", "WPOTrunkShader", std::vector<std::string>{"Texture3", "Texture3Normal"});
+	PAssetManager::GetSingleton().AddMaterialData("TowerMat", "TowerShader", std::vector<std::string>{"TextureTower", "TextureTowerNormal", "TextureTowerRM", "TextureTowerEmissive"});
 	//Light
 	PAssetManager::GetSingleton().AddLightData("DefaultLight");
 
@@ -90,12 +96,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PFunc<void()> f2 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\InSceneData.json", "DefaultMat");
+		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tower.json", "TowerMat");
 	};
 	PFunc<void()> f3 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\InSceneData.json", "DefaultMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeTruckMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeLeafMat");
+		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tower.json", "TowerMat");
 	};
 	PFunc<void()> f4 = [&]() {
 		Transform LightTransform(glm::vec3(-2.f, 55.f, 36.f), glm::vec3(0.f, -45.f, -90.f), glm::vec3(1.f, 1.f, 1.f));

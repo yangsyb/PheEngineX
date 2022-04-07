@@ -27,11 +27,12 @@ namespace Phe
 		PerCameraCBuffer GetPassCBuffer(){ return LightView->GetPassConstant(); }
 		glm::mat4 GetVP() { return LightView->GetProjectionViewMatrix();}
 		POrthographicCamera* GetLightView() { return LightView; }
-		PerLightCBuffer GetPerLightCBuffer() { return PerLightCBuffer{LightView->GetPosition(), PLightStrength, PLightRaidus}; }
+		PerLightCBuffer GetPerLightCBuffer() { return PerLightCBuffer{LightView->GetPosition(), PLightColor, PLightStrength, PLightRaidus}; }
 	private:
 		std::string PLightName;
 		float PLightRaidus;
 		float PLightStrength;
+		glm::vec3 PLightColor;
 		bool PIsDynamic;
 
 		POrthographicCamera* LightView;

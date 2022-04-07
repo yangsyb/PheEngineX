@@ -7,10 +7,11 @@
 默认多线程渲染 <br/>
 默认不开灯 <br/>
 按1可渲染一个box <br/>
-按2渲染导出的json地图 <br/>
-按3渲染地图加上WPO树 <br/>
+按2渲染导出的json地图 + PBR炮台 <br/>
+按3渲染地图 + WPO树 + PBR炮台 <br/>
 按4开灯 <br/>
 按5可开关灯是否移动，目前阴影移动起来有失真 <br/>
+
 
 # Engine Design
 Engine/Core : Basic Infrastructure Used for Engine Construction <br/><br/>

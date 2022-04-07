@@ -37,12 +37,13 @@ struct PerLightCBuffer
 {
 	glm::vec3 LightDirection;
 	float LightIntensity;
+	glm::vec3 LightColor;
 	float LightRadius;
 	PerLightCBuffer() : 
-		LightDirection(glm::vec3()), LightIntensity(0), LightRadius(0)
+		LightDirection(glm::vec3()), LightColor(glm::vec3()), LightIntensity(0.f), LightRadius(0.f)
 	{}
-	PerLightCBuffer(glm::vec3 LD, float LI, float LR) : 
-		LightDirection(LD), LightIntensity(LI), LightRadius(LR)
+	PerLightCBuffer(glm::vec3 LD, glm::vec3 LC, float LI, float LR) : 
+		LightDirection(LD), LightColor(LC), LightIntensity(LI), LightRadius(LR)
 	{}
 };
 
