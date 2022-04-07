@@ -106,20 +106,6 @@ float CalcShadowFactor(float4 shadowPosH)
 //	return a2 / (PI * d * d); // 4 mul, 1 rcp
 //}
 
-float3 NormalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
-{
-	float3 normalT = 2.0f * normalMapSample - 1.0f;
-
-	float3 N = normalize(unitNormalW);
-	float3 T = normalize(tangentW - dot(tangentW, N) * N);
-	float3 B = normalize(cross(N, T));
-
-	float3x3 TBN = float3x3(T, B, N);
-
-	float3 bumpedNormalW = mul(normalT, TBN);
-	return bumpedNormalW;
-}
-
 
 VertexOut VS(VertexIn vin)
 {

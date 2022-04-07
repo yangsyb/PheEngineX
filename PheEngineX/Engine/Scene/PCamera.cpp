@@ -63,7 +63,7 @@ namespace Phe
  		PFront.y = sin(glm::radians(rotation.z)) * cos(glm::radians(rotation.y));
  		PFront.z = sin(glm::radians(rotation.y));
  		PFront = glm::normalize(PFront);
- 
+
  		if (PRotation.y < -89) PRotation.y = -89;
  		else if (PRotation.y > 89) PRotation.y = 89;
  		PRight = glm::normalize(glm::cross(PWorldUp, PFront));

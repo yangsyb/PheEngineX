@@ -76,7 +76,7 @@ namespace Phe
 		Light->BindNodeLight(NodeLight);
 		NodeLight->BindLinkedLight(Light);
 		NodeLight->SetPosition(LightTransform.GetPosition());
-		NodeLight->SetRotation(LightTransform.GetRotation());
+		NodeLight->GetLightView()->SetDirection(glm::vec3(0,0,0) - NodeLight->GetLightView()->GetPosition());
  		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddLight(NodeLight));
  		PRender->AddTask(task);
 	}
@@ -109,35 +109,30 @@ namespace Phe
 		{
 			if(PMainLight->GetIsDynamic())
  			{
-// 				static bool IsUp = true;
-// 				glm::vec3 CurrentRotation = PMainLight->GetLightView()->GetRotation();
-// 				if (IsUp)
-// 				{
-// 					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y + 0.05, CurrentRotation.z));
-// 					if (CurrentRotation.y + 0.02 > -20)
-// 					{
-// 						IsUp = false;
-// 					}
-// 					PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
-// 					PRender->AddTask(task);
-// 				}
-// 				else
-// 				{
-// 					PMainLight->GetLightView()->SetRotation(glm::vec3(CurrentRotation.x, CurrentRotation.y - 0.05, CurrentRotation.z));
-// 					if (CurrentRotation.y - 0.02 < -70)
-// 					{
-// 						IsUp = true;
-// 					}
-// 					PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
-// 					PRender->AddTask(task);
-// 				}
-//				glm::vec3 CurrentPosition = PMainLight->GetLightView()->GetPosition();
-//				glm::vec3 CurrentRotation = PMainLight->GetLightView()->GetRotation();
-//				PMainLight->SetPosition((glm::vec3(CurrentPosition.x, -CurrentPosition.y, CurrentPosition.z)));
-//				PMainLight->SetRotation((glm::vec3(-CurrentRotation.x, -CurrentRotation.y, -CurrentRotation.z)));
-//				PMainLight->SetIsDynamic(false);
-//				PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
-//				PRender->AddTask(task);
+ 				static bool IsLeft = true;
+				glm::vec3 CurrentPosition = PMainLight->GetLightView()->GetPosition();
+ 				if (IsLeft)
+ 				{
+					if(CurrentPosition.y - 0.03 < -55)
+					{
+						IsLeft = !IsLeft;
+					}
+					PMainLight->SetPosition((glm::vec3(CurrentPosition.x, CurrentPosition.y - 0.03, CurrentPosition.z)));
+					PMainLight->GetLightView()->SetDirection(glm::vec3(0, 0, 0) - PMainLight->GetLightView()->GetPosition());
+					PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
+					PRender->AddTask(task);
+ 				}
+ 				else
+ 				{
+					if (CurrentPosition.y + 0.03 > 55)
+					{
+						IsLeft = !IsLeft;
+					}
+					PMainLight->SetPosition((glm::vec3(CurrentPosition.x, CurrentPosition.y + 0.03, CurrentPosition.z)));
+					PMainLight->GetLightView()->SetDirection(glm::vec3(0, 0, 0) - PMainLight->GetLightView()->GetPosition());
+					PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateLight(PMainLight->GetLinkedRenderLight(), PMainLight->GetPerLightCBuffer()));
+					PRender->AddTask(task);
+ 				}
  			}
 
 			UpdateShadowPassBuffer();

@@ -106,7 +106,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tower.json", "TowerMat");
 	};
 	PFunc<void()> f4 = [&]() {
-		Transform LightTransform(glm::vec3(-2.f, 55.f, 36.f), glm::vec3(0.f, -45.f, -90.f), glm::vec3(1.f, 1.f, 1.f));
+		Transform LightTransform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
 		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", LightTransform);
 	};
 	PFunc<void()> f5 = [&]() {
