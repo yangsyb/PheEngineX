@@ -2,4 +2,4 @@
 .vscode
 Debug
 Release
-.hlsli
+BRDF.hlsli
