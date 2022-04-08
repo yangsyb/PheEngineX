@@ -71,7 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\InSceneData.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tree.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tower.json");
-	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxTangent, StandardBoxUVs);
+	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxTangent, StandardBoxTangentY, StandardBoxUVs);
 	//Texture Data
 	PAssetManager::GetSingleton().AddTextureData("Texture1", L"Textures\\jacket_diff.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture1Normal", L"Textures\\jacket_norm.dds");
@@ -82,11 +82,14 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().AddTextureData("TextureTowerNormal", L"Textures\\T_Tower_Normal.dds");
 	PAssetManager::GetSingleton().AddTextureData("TextureTowerRM", L"Textures\\T_Tower_OcclusionRoughnessMetallic.dds");
 	PAssetManager::GetSingleton().AddTextureData("TextureTowerEmissive", L"Textures\\T_Tower_Emissive.dds");
+	PAssetManager::GetSingleton().AddTextureData("Texture4", L"Textures\\Stone_Texture.dds");
+	PAssetManager::GetSingleton().AddTextureData("Texture4Normal", L"Textures\\Stone_Normal.dds");
 	//Material
 	PAssetManager::GetSingleton().AddMaterialData("DefaultMat", "DefaultShader", std::vector<std::string>{"Texture1", "Texture1Normal"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeLeafMat", "WPOShader", std::vector<std::string>{"Texture2"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeTruckMat", "WPOTrunkShader", std::vector<std::string>{"Texture3", "Texture3Normal"});
 	PAssetManager::GetSingleton().AddMaterialData("TowerMat", "TowerShader", std::vector<std::string>{"TextureTower", "TextureTowerNormal", "TextureTowerRM", "TextureTowerEmissive"});
+	PAssetManager::GetSingleton().AddMaterialData("StoneMat", "DefaultShader", std::vector<std::string>{"Texture4", "Texture4Normal"});
 	//Light
 	PAssetManager::GetSingleton().AddLightData("DefaultLight");
 

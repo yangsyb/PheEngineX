@@ -52,6 +52,7 @@ struct PVertex
 	glm::vec3 Pos;
 	glm::vec4 Normal;
 	glm::vec4 Tangent;
+	glm::vec4 TangentY;
 	glm::vec2 TextCoord;
 };
 
@@ -61,6 +62,7 @@ struct PMeshDataStruct
 	std::vector<UINT16> Indices;
 	std::vector<float> Normal;
 	std::vector<float> Tangent;
+	std::vector<float> TangentY;
 	std::vector<float> UVs;
 };
 

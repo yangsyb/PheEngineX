@@ -15,7 +15,7 @@ namespace Phe
 
 		void LoadJsonFile(const std::string FileName);
 		void AddMeshData(const std::string MeshName, PStaticMesh* InStaticMesh);
-		void AddMeshData(const std::string MeshName, std::vector<float> PVertices, std::vector<UINT16> PIndices, std::vector<float> PNormals, std::vector<float> PTangents, std::vector<float> PUVs);
+		void AddMeshData(const std::string MeshName, std::vector<float> PVertices, std::vector<UINT16> PIndices, std::vector<float> PNormals, std::vector<float> PTangents, std::vector<float> PTangentYs, std::vector<float> PUVs);
 		void AddTextureData(const std::string TextureName, PTexture* InTexture);
 		void AddTextureData(const std::string TextureName, const std::wstring TFileName);
 		void AddMaterialData(const std::string MaterialName, PMaterial* InMaterial);

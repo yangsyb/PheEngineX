@@ -20,6 +20,7 @@ namespace Phe
 	{
 		auto Vertices = StaticMeshData->GetVertices();
 		auto Tangents = StaticMeshData->GetTangents();
+		auto TangentYs = StaticMeshData->GetTangentYs();
 		auto Normals = StaticMeshData->GetNormals();
 		auto UVs = StaticMeshData->GetUVs();
 		for (size_t index = 0; index < Vertices.size() / 3; index++)
@@ -27,6 +28,7 @@ namespace Phe
 			PVertex Vertex;
 			Vertex.Pos = { Vertices[index * 3], Vertices[index * 3 + 1] ,Vertices[index * 3 + 2] };
 			Vertex.Tangent = { Tangents[index * 3], Tangents[index * 3 + 1], Tangents[index * 3 + 2], 0 };
+			Vertex.TangentY = { TangentYs[index * 3], TangentYs[index * 3 + 1], TangentYs[index * 3 + 2], 0 };
 			Vertex.Normal = { Normals[index * 3], Normals[index * 3 + 1] ,Normals[index * 3 + 2],1 };
 			Vertex.TextCoord = { UVs[index * 2], UVs[index * 2 + 1] };
 			PVertexVector.push_back(Vertex);

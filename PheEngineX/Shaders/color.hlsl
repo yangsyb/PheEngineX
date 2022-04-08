@@ -53,6 +53,7 @@ struct VertexIn
 	float3 PosL  : POSITION;
 	float4 Normal : NORMAL;
 	float4 Tangent : TANGENT;
+	float4 TangentY : TANGENTY;
 	float2 TextCoord : TEXTCOORD;
 };
 
@@ -65,6 +66,7 @@ struct VertexOut
 	float3 WorldPos : POSITION1;
 	float3 Norm : NORMAL;
 	float3 TangentW : TANGENT;
+	float3 BiTangent : TANGENTY;
 };
 
 float CalcShadowFactor(float4 shadowPosH)
@@ -124,9 +126,13 @@ VertexOut VS(VertexIn vin)
 
 	vout.ShadowPos = mul(gShadowTransform, PosWorld);
 
-	vout.Norm = mul(gWorld, float4(vin.Normal.xyz,0)).xyz;
+	vout.Norm = mul((float3x3)gWorld, normalize(vin.Normal.xyz));
 
 	vout.TangentW = mul((float3x3)gWorld, normalize(vin.Tangent.xyz));
+
+//	vout.Norm = normalize(mul((float3x3)gWorld, vin.Normal.xyz));
+//
+//	vout.TangentW = normalize(mul((float3x3)gWorld, vin.Tangent.xyz));
 
 	return vout;
 }
@@ -138,54 +144,64 @@ float4 PS(VertexOut pin) : SV_Target
 	float4 BaseColor = gDiffuseMap.Sample(gsamPointWrap, pin.TextCoord);
 	BaseColor.rgb *= gBaseColor.rgb;
 
-
 	float Shadow = CalcShadowFactor(pin.ShadowPos);
-
-	float4 NormalMapSample = gNormalMap.Sample(gsamAnisotropicWrap, pin.TextCoord);
-	float3 bumpedNormalW = NormalSampleToWorldSpace(NormalMapSample.rgb, pin.Norm, pin.TangentW);
-
-	BaseColor.rgb *= gBaseColor.rgb;
 
 	float Roughness = gRoughness;
 	float Metallic = gFresnelR0;
-	float F0 = 0.04f;
-	float AO = 20.0f;
+	float F0 = 0.74f;
 	F0 = lerp(F0.rrr, BaseColor.rgb, Metallic);
 
-	//Light
-	{
-		float3 PointLightPos = gLightPosition;
-		float LightRadius = gLightRadius;
-		float LightStrenth = gLightIntensity;
+	float3 Ambient = 0.5f * gLightColor;
 
-		float3 WPos = pin.WorldPos;
-		float FallOff = distance(PointLightPos, WPos);
-		FallOff = LightRadius / (FallOff * FallOff);
-		float3 V = normalize(gCameraPosition - pin.WorldPos);
-		float3 N = bumpedNormalW;
-//		float3 N = normalize(pin.Norm);
-		float3 L = normalize(PointLightPos - WPos);
-		float3 H = normalize(V + L);
-		float3 R = -reflect(V, N);
+	float4 NormalMapSample = gNormalMap.Sample(gsamAnisotropicWrap, pin.TextCoord);
+	float3 BumpedNormalW = NormalSampleToWorldSpace(NormalMapSample.rgb, pin.Norm, pin.TangentW);
 
-		float NoL = saturate(dot(L, N));
-		float NoH = saturate(dot(N, H));
-		float NoV = saturate(dot(N, V));
-		float VoH = saturate(dot(V, H));
-		float NoR = saturate(dot(N, R));
-
-		float3 Diffuse = Diffuse_Burley(BaseColor.rgb, Roughness, NoV, NoL, NoH);
-
-		float a2 = Roughness * Roughness * Roughness * Roughness;
-		float D = D_GGX(a2, NoH);
-		float G = Vis_SmithJointApprox(a2, NoV, NoL);
-		float F = FSchlick(VoH, F0);
-		float3 Specular = D * G * F;
-		Output.rgb += (Diffuse + Specular) * NoL * Shadow * (FallOff * LightStrenth) * 300;
-	}
-
-	Output.rgb += 0.03f * BaseColor.rgb * AO;
+	SurfaceInfo surfaceInfo = GetSurfaceInfo(BaseColor, Metallic, Roughness);
+	Output.rgb += ApplyDirectionalLight(gLightPosition - pin.WorldPos, gLightColor, surfaceInfo, BumpedNormalW, gCameraPosition - pin.WorldPos) * Shadow;
+//	Output.rgb += ComputeDirectionalLight(gLightPosition - pin.WorldPos, BumpedNormalW, 1.f, gCameraPosition - pin.WorldPos, Roughness, BaseColor, surfaceInfo.F0, surfaceInfo.F90) * Shadow;
+	Output.rgb += Ambient * BaseColor.rgb;
+	Output.rgb = pow(Output.rgb, 1 / 2.2);
 	return Output;
+
+	//Light
+//	{
+//		float3 PointLightPos = gLightPosition;
+//		float LightRadius = gLightRadius;
+//		float LightStrenth = gLightIntensity;
+//
+//		float3 WPos = pin.WorldPos;
+//		float FallOff = distance(PointLightPos, WPos);
+//		FallOff = LightRadius / (FallOff * FallOff);
+//		float3 V = normalize(gCameraPosition - pin.WorldPos);
+//		float3 N = normalize(bumpedNormalW);
+////		float3 N = normalize(pin.Norm);
+//		float3 L = normalize(PointLightPos - WPos);
+//		float3 H = normalize(V + L);
+//		float3 R = -reflect(V, N);
+//
+////		float NoL = saturate(dot(L, N));
+////		float NoH = saturate(dot(N, H));
+////		float NoV = saturate(dot(N, V));
+////		float VoH = saturate(dot(V, H));
+////		float NoR = saturate(dot(N, R));
+//
+//		float NoL = clamp(dot(N, L), 0.0, 1.0);
+//		float NoH = clamp(dot(N, V), 0.0, 1.0);
+//		float NoV = clamp(dot(N, H), 0.0, 1.0);
+//		float VoH = clamp(dot(L, H), 0.0, 1.0);
+//		float NoR = clamp(dot(V, H), 0.0, 1.0);
+//
+//		float3 Diffuse = Diffuse_Burley(BaseColor.rgb, Roughness, NoV, NoL, NoH);
+//
+//		float a2 = Roughness * Roughness * Roughness * Roughness;
+//		float D = D_GGX(a2, NoH);
+//		float G = Vis_SmithJointApprox(a2, NoV, NoL);
+//		float F = FSchlick(VoH, F0);
+//		float3 Specular = D * G * F;
+//		Output.rgb += (Diffuse + Specular) * NoL * Shadow * (FallOff * LightStrenth) * 1;
+//	}
+//	Output.rgb += 0.3f * BaseColor.rgb * AO;
+//	return Output;
 
 //	return pow(BaseColor * (Shadow + 0.1), 1 / 2.2f);
 }

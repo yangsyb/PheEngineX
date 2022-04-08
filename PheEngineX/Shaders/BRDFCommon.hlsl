@@ -143,7 +143,7 @@ float4 PS(VertexOut pin) : SV_Target
 
     SurfaceInfo surfaceInfo = GetSurfaceInfo(BaseColor, PhysicalDesc);
     Output.rgb += ApplyDirectionalLight(gLightDirection - WPos, gLightColor, surfaceInfo, BumpedNormalW, gCameraPosition - pin.WorldPos) * Shadow;
-//	Output.rgb += ComputeDirectionalLight(gLightDirection - WPos, BumpedNormalW, 1, gCameraPosition - pin.WorldPos, 0.5f, BaseColor, float3(0.1f,0.1f,0.1f)) * Shadow;
+//	Output.rgb += ComputeDirectionalLight(gLightDirection - WPos, BumpedNormalW, 1.f, gCameraPosition - pin.WorldPos, surfaceInfo.PerceptualRoughness, BaseColor, surfaceInfo.F0, surfaceInfo.F90) * Shadow;
     Output.rgb += Ambient * BaseColor.rgb;
     Output.rgb += EmissiveColor.rgb;
 

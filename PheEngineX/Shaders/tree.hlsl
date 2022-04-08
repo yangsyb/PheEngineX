@@ -47,6 +47,7 @@ struct VertexIn
 	float3 PosL  : POSITION;
 	float4 Normal : NORMAL;
 	float4 Tangent : TANGENT;
+	float4 TangentY : TANGENTY;
 	float2 TextCoord : TEXTCOORD;
 };
 
