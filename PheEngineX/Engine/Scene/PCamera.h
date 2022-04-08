@@ -21,27 +21,27 @@ namespace Phe
 
 		PerCameraCBuffer GetPassConstant() { return PMainPassCB; }
 	public:
-		void SetPosition(const glm::vec3& position);
+		virtual void SetPosition(const glm::vec3 position);
 
-		void SetRotation(const glm::vec3& rotation);
+		virtual void SetRotation(const glm::vec3 rotation);
 
-		void SetDirection(const glm::vec3& front);
+		virtual void SetDirection(const glm::vec3 front);
 
-		void SetTransform(Transform transform);
+		virtual void SetTransform(Transform transform);
 
-		glm::vec3& MoveForward(const glm::vec3& offset);
+		virtual glm::vec3& MoveForward(const glm::vec3 offset);
 
 
 	public:
-		const glm::vec3& GetPosition() const { return PPosistion; }
-		const glm::vec3& GetRotation() const { return PRotation; }
-		const Transform& GetTransform() const { return PTransform; }
-		const glm::mat4& GetProjectionMatrix() const { return PProjection; }
-		const glm::mat4& GetProjectionDitherMatrix() const { return PProjectionDither; }
-		const glm::mat4& GetViewMatrix() const { return PView; }
-		const glm::mat4& GetProjectionViewMatrix() const { return PProjectionView; }
+		virtual const glm::vec3 GetPosition() const { return PPosistion; }
+		virtual const glm::vec3 GetRotation() const { return PRotation; }
+		virtual const Transform GetTransform() const { return PTransform; }
+		virtual const glm::mat4 GetProjectionMatrix() const { return PProjection; }
+		virtual const glm::mat4 GetProjectionDitherMatrix() const { return PProjectionDither; }
+		virtual const glm::mat4 GetViewMatrix() const { return PView; }
+		virtual const glm::mat4 GetProjectionViewMatrix() const { return PProjectionView; }
 
-		const glm::vec3 GetFront() const { return PFront; }
+		virtual const glm::vec3 GetFront() const { return PFront; }
 
 	protected:
 		float PWidth;
@@ -152,6 +152,7 @@ namespace Phe
 			RecalculateViewMatrix();
 		}
 
+		glm::mat4 AsOrthoProjection(glm::vec3 SceneCenter, float SceneRadius);
 	protected:
 		virtual void RecalculateProjectionMatrix() override
 		{
@@ -164,6 +165,7 @@ namespace Phe
 		{
 			return glm::perspectiveLH_ZO(glm::radians(PFov), PWidth / PHeight, 1.f, 3000.0f);
 		}
+
 
 	private:
 		float PFov;

@@ -1,5 +1,5 @@
 #include "BRDF.hlsli"
-
+#include "BlinnPhong.hlsli"
 Texture2D    gDiffuseMap : register(t0);
 Texture2D    gNormalMap : register(t1);
 Texture2D    gRoughnessMetallicMap : register(t2);
@@ -143,6 +143,7 @@ float4 PS(VertexOut pin) : SV_Target
 
     SurfaceInfo surfaceInfo = GetSurfaceInfo(BaseColor, PhysicalDesc);
     Output.rgb += ApplyDirectionalLight(gLightDirection - WPos, gLightColor, surfaceInfo, BumpedNormalW, gCameraPosition - pin.WorldPos) * Shadow;
+//	Output.rgb += ComputeDirectionalLight(gLightDirection - WPos, BumpedNormalW, 1, gCameraPosition - pin.WorldPos, 0.5f, BaseColor, float3(0.1f,0.1f,0.1f)) * Shadow;
     Output.rgb += Ambient * BaseColor.rgb;
     Output.rgb += EmissiveColor.rgb;
 

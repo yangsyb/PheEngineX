@@ -21,9 +21,8 @@ namespace Phe
 	PScene::PScene() : PSceneCenter(glm::vec3(0, 0, 0)), PSceneRadius(35), PMainLight(nullptr)
 	{
 		PSceneNode = PNodeFactory::CreateNode<PNodeScene>(nullptr, "MainScene");
-		PMainCamera = std::make_shared<PPerspectiveCamera>(45.0f, 1920.0f, 1080.0f);
-//		PMainCamera = std::make_shared<POrthographicCamera>(1000.0f, 1000.0f);
-		PMainCameraController = std::make_unique<PCameraController>(PMainCamera);
+		PMainPerspectCamera = std::make_shared<PPerspectiveCamera>(45.0f, 1920.0f, 1080.0f);
+		PMainCameraController = std::make_unique<PCameraController>(PMainPerspectCamera);
 	}
 
 	PScene::~PScene()
@@ -144,11 +143,16 @@ namespace Phe
 		if (!PRender) PRender = PRenderThread::Get();
 		assert(PRender);
 		PerCameraCBuffer PerCameraBuffer;
-		auto CameraPassConstant = PMainCamera->GetPassConstant();
+		PerCameraCBuffer PerOrthoCameraBuffer;
+		auto CameraPassConstant = PMainPerspectCamera->GetPassConstant();
 		PerCameraBuffer.Time = PEngine::GetSingleton().GetTimer().TotalTime();
 		PerCameraBuffer.View = CameraPassConstant.View;
 		PerCameraBuffer.Proj = CameraPassConstant.Proj;
 		PerCameraBuffer.CameraLocation = CameraPassConstant.CameraLocation;
+
+		PerOrthoCameraBuffer = PerCameraBuffer;
+		PerOrthoCameraBuffer.Proj = PMainPerspectCamera->AsOrthoProjection(PSceneCenter, PSceneRadius);
+
 //		PerCameraBuffer.CameraLocationMat = CameraPassConstant.CameraLocationMat;
 		if(PMainLight)
 		{
@@ -156,6 +160,8 @@ namespace Phe
 		}
 		PTask* task = CreateTask(PTask, PRender->GetRenderer()->UpdateCamera(PerCameraBuffer));
 		PRender->AddTask(task);
+		PTask* task1 = CreateTask(PTask, PRender->GetRenderer()->UpdateOrthoCamera(PerOrthoCameraBuffer));
+		PRender->AddTask(task1);
 	}
 
 	void PScene::UpdateShadowPassBuffer()

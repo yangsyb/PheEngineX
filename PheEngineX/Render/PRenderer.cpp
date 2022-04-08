@@ -6,7 +6,7 @@
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr), PExportRenderTarget(nullptr), PerOrthoCameraBuffer(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -21,6 +21,7 @@ namespace Phe
 		PRHI::Get()->InitGraphicsPipeline();
 		PRHI::Get()->ResizeWindow(1920, 1080);
 		PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
+		PerOrthoCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
 	}
 
 	
@@ -29,6 +30,12 @@ namespace Phe
 		PRHI::Get()->BeginFrame();
 		PCurrentPipeline = nullptr;
 		PRenderLight* MainRenderLight = nullptr;
+		ExportPass(RenderScene);
+		if(NeedExportDepth)
+ 		{
+			PRHI::Get()->ReadBackRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
+			NeedExportDepth = false;
+		}
 		if(MainRenderLight = RenderScene->GetMainRenderLight())
 		{
 			ShadowPass(RenderScene);
@@ -52,7 +59,9 @@ namespace Phe
 	void PRenderer::DestroyRenderer()
 	{
 		ReleasePtr(PerCameraBuffer);
+		ReleasePtr(PerOrthoCameraBuffer);
 		ReleasePtr(PShadowMap);
+		ReleasePtr(PExportRenderTarget);
 	}
 
 	void PRenderer::UpdatePrimitiveBuffer(PPrimitive* Primitive)
@@ -66,6 +75,12 @@ namespace Phe
 		PRHI::Get()->UpdateCommonBuffer(PerCameraBuffer, CameraData);
 	}
 
+
+	void PRenderer::UpdateOrthoCamera(PerCameraCBuffer CameraCBuffer)
+	{
+		std::shared_ptr<void> CameraData = std::make_shared<PerCameraCBuffer>(CameraCBuffer);
+		PRHI::Get()->UpdateCommonBuffer(PerOrthoCameraBuffer, CameraData);
+	}
 
 	void PRenderer::UpdateLight(PRenderLight* RenderLight, PerLightCBuffer LightCBuffer)
 	{
@@ -125,11 +140,12 @@ namespace Phe
  			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
    		}
    		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
-		if(NeedExportDepth)
-		{
-			PRHI::Get()->ReadBackRTBuffer(PShadowMap->GetDepthStencilBuffer());
-			NeedExportDepth = false;
-		}
+// 		if(NeedExportDepth)
+// 		{
+// 			PRHI::Get()->ReadBackRTBuffer(PShadowMap->GetDepthStencilBuffer());
+// 			//PRHI::Get()->ReadBackTexture(RenderScene->GetFirstTexture());
+// 			NeedExportDepth = false;
+// 		}
 	}
 
 
@@ -142,6 +158,36 @@ namespace Phe
 		PRHI::Get()->SetRenderTarget(PIBLBRDFRenderTarget);
 
 		PRHI::Get()->EndRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
+	}
+
+
+	void PRenderer::ExportPass(PRenderScene* RenderScene)
+	{
+		if (!PExportRenderTarget)
+		{
+			PExportRenderTarget = PRHI::Get()->CreateRenderTarget("Export", 1024, 1024);
+			PExportRenderTarget->AddDepthStencilBuffer();
+			PExportRenderTarget->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ExportDepthTexture", PExportRenderTarget->GetDepthStencilBuffer());
+		}
+		PRHI::Get()->BeginRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
+
+		PRHI::Get()->SetRenderTarget(PExportRenderTarget);
+
+		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
+		for (auto Primitive : CurrentDrawPrimitives)
+		{
+			auto PrimitivePipeline = Primitive.second->GetPipeline(PipelineType::ShadowPipeline);
+			if (PrimitivePipeline != PCurrentPipeline)
+			{
+				PRHI::Get()->SetGraphicsPipeline(PrimitivePipeline);
+				PCurrentPipeline = PrimitivePipeline;
+			}
+			PRHI::Get()->SetMeshBuffer(Primitive.second->GetMeshBuffer());
+			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerOrthoCameraBuffer->GetHandleOffset());
+			ShaderResourceBinding(Primitive.second);
+			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
+		}
+		PRHI::Get()->EndRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
 	}
 
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)

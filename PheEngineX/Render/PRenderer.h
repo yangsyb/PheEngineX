@@ -22,19 +22,23 @@ namespace Phe
 
 		void UpdatePrimitiveBuffer(PPrimitive* Primitive);
 		void UpdateCamera(PerCameraCBuffer CameraCBuffer);
+		void UpdateOrthoCamera(PerCameraCBuffer CameraCBuffer);
 		void UpdateLight(PRenderLight* RenderLight, PerLightCBuffer LightCBuffer);
 		void ShaderResourceBinding(PPrimitive* Primitive);
 		void ShadowPass(PRenderScene* RenderScene);
 		void IBLBRDFPass(PRenderScene* RenderScene);
+		void ExportPass(PRenderScene* RenderScene);
 
 		void SetExportDepth() { NeedExportDepth = true; }
 	private:
 		void RenderCurrentScene(PRenderScene* RenderScene);
 		PGPUCommonBuffer* PerCameraBuffer;
+		PGPUCommonBuffer* PerOrthoCameraBuffer;
 
 		PPipeline* PCurrentPipeline;
 		PGPURenderTarget* PShadowMap;
 		PGPURenderTarget* PIBLBRDFRenderTarget;
+		PGPURenderTarget* PExportRenderTarget;
 
 	private:
 		bool NeedExportDepth = false;

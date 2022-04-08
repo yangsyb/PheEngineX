@@ -35,7 +35,7 @@ namespace Phe
 		float PSpeed = 10.f;
 		float PRotateSpeed = 0.4f;
 		float PPositionLerpTime = 0.2f;
-		float PRotationLerpTime = 0.01f;
+		float PRotationLerpTime = 0.02f;
 
 		CameraState PTargetState;
 		CameraState PInterpolatingState;

@@ -121,8 +121,8 @@ namespace Phe
 	Transform PCameraController::CameraState::AsTransform()
 	{
 		Transform t;
-		t.EulerAngles = glm::vec3(roll, pitch, yaw);
-		t.Translation = glm::vec3(x, y, z);
+		t.SetRotation(glm::vec3(roll, pitch, yaw));
+		t.SetPosition(glm::vec3(x, y, z));
 		return t;
 	}
 }

@@ -48,14 +48,14 @@ namespace Phe
         PMainPassCB.ShadowTransform = NormalizedPProjectionView;
  	}
  
- 	void PCamera::SetPosition(const glm::vec3& position)
+ 	void PCamera::SetPosition(const glm::vec3 position)
  	{
  		PTransform.Translation = position;
  		PPosistion = position;
  		RecalculateViewMatrix();
  	}
  
- 	void PCamera::SetRotation(const glm::vec3& rotation)
+ 	void PCamera::SetRotation(const glm::vec3 rotation)
  	{
  		PRotation = rotation;
  		PTransform.EulerAngles = rotation;
@@ -71,7 +71,7 @@ namespace Phe
  		RecalculateViewMatrix();
  	}
  
- 	void PCamera::SetDirection(const glm::vec3& front)
+ 	void PCamera::SetDirection(const glm::vec3 front)
  	{
  		PFront = front;
  		PFront = glm::normalize(PFront);
@@ -84,10 +84,9 @@ namespace Phe
  	{
  		SetPosition(transform.Translation);
  		SetRotation(transform.EulerAngles);
- 
  	}
  
- 	glm::vec3& PCamera::MoveForward(const glm::vec3& offset)
+ 	glm::vec3& PCamera::MoveForward(const glm::vec3 offset)
  	{
  		glm::vec3 res = { 0,0,0 };
  		res += PRight * offset.y;
@@ -105,6 +104,24 @@ namespace Phe
 	void PPerspectiveCamera::UpdateZNearFar()
 	{
 
+	}
+
+
+	glm::mat4 PPerspectiveCamera::AsOrthoProjection(glm::vec3 SceneCenter, float SceneRadius)
+	{
+		glm::mat4 PDesiredView = glm::lookAtLH(PPosistion, SceneCenter, PUp);
+		glm::vec4 PSceneSphere = VectorToMat(SceneCenter, PDesiredView);
+
+		float Left = PSceneSphere.x - SceneRadius;
+        float Right = PSceneSphere.x + SceneRadius;
+        float Bottom = PSceneSphere.y - SceneRadius;
+        float Top = PSceneSphere.y + SceneRadius;
+        float Near = PSceneSphere.z - SceneRadius;
+        float Far = PSceneSphere.z + SceneRadius;
+
+		glm::mat4 AsProjection = glm::orthoLH_ZO(Left, Right, Bottom, Top, Near, Far);
+        return AsProjection;
+//		PProjectionView = PProjection * PView;
 	}
 
 }

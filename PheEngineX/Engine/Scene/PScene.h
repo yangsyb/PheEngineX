@@ -48,8 +48,7 @@ namespace Phe
 		PNodeLight* PMainLight;
 
 		PRenderThread* PRender;
-		std::shared_ptr<PPerspectiveCamera> PMainCamera;
-//		std::shared_ptr<POrthographicCamera> PMainCamera;
+		std::shared_ptr<PPerspectiveCamera> PMainPerspectCamera;
 		std::unique_ptr<PCameraController> PMainCameraController;
 	};
 }

@@ -892,9 +892,9 @@ static HRESULT CaptureTexture(_In_ ID3D12Device* device,
 	if (srcPitch > UINT32_MAX)
 		return HRESULT_FROM_WIN32(ERROR_ARITHMETIC_OVERFLOW);
 
- 	const UINT numberOfPlanes = D3D12GetFormatPlaneCount(device, desc.Format);
- 	if (numberOfPlanes != 1)
- 		return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
+// 	const UINT numberOfPlanes = D3D12GetFormatPlaneCount(device, desc.Format);
+// 	if (numberOfPlanes != 1)
+// 		return HRESULT_FROM_WIN32(ERROR_NOT_SUPPORTED);
 
 	D3D12_HEAP_PROPERTIES sourceHeapProperties;
 	HRESULT hr = pSource->GetHeapProperties(&sourceHeapProperties, nullptr);
@@ -1013,7 +1013,7 @@ static HRESULT CaptureTexture(_In_ ID3D12Device* device,
 	bufferFootprint.Footprint.Height = desc.Height;
 	bufferFootprint.Footprint.Depth = 1;
 	bufferFootprint.Footprint.RowPitch = static_cast<UINT>(srcPitch);
-	bufferFootprint.Footprint.Format = desc.Format;
+	bufferFootprint.Footprint.Format = DXGI_FORMAT_D32_FLOAT;//desc.Format;
 
 	const CD3DX12_TEXTURE_COPY_LOCATION copyDest(pStaging.Get(), bufferFootprint);
 	const CD3DX12_TEXTURE_COPY_LOCATION copySrc(copySource.Get(), 0);
@@ -1085,7 +1085,8 @@ static HRESULT SaveDDSTextureToFile(
 
 
 	ComPtr<ID3D12Resource> pStaging;
-	desc.Format= DXGI_FORMAT_R32_TYPELESS;
+//	desc.Format= DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+	desc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 	HRESULT hr = CaptureTexture(device.Get(), pCommandQ, pSource, dstRowPitch, desc, pStaging);
 	if (FAILED(hr))
 		return hr;

@@ -39,6 +39,8 @@ namespace Phe
 		PHashMap<std::string, PPrimitive*> GetPrimitives() { return PPrimitivePool; }
 		PRenderLight* GetRenderLight(std::string LightName);
 		PRenderLight* GetMainRenderLight();
+
+		PGPUTexture* GetFirstTexture() { return PTexturePool.begin()->second; }
 	private:
 		UINT32 PrimitiveNumber;
 		PHashMap<std::string, PGPUMeshBuffer*> PMeshBufferPool;
