@@ -3,18 +3,26 @@
 
 namespace Phe
 {
+	enum class P_CULL_MODE
+	{
+		P_CULL_MODE_NONE = 1,
+		P_CULL_MODE_FRONT = 2,
+		P_CULL_MODE_BACK = 3
+	};
 
 	struct P_RasterizerDesc
 	{
+		P_CULL_MODE CullMode;
 		UINT32 DepthBias;
 		float DepthBiasClamp;
 		float SlopeScaledDepthBias;
 
-		P_RasterizerDesc() : DepthBias(0), DepthBiasClamp(0.f), SlopeScaledDepthBias(0.f)
+
+		P_RasterizerDesc() : CullMode(P_CULL_MODE::P_CULL_MODE_BACK), DepthBias(0), DepthBiasClamp(0.f), SlopeScaledDepthBias(0.f)
 		{
 
 		}
-		P_RasterizerDesc(UINT32 DB, float DBC, float SSDB) : DepthBias(DB), DepthBiasClamp(DBC), SlopeScaledDepthBias(SSDB)
+		P_RasterizerDesc(P_CULL_MODE CM, UINT32 DB, float DBC, float SSDB) : CullMode(CM), DepthBias(DB), DepthBiasClamp(DBC), SlopeScaledDepthBias(SSDB)
 		{
 
 		}
@@ -170,6 +178,38 @@ namespace Phe
 		, BackStencilFunc(P_COMPARISON_FUNC::P_COMPARISON_FUNC_ALWAYS)
 		{
 		}
+
+		P_DepthStencilState(
+			bool DE,
+			P_DEPTH_WRITE_MASK DWM,
+			P_COMPARISON_FUNC DF,
+			bool SE,
+			UINT8 SRM,
+			UINT8 SWM,
+			P_STENCIL_OP FSFO,
+			P_STENCIL_OP FSDFO,
+			P_STENCIL_OP FSPO,
+			P_COMPARISON_FUNC FSF,
+			P_STENCIL_OP BSFO,
+			P_STENCIL_OP BSDFO,
+			P_STENCIL_OP BSPO,
+			P_COMPARISON_FUNC BSF
+		) : DepthEnable(DE)
+			, DepthWriteMask(DWM)
+			, DepthFunc(DF)
+			, StencilEnable(SE)
+			, StencilReadMask(SRM)
+			, StencilWriteMask(SWM)
+			, FrontStencilFailOp(FSFO)
+			, FrontStencilDepthFailOp(FSDFO)
+			, FrontStencilPassOp(FSPO)
+			, FrontStencilFunc(FSF)
+			, BackStencilFailOp(BSFO)
+			, BackStencilDepthFailOp(BSDFO)
+			, BackStencilPassOp(BSPO)
+			, BackStencilFunc(BSF)
+		{}
+
 	};
 
 	class PShader

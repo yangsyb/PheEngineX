@@ -23,9 +23,10 @@ namespace Phe
 		void AddMeshBuffer(std::string StaticMeshName, PNodeStaticMesh* InNodeStaticMesh);
 //		void AddPrimitive(std::string MeshBufferName, Transform MeshTransform, std::string MaterialName);
 		void AddPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, Transform TransformData);
+		void AddSkySphere(PNodeStaticMesh* InNodeStaticMesh, Transform TransformData, PTexture* Texture);
 		void AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, Transform TransformData);
 		void AddLight(PNodeLight* InNodeLight);
-		void AddTexture(PTexture* Texture);
+		void AddTexture(PTexture* Texture, P_TextureType TextureType);
 		void AddMaterial(PMaterial* Material);
 
 		void DestroyRenderScene();
@@ -39,6 +40,7 @@ namespace Phe
 		PHashMap<std::string, PPrimitive*> GetPrimitives() { return PPrimitivePool; }
 		PRenderLight* GetRenderLight(std::string LightName);
 		PRenderLight* GetMainRenderLight();
+		PPrimitive* GetSkySphere() { return PSkySphere; }
 
 		PGPUTexture* GetFirstTexture() { return PTexturePool.begin()->second; }
 	private:
@@ -51,5 +53,9 @@ namespace Phe
 		PHashMap<std::string, PPrimitive*> PPrimitivePool;
 		PHashMap<std::string, PRenderLight*> PRenderLightPool;
 		PVector<PShader*> PShaderPool;
+		
+		PPrimitive* PSkySphere;
+		PPipeline* PSkyBoxPipeline;
+		PShader* PSkyShader;
 	};
 }

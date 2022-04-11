@@ -23,7 +23,6 @@ namespace Phe
 		PrimitiveMaterial = MaterialBuffer;
 	}
 
-
 	void PPrimitive::SetPipeline(PipelineType PType, PPipeline* Pipeline)
 	{
 		PPipelines[static_cast<int>(PType)] = Pipeline;

@@ -1,4 +1,4 @@
-TextureCube Skybox;
+TextureCube Skybox : register(t5);
 
 SamplerState gsamPointWrap : register(s0);
 SamplerState gsamPointClamp : register(s1);
@@ -39,20 +39,23 @@ struct VertexOut
 	float3 ObjPos : POSITION;
 };
 
-VertexOut VS(VertexIn IN)
+VertexOut VS(VertexIn vin)
 {
-	VertexOut Output;
+	VertexOut vout;
+	float4x4 gWorld = mul(gPosition, mul(gRotation, gScale));
+	float4 PosWorld = mul(gWorld, float4(vin.PosL, 1.0f));
+	float4x4 gViewProj = mul(gProj, gView);
+	PosWorld.xyz += gCameraPosition;
 
-	Output.ObjPos = IN.PosL;
 
-	VP = mul(gProj, gView);
+	vout.PosH = mul(gProj, mul(gView, float4(gCameraPosition + vin.PosL, 1.0))).xyww;
+	vout.ObjPos = vin.PosL;
 
-	Output.PosH = mul(VP, float4(IN.PosL + gCameraPosition, 1.0)).xyww;
-	return Output;
+	return vout;
 }
+
 
 float4 PS(VertexOut IN) : SV_Target
 {
 	return pow(Skybox.Sample(gsamLinearWrap, IN.ObjPos), 1 / 2.2);
 }
-

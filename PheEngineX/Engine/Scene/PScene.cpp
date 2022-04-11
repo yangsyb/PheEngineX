@@ -23,6 +23,8 @@ namespace Phe
 		PSceneNode = PNodeFactory::CreateNode<PNodeScene>(nullptr, "MainScene");
 		PMainPerspectCamera = std::make_shared<PPerspectiveCamera>(45.0f, 1920.0f, 1080.0f);
 		PMainCameraController = std::make_unique<PCameraController>(PMainPerspectCamera);
+
+		AddSkySphere("JsonFile\\SkySphere.json", PAssetManager::GetSingleton().GetTextureData("SkyBoxTexture"));
 	}
 
 	PScene::~PScene()
@@ -30,6 +32,7 @@ namespace Phe
 		PSceneNode->RemoveAllChild();
 		PRender = nullptr;
 		ReleasePtr(PSceneNode);
+		ReleasePtr(PSkySphere);
 	}
 
 	// Add Mesh Data To MainThread Scene
@@ -84,6 +87,25 @@ namespace Phe
 	void PScene::AddLightFromFile(const std::string FilePath)
 	{
 
+	}
+
+
+	void PScene::AddSkySphere(const std::string FilePath, PTexture* SkyTexture)
+	{
+		if (!PRender) PRender = PRenderThread::Get();
+		assert(PRender);
+		std::vector<std::pair<std::string, Transform>> StaticMeshTransformList;
+		DeserilizeActorJsonFile(FilePath, StaticMeshTransformList);
+
+		PStaticMesh* StaticMesh = PAssetManager::GetSingleton().GetMeshData(StaticMeshTransformList[0].first);
+		PSkySphere = PNodeFactory::CreateNode<PNodeStaticMesh>(nullptr, "Sky");
+
+		StaticMesh->BindNodeStaticMesh(PSkySphere);
+		PSkySphere->BindLinkedStaticMesh(StaticMesh);
+		PSkySphere->SetStaticMeshName(StaticMeshTransformList[0].first);
+		PSkySphere->SetTransform(StaticMeshTransformList[0].second);
+		PTask* task = CreateTask(PTask, PRender->GetRenderScene()->AddSkySphere(PSkySphere, PSkySphere->GetTransform(), SkyTexture));
+		PRender->AddTask(task);
 	}
 
 	void PScene::SetLightDynamic()

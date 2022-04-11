@@ -19,6 +19,10 @@ namespace Phe
 		ParamMap[DX12ShaderManager->PropertyToID(shadowTexture.name)] = UINT(Params.size());
 		Params.push_back(shadowTexture);
 
+		ShaderParameter TextureCube("SkyTexture", ShaderParamType::SRVDescriptorHeap, 1, 5, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(TextureCube.name)] = UINT(Params.size());
+		Params.push_back(TextureCube);
+
 		ShaderParameter perObject("PerObjectBuffer", ShaderParamType::CBVDescriptorHeap, 1, 0, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(perObject.name)] = UINT(Params.size());
 		Params.push_back(perObject);

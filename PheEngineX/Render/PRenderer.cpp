@@ -3,10 +3,12 @@
 #include "RHI/PRHI.h"
 #include "PRenderThread.h"
 #include "Engine/Editor/PShaderManager.h"
-
+#include "GPUResource/PGPUTexture.h"
+#include "Engine/Editor/PTexture.h"
+#include "Engine/Editor/PAssetManager.h"
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr), PExportRenderTarget(nullptr), PerOrthoCameraBuffer(nullptr), PSkyBoxPipeline(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr), PExportRenderTarget(nullptr), PerOrthoCameraBuffer(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -30,10 +32,6 @@ namespace Phe
 		PRHI::Get()->BeginFrame();
 		PCurrentPipeline = nullptr;
 		PRenderLight* MainRenderLight = nullptr;
-		if(!PSkyBoxPipeline)
-		{
-//			PSkyBoxPipeline = PRHI::Get()->CreatePipeline();
-		}
  		ExportPass(RenderScene);
  		if(NeedExportDepth)
   		{
@@ -67,6 +65,13 @@ namespace Phe
 		ReleasePtr(PShadowMap);
 		ReleasePtr(PExportRenderTarget);
 	}
+
+
+// 	void PRenderer::UpdateTextureCube()
+// 	{
+// 		PTexture* SkyTEXT = PAssetManager::GetSingleton().GetTextureData("SkyBoxTexture");
+// 		PSkyTexture = PRHI::Get()->CreateTexture(SkyTEXT->GetTextureName(), SkyTEXT->GetTextureFileName(), P_TextureType::P_TextureCube);
+// 	}
 
 	void PRenderer::UpdatePrimitiveBuffer(PPrimitive* Primitive)
 	{
@@ -188,6 +193,20 @@ namespace Phe
 		PRHI::Get()->EndRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
 	}
 
+
+	void PRenderer::SkyBoxPass(PRenderScene* RenderScene)
+	{
+		PPrimitive* SkySphere = RenderScene->GetSkySphere();
+		PPipeline* SkyPipeline = SkySphere->GetPipeline(PipelineType::SkyPipeline);
+		PRHI::Get()->SetGraphicsPipeline(SkyPipeline);
+		PCurrentPipeline = SkyPipeline;
+		PRHI::Get()->SetMeshBuffer(SkySphere->GetMeshBuffer());
+		PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerOrthoCameraBuffer->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("Texture", SkySphere->GetMaterial()->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("PerObjectBuffer", SkySphere->GetPerObjBuffer()->GetHandleOffset());
+		PRHI::Get()->DrawPrimitiveIndexedInstanced(SkySphere->GetMeshBuffer()->GetIndexCount());
+	}
+
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)
 	{
 		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
@@ -210,5 +229,6 @@ namespace Phe
    			}
 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
 		}
+//		SkyBoxPass(RenderScene);
 	}
 }

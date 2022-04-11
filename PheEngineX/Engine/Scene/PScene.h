@@ -29,6 +29,7 @@ namespace Phe
 		void AddStaticMeshFromFile(const std::string FilePath, std::string MaterialName);
 		void AddLight(std::string LightName, Transform LightTransform);
 		void AddLightFromFile(const std::string FilePath);
+		void AddSkySphere(const std::string FilePath, PTexture* SkyTexture);
 
 		void SetLightDynamic();
 
@@ -40,11 +41,13 @@ namespace Phe
 
 		glm::vec3 GetSceneCenter() { return PSceneCenter; }
 		float GetSceneRadius() { return PSceneRadius; }
+
 	private:
 		glm::vec3 PSceneCenter;
 		float PSceneRadius;
 
 		PNodeScene* PSceneNode;
+		PNodeStaticMesh* PSkySphere;
 		PNodeLight* PMainLight;
 
 		PRenderThread* PRender;

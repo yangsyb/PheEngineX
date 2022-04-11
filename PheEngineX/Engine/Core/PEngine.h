@@ -39,7 +39,7 @@ namespace Phe
 		UINT32 PHeight;
 		bool IsRunning;
 		Platform PCurrentPlatform;
-
+	
 		PWindow* PheWindow;
 //		PRenderThread* PRender;
 

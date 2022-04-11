@@ -9,14 +9,16 @@
 namespace Phe
 {
 
-	PRenderScene::PRenderScene() : PrimitiveNumber(0)
+	PRenderScene::PRenderScene() : PrimitiveNumber(0), PSkySphere(nullptr), PSkyBoxPipeline(nullptr), PSkyShader(nullptr)
 	{
 
 	}
 
 	PRenderScene::~PRenderScene()
 	{
-
+		ReleasePtr(PSkyBoxPipeline);
+		ReleasePtr(PSkyShader);
+		PSkySphere->DestroyPrimitive();
 	}
 
 	void PRenderScene::AddMeshBuffer(std::string StaticMeshName, PNodeStaticMesh* InNodeStaticMesh)
@@ -62,6 +64,7 @@ namespace Phe
 						break;
 					case static_cast<int>(PipelineType::ShadowPipeline):
 						NewShader->SetRasterizerDesc(P_RasterizerDesc(ShadowRasterizerDesc));
+					case static_cast<int>(PipelineType::SkyPipeline):
 						break;
 					}
 					PRHI::Get()->UpdatePipeline(NewPipeline);
@@ -83,6 +86,30 @@ namespace Phe
  		}
 	}
 
+
+	void PRenderScene::AddSkySphere(PNodeStaticMesh* InNodeStaticMesh, Transform TransformData, PTexture* Texture)
+	{
+		if(!PSkySphere)
+		{
+			auto StaticMeshName = InNodeStaticMesh->GetStaticMeshName();
+			AddMeshBuffer(StaticMeshName, InNodeStaticMesh);
+			auto ptr = GetMeshBuffer(InNodeStaticMesh->GetStaticMeshName());
+			PSkySphere = new PPrimitive();
+			InNodeStaticMesh->SetLinkedPrimitive(PSkySphere);
+
+			PSkyShader = PRHI::Get()->CreateShader(PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderName(), PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderFilePath());
+			PSkyBoxPipeline = PRHI::Get()->CreatePipeline(PSkyShader);
+			PRHI::Get()->UpdatePipeline(PSkyBoxPipeline);
+			PSkySphere->SetPipeline(PipelineType::SkyPipeline, PSkyBoxPipeline);
+			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
+			std::shared_ptr<void> TransData = std::make_shared<PerObjectCBuffer>(TransformData.GetPositionMat(), TransformData.GetRotaionMat(), TransformData.GetScaleMat());
+			PRHI::Get()->UpdateCommonBuffer(Obj, TransData);
+			PSkySphere->SetPrimitiveRenderData(ptr, Obj);
+
+			AddTexture(Texture, P_TextureType::P_TextureCube);
+		}
+	}
+
 	void PRenderScene::AddMeshBufferAndPrimitive(PNodeStaticMesh* InNodeStaticMesh, PMaterial* StaticMeshMaterial, Transform TransformData)
 	{
 		auto StaticMeshName = InNodeStaticMesh->GetStaticMeshName();
@@ -99,12 +126,12 @@ namespace Phe
   		PRenderLightPool.insert( {InNodeLight->GetID(), NewRenderLight} );
 	}
 
-	void PRenderScene::AddTexture(PTexture* Texture)
+	void PRenderScene::AddTexture(PTexture* Texture, P_TextureType TextureType)
 	{
 		std::string TextureName = Texture->GetTextureName();
 		if(PTexturePool.count(TextureName) == 0)
 		{
-			PGPUTexture* NewGPUTexture = PRHI::Get()->CreateTexture(TextureName, Texture->GetTextureFileName(), P_TextureType::P_Texture2D);
+			PGPUTexture* NewGPUTexture = PRHI::Get()->CreateTexture(TextureName, Texture->GetTextureFileName(), TextureType);
 			Texture->BindGPUTexture(NewGPUTexture);
 			PTexturePool.insert({ TextureName, NewGPUTexture });
 		}
@@ -118,7 +145,7 @@ namespace Phe
 			auto Textures = Material->GetTextures();
 			for(auto& Texture : Textures)
 			{
-				AddTexture(Texture.second);
+				AddTexture(Texture.second, P_TextureType::P_Texture2D);
 				Texture.second->BindMaterial(Material);
 			}
 			PMaterialPool.insert( {Material->GetName(), Material } );

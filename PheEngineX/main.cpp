@@ -71,6 +71,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\InSceneData.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tree.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tower.json");
+	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\SkySphere.json");
 	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxTangent, StandardBoxTangentY, StandardBoxUVs);
 	//Texture Data
 	PAssetManager::GetSingleton().AddTextureData("Texture1", L"Textures\\jacket_diff.dds");
@@ -84,6 +85,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().AddTextureData("TextureTowerEmissive", L"Textures\\T_Tower_Emissive.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture4", L"Textures\\Stone_Texture.dds");
 	PAssetManager::GetSingleton().AddTextureData("Texture4Normal", L"Textures\\Stone_Normal.dds");
+	PAssetManager::GetSingleton().AddTextureData("SkyBoxTexture", L"Textures\\sunsetcube1024.dds");
 	//Material
 	PAssetManager::GetSingleton().AddMaterialData("DefaultMat", "DefaultShader", std::vector<std::string>{"Texture1", "Texture1Normal"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeLeafMat", "WPOShader", std::vector<std::string>{"Texture2"});
@@ -106,7 +108,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	};
 	PFunc<void()> f3 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
-		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\InSceneData.json", "StoneMat");
+		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\InSceneData.json", "DefaultMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeTruckMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeLeafMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tower.json", "TowerMat");

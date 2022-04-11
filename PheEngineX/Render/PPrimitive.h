@@ -14,7 +14,7 @@ namespace Phe
 		PPrimitive();
 		~PPrimitive();
 
-		void SetPrimitiveRenderData(PGPUMeshBuffer* MeshBuffer, PGPUCommonBuffer* ObjBuffer, PGPUCommonBuffer* MatBuffer, PMaterial* MaterialBuffer);
+		void SetPrimitiveRenderData(PGPUMeshBuffer* MeshBuffer, PGPUCommonBuffer* ObjBuffer, PGPUCommonBuffer* MatBuffer = nullptr, PMaterial* MaterialBuffer = nullptr);
 //		void SetPipeline(PPipeline* Pipe) { Pipeline = Pipe; }
 		void SetPipeline(PipelineType PType, PPipeline* Pipeline);
 		void SetPipeline(PVector<PPipeline*> Pipelines) { PPipelines = Pipelines; }

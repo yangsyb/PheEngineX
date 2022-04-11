@@ -7,6 +7,8 @@ namespace Phe
 {
 	class PRHI;
 	class PRenderScene;
+	class PGPUTexture;
+	class PTexture;
 
 	class PRenderer
 	{
@@ -28,6 +30,7 @@ namespace Phe
 		void ShadowPass(PRenderScene* RenderScene);
 		void IBLBRDFPass(PRenderScene* RenderScene);
 		void ExportPass(PRenderScene* RenderScene);
+		void SkyBoxPass(PRenderScene* RenderScene);
 
 		void SetExportDepth() { NeedExportDepth = true; }
 	private:
@@ -36,7 +39,6 @@ namespace Phe
 		PGPUCommonBuffer* PerOrthoCameraBuffer;
 
 		PPipeline* PCurrentPipeline;
-		PPipeline* PSkyBoxPipeline;
 		PGPURenderTarget* PShadowMap;
 		PGPURenderTarget* PIBLBRDFRenderTarget;
 		PGPURenderTarget* PExportRenderTarget;

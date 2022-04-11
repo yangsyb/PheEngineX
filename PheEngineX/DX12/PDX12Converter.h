@@ -4,6 +4,21 @@
 #define Render_Target_Count 1
 namespace Phe
 {
+	static D3D12_CULL_MODE SwitchCullMode(P_CULL_MODE CullMode)
+	{
+		switch (CullMode)
+		{
+		case Phe::P_CULL_MODE::P_CULL_MODE_NONE:
+			return D3D12_CULL_MODE_NONE;
+		case Phe::P_CULL_MODE::P_CULL_MODE_FRONT:
+			return D3D12_CULL_MODE_FRONT;
+		case Phe::P_CULL_MODE::P_CULL_MODE_BACK:
+			return D3D12_CULL_MODE_BACK;
+		default:
+			return D3D12_CULL_MODE_NONE;
+		}
+	}
+
 	static D3D12_BLEND SwitchBlend(P_BLEND Blend)
 	{
 		switch (Blend)
@@ -235,7 +250,7 @@ namespace Phe
 	inline void MakeDX12RasterizerState(P_RasterizerDesc PDesc, D3D12_RASTERIZER_DESC& D3DRasterizerDesc)
 	{
 		D3DRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
-		D3DRasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+		D3DRasterizerDesc.CullMode = SwitchCullMode(PDesc.CullMode);
 		D3DRasterizerDesc.FrontCounterClockwise = FALSE;
 		D3DRasterizerDesc.DepthBias = PDesc.DepthBias;
 		D3DRasterizerDesc.DepthBiasClamp = PDesc.DepthBiasClamp;

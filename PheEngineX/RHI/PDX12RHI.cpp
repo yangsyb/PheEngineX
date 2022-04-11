@@ -131,7 +131,7 @@ namespace Phe
 	void PDX12RHI::EndFrame()
 	{
 		ExecuteCommandList();
-
+//		Flush();
 		ThrowIfFailed(PSwapChain->Present(1, 0));
 
 		PCurrBackBuffer = (PCurrBackBuffer + 1) % SwapChainBufferCount;
@@ -355,6 +355,7 @@ namespace Phe
 		DX12GpuMeshBuffer->IndexBufferView.Format = DXGI_FORMAT_R16_UINT;
 		DX12GpuMeshBuffer->IndexBufferView.SizeInBytes = DX12GpuMeshBuffer->GetIndexBufferByteSize();
 		ExecuteCommandList();
+		Flush();
 	}
 
 	void PDX12RHI::BeginRenderBackBuffer()
@@ -861,9 +862,15 @@ namespace Phe
 	void PDX12RHI::DestroyPrimitive(PPrimitive* Primitive)
 	{
 		auto PerObjBuffer = Primitive->GetPerObjBuffer();
-		PCbvSrvUavHeap->Deallocate(PerObjBuffer->GetHandleOffset(), PerObjBuffer->GetElements());
+		if(PerObjBuffer)
+		{
+			PCbvSrvUavHeap->Deallocate(PerObjBuffer->GetHandleOffset(), PerObjBuffer->GetElements());
+		}
 		auto PerMatBuffer = Primitive->GetPerMatBuffer();
-		PCbvSrvUavHeap->Deallocate(PerMatBuffer->GetHandleOffset(), PerMatBuffer->GetElements());
+		if(PerMatBuffer)
+		{
+			PCbvSrvUavHeap->Deallocate(PerMatBuffer->GetHandleOffset(), PerMatBuffer->GetElements());
+		}
 	}
 
 	void PDX12RHI::DestroyTexture(PGPUTexture* Texture)

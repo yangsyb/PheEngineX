@@ -8,6 +8,7 @@ namespace Phe
 	{
 		BasePipeline,
 		ShadowPipeline,
+		SkyPipeline,
 
 		PipelineCount
 	};
