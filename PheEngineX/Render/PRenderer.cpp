@@ -6,7 +6,7 @@
 
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr), PExportRenderTarget(nullptr), PerOrthoCameraBuffer(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr), PExportRenderTarget(nullptr), PerOrthoCameraBuffer(nullptr), PSkyBoxPipeline(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -30,12 +30,16 @@ namespace Phe
 		PRHI::Get()->BeginFrame();
 		PCurrentPipeline = nullptr;
 		PRenderLight* MainRenderLight = nullptr;
-		ExportPass(RenderScene);
-		if(NeedExportDepth)
- 		{
-			PRHI::Get()->ReadBackRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
-			NeedExportDepth = false;
+		if(!PSkyBoxPipeline)
+		{
+//			PSkyBoxPipeline = PRHI::Get()->CreatePipeline();
 		}
+ 		ExportPass(RenderScene);
+ 		if(NeedExportDepth)
+  		{
+ 			PRHI::Get()->ReadBackRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
+ 			NeedExportDepth = false;
+ 		}
 		if(MainRenderLight = RenderScene->GetMainRenderLight())
 		{
 			ShadowPass(RenderScene);
@@ -118,7 +122,7 @@ namespace Phe
 		{
 			PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2048, 2048);
 			PShadowMap->AddDepthStencilBuffer();
-			PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer());
+			PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer(), P_TextureType::P_Texture2D);
 		}
    		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
   
@@ -140,12 +144,6 @@ namespace Phe
  			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
    		}
    		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
-// 		if(NeedExportDepth)
-// 		{
-// 			PRHI::Get()->ReadBackRTBuffer(PShadowMap->GetDepthStencilBuffer());
-// 			//PRHI::Get()->ReadBackTexture(RenderScene->GetFirstTexture());
-// 			NeedExportDepth = false;
-// 		}
 	}
 
 
@@ -153,7 +151,7 @@ namespace Phe
 	{
 		PIBLBRDFRenderTarget = PRHI::Get()->CreateRenderTarget("IBLBRDF", 1024, 1024);
 		PIBLBRDFRenderTarget->AddColorBuffer(1);
-		PIBLBRDFRenderTarget->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("IBLBRDFTexture", PIBLBRDFRenderTarget->GetColorBuffer(1));
+		PIBLBRDFRenderTarget->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("IBLBRDFTexture", PIBLBRDFRenderTarget->GetColorBuffer(1), P_TextureType::P_Texture2D);
 		PRHI::Get()->BeginRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
 		PRHI::Get()->SetRenderTarget(PIBLBRDFRenderTarget);
 
@@ -167,7 +165,7 @@ namespace Phe
 		{
 			PExportRenderTarget = PRHI::Get()->CreateRenderTarget("Export", 1024, 1024);
 			PExportRenderTarget->AddDepthStencilBuffer();
-			PExportRenderTarget->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ExportDepthTexture", PExportRenderTarget->GetDepthStencilBuffer());
+			PExportRenderTarget->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ExportDepthTexture", PExportRenderTarget->GetDepthStencilBuffer(), P_TextureType::P_Texture2D);
 		}
 		PRHI::Get()->BeginRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
 

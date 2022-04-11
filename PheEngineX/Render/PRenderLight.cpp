@@ -37,9 +37,10 @@ namespace Phe
 
 	void PRenderLight::DestroyRenderLight()
 	{
-/*		ReleasePtr(TransformBuffer);*/
-		ReleasePtr(CameraBuffer);
-		ReleasePtr(PerLightBuffer);
+// 		ReleasePtr(CameraBuffer);
+// 		ReleasePtr(PerLightBuffer);
+		PRHI::Get()->DestroyGPUCommonBuffer(CameraBuffer);
+		PRHI::Get()->DestroyGPUCommonBuffer(PerLightBuffer);
 	}
 
 }

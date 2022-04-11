@@ -534,10 +534,10 @@ namespace Phe
 		return NewGPUCommonBuffer;
 	}
 
-	Phe::PGPUTexture* PDX12RHI::CreateTexture(std::string TextureName, std::wstring FileName)
+	Phe::PGPUTexture* PDX12RHI::CreateTexture(std::string TextureName, std::wstring FileName, P_TextureType TextureType)
 	{
 		ResetCommandList();
-		PDX12GPUTexture* NewGPUTexture = new PDX12GPUTexture(TextureName, FileName);
+		PDX12GPUTexture* NewGPUTexture = new PDX12GPUTexture(TextureName, FileName, TextureType);
 		ComPtr<ID3D12Resource> PResource = nullptr;
 		ComPtr<ID3D12Resource> UploadHeap = nullptr;
 		DirectX::CreateDDSTextureFromFile12(PDevice.Get(), PCommandList.Get(), FileName.c_str(), PResource, UploadHeap);
@@ -545,25 +545,45 @@ namespace Phe
 		NewGPUTexture->SetPUploadHeap(UploadHeap);
 		auto Pair = PCbvSrvUavHeap->Allocate(1);
 		NewGPUTexture->SetHandleOffset(Pair.second);
-
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
-		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Format = PResource->GetDesc().Format;
-		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-		srvDesc.Texture2D.MostDetailedMip = 0;
-		srvDesc.Texture2D.MipLevels = PResource->GetDesc().MipLevels;
-		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+		switch (TextureType)
+		{
+		case Phe::P_TextureType::P_Texture2D:
+			srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			srvDesc.Format = PResource->GetDesc().Format;
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = PResource->GetDesc().MipLevels;
+			srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+			break;
+		case Phe::P_TextureType::P_TextureCube:
+			srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+			srvDesc.Format = PResource->GetDesc().Format;;
+			srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURECUBE;
+			srvDesc.Texture2D.MostDetailedMip = 0;
+			srvDesc.Texture2D.MipLevels = PResource->GetDesc().MipLevels;
+			srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+			break;
+		}
 		PDevice->CreateShaderResourceView(PResource.Get(), &srvDesc, Pair.first);
+// 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
+// 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
+// 		srvDesc.Format = PResource->GetDesc().Format;
+// 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
+// 		srvDesc.Texture2D.MostDetailedMip = 0;
+// 		srvDesc.Texture2D.MipLevels = PResource->GetDesc().MipLevels;
+// 		srvDesc.Texture2D.ResourceMinLODClamp = 0.0f;
+// 		PDevice->CreateShaderResourceView(PResource.Get(), &srvDesc, Pair.first);
 
 		ExecuteCommandList();
 		Flush();
 		return NewGPUTexture;
 	}
 
-	Phe::PGPUTexture* PDX12RHI::CreateTexture(std::string TextureName, RTBuffer* InRTBuffer)
+	Phe::PGPUTexture* PDX12RHI::CreateTexture(std::string TextureName, RTBuffer* InRTBuffer, P_TextureType TextureType)
 	{
 //		ResetCommandList();
-		PDX12GPUTexture* NewGPUTexture = new PDX12GPUTexture(TextureName);
+		PDX12GPUTexture* NewGPUTexture = new PDX12GPUTexture(TextureName, L"", TextureType);
 		DX12RTBuffer* InDX12RTBuffer = static_cast<DX12RTBuffer*>(InRTBuffer);
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
@@ -664,17 +684,18 @@ namespace Phe
 			Handle.ptr += size_t(PDsvDescriptorSize) * RTDSBuffer->PHandleOffset;
 			Dsv = &Handle;
 		}
+		PCommandList->OMSetRenderTargets(UINT(RTColorBuffer.size()), Rtv, false, Dsv);
 		if(RtvDescriptors.size()>0)
 		{
-//			PCommandList->ClearRenderTargetView(*Rtv)
+			for(size_t index = 0; index< RTColorBuffer.size(); index++)
+			{
+//				PCommandList->ClearRenderTargetView();
+			}
 		}
 		if (Dsv)
 		{
 			PCommandList->ClearDepthStencilView(*Dsv, D3D12_CLEAR_FLAG_DEPTH | D3D12_CLEAR_FLAG_STENCIL, 1.0f, 0, 0, nullptr);
 		}
-
-
-		PCommandList->OMSetRenderTargets(UINT(RTColorBuffer.size()), Rtv, false, Dsv);
 
 	}
 
@@ -845,7 +866,7 @@ namespace Phe
 		PCbvSrvUavHeap->Deallocate(PerMatBuffer->GetHandleOffset(), PerMatBuffer->GetElements());
 	}
 
-	void PDX12RHI::DestroyTexture(PGPUTexture* Texture, bool CheckMap)
+	void PDX12RHI::DestroyTexture(PGPUTexture* Texture)
 	{
 		PCbvSrvUavHeap->Deallocate(Texture->GetHandleOffset(), 1);
 
@@ -867,6 +888,13 @@ namespace Phe
 		{
 			PDsvHeap->Deallocate(RtBuffer->PHandleOffset, 1);
 		}
+	}
+
+
+	void PDX12RHI::DestroyGPUCommonBuffer(PGPUCommonBuffer* GPUCommonBuffer)
+	{
+		PCbvSrvUavHeap->Deallocate(GPUCommonBuffer->GetHandleOffset(), 1);
+		ReleasePtr(GPUCommonBuffer);
 	}
 
 	//Please Ensure the RTBuffer State is Generic_Read!!

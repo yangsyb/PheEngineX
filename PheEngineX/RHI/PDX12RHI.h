@@ -22,8 +22,8 @@ namespace Phe
 		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") override;
 		virtual PPipeline* CreatePipeline(PShader* Shader) override;
 		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum) override;
-		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer) override;
-		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName) override;
+		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer, P_TextureType TextureType) override;
+		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName, P_TextureType TextureType) override;
 		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height) override;
 		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default", UINT32 Width = 1920, UINT32 Height = 1080) override;
 
@@ -49,9 +49,10 @@ namespace Phe
 // 		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) override;
 		virtual void DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName) override;
 		virtual void DestroyPrimitive(PPrimitive* Primitive) override;
-		virtual void DestroyTexture(PGPUTexture* Texture, bool CheckMap = false) override;
+		virtual void DestroyTexture(PGPUTexture* Texture) override;
 		virtual void DestroyMaterial(PMaterial* Material) override;
 		virtual void DestroyRTBuffer(RTBuffer* RtBuffer) override;
+		virtual void DestroyGPUCommonBuffer(PGPUCommonBuffer* GPUCommonBuffer) override;
 
 		virtual void ReadBackRTBuffer(RTBuffer* InRTBuffer) override;
 		virtual void ReadBackTexture(PGPUTexture* InTexture) override;

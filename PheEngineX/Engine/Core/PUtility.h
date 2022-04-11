@@ -93,6 +93,7 @@ static void DeserilizeActorJsonFile(const std::string FilePath, std::vector<std:
 			MeshTransform.push_back({ MeshName, Trans });
 		}
 	}
+	in.close();
 }
 
 static glm::vec4 VectorToMat(glm::vec3 V, glm::mat4 M)

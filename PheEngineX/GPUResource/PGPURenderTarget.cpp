@@ -26,7 +26,7 @@ namespace Phe
 	{
 		if(PRTTexture)
 		{
-			PRHI::Get()->DestroyTexture(PRTTexture, true);
+			PRHI::Get()->DestroyTexture(PRTTexture);
 		}
 	}
 

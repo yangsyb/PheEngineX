@@ -36,6 +36,7 @@ namespace Phe
 		PGPUCommonBuffer* PerOrthoCameraBuffer;
 
 		PPipeline* PCurrentPipeline;
+		PPipeline* PSkyBoxPipeline;
 		PGPURenderTarget* PShadowMap;
 		PGPURenderTarget* PIBLBRDFRenderTarget;
 		PGPURenderTarget* PExportRenderTarget;

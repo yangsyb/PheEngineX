@@ -88,7 +88,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().AddMaterialData("DefaultMat", "DefaultShader", std::vector<std::string>{"Texture1", "Texture1Normal"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeLeafMat", "WPOShader", std::vector<std::string>{"Texture2"});
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeTruckMat", "WPOTrunkShader", std::vector<std::string>{"Texture3", "Texture3Normal"});
-	PAssetManager::GetSingleton().AddMaterialData("TowerMat", "TowerShader", std::vector<std::string>{"TextureTower", "TextureTowerNormal", "TextureTowerRM", "TextureTowerEmissive"});
+	PAssetManager::GetSingleton().AddMaterialData("TowerMat", "PBRShader", std::vector<std::string>{"TextureTower", "TextureTowerNormal", "TextureTowerRM", "TextureTowerEmissive"});
 	PAssetManager::GetSingleton().AddMaterialData("StoneMat", "DefaultShader", std::vector<std::string>{"Texture4", "Texture4Normal"});
 	//Light
 	PAssetManager::GetSingleton().AddLightData("DefaultLight");
@@ -96,22 +96,25 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PFunc<void()> f1 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
 		PEngine::GetSingleton().GetScene()->AddStaticMesh("box", Transform{ glm::vec3(0,0, 0), glm::vec3(0,0,0), glm::vec3(1,1,1) }, "DefaultMat");
+		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", Transform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
 	};
 	PFunc<void()> f2 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\InSceneData.json", "DefaultMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tower.json", "TowerMat");
+		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", Transform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
 	};
 	PFunc<void()> f3 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
-		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\InSceneData.json", "DefaultMat");
+		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\InSceneData.json", "StoneMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeTruckMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tree.json", "WPOTreeLeafMat");
 		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFile("JsonFile\\Tower.json", "TowerMat");
+		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", Transform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
 	};
 	PFunc<void()> f4 = [&]() {
-		Transform LightTransform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
-		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", LightTransform);
+		//		Transform LightTransform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f));
+		//		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", LightTransform);
 	};
 	PFunc<void()> f5 = [&]() {
 		PEngine::GetSingleton().GetScene()->SetLightDynamic();

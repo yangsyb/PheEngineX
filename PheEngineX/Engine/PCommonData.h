@@ -31,6 +31,7 @@ struct PerMaterialCBuffer
 	glm::vec4 BaseColor;
 	glm::vec3 FresnelR0;
 	float Roughness;
+	float Metallic;
 };
 
 struct PerLightCBuffer

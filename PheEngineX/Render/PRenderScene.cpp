@@ -104,7 +104,7 @@ namespace Phe
 		std::string TextureName = Texture->GetTextureName();
 		if(PTexturePool.count(TextureName) == 0)
 		{
-			PGPUTexture* NewGPUTexture = PRHI::Get()->CreateTexture(TextureName, Texture->GetTextureFileName());
+			PGPUTexture* NewGPUTexture = PRHI::Get()->CreateTexture(TextureName, Texture->GetTextureFileName(), P_TextureType::P_Texture2D);
 			Texture->BindGPUTexture(NewGPUTexture);
 			PTexturePool.insert({ TextureName, NewGPUTexture });
 		}

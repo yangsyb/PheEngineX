@@ -37,7 +37,7 @@ namespace Phe
 
 		MakeDX12RasterizerState(RasterizerDesc, PRasterizerState);
 		MakeDX12BlendState(BlendState, PBlendState);
-		PDepthStencilState = CD3DX12_DEPTH_STENCIL_DESC(D3D12_DEFAULT);
+		MakeDX12DepthStencilState(DepthStencilState, PDepthStencilState);
 	}
 
 

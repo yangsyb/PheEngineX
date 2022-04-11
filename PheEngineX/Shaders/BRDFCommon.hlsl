@@ -39,6 +39,7 @@ cbuffer cbMaterial : register(b2)
 	float4 gBaseColor;
 	float3 gFresnelR0;
 	float  gRoughness;
+	float gMetallic;
 }
 
 cbuffer cbLight : register(b3)
@@ -54,6 +55,7 @@ struct VertexIn
 	float3 PosL  : POSITION;
 	float4 Normal : NORMAL;
 	float4 Tangent : TANGENT;
+	float4 TangentY : TANGENTY;
 	float2 TextCoord : TEXTCOORD;
 };
 
@@ -66,6 +68,7 @@ struct VertexOut
 	float3 WorldPos : POSITION1;
 	float3 Norm : NORMAL;
 	float3 TangentW : TANGENT;
+	float3 BiTangent : TANGENTY;
 };
 
 float CalcShadowFactor(float4 shadowPosH)
@@ -130,15 +133,17 @@ float4 PS(VertexOut pin) : SV_Target
 {
 	float4 Output = float4(0.0f, 0.0f, 0.0f, 1.0f);
 	float3 WPos = pin.WorldPos;
-	float4 BaseColor = gDiffuseMap.Sample(gsamPointWrap, pin.TextCoord);
+	float4 BaseColor = gDiffuseMap.Sample(gsamLinearClamp, pin.TextCoord);
 //	BaseColor = pow(BaseColor, 2.2);
-    float4 PhysicalDesc = gRoughnessMetallicMap.Sample(gsamPointWrap, pin.TextCoord);
-    float4 EmissiveColor = gEmissiveMap.Sample(gsamPointWrap, pin.TextCoord);
-    float3 Ambient = 0.5f * gLightColor;
+    float4 PhysicalDesc = gRoughnessMetallicMap.Sample(gsamLinearClamp, pin.TextCoord);
+    float4 EmissiveColor = gEmissiveMap.Sample(gsamLinearClamp, pin.TextCoord);
+//    float3 Ambient = 0.5f * gLightColor;
+	float AmbientFactor = 0.35;
+	float3 Ambient = AmbientFactor * float3(1.f, 1.f, 1.f);
 
 	float Shadow = CalcShadowFactor(pin.ShadowPos);
 
-	float4 NormalMapSample = gNormalMap.Sample(gsamAnisotropicWrap, pin.TextCoord);
+	float4 NormalMapSample = gNormalMap.Sample(gsamLinearClamp, pin.TextCoord);
 	float3 BumpedNormalW = NormalSampleToWorldSpace(NormalMapSample.rgb, pin.Norm, pin.TangentW);
 
     SurfaceInfo surfaceInfo = GetSurfaceInfo(BaseColor, PhysicalDesc);
@@ -147,7 +152,7 @@ float4 PS(VertexOut pin) : SV_Target
     Output.rgb += Ambient * BaseColor.rgb;
     Output.rgb += EmissiveColor.rgb;
 
-    Output.rgb = pow(Output.rgb, 1 / 2.2);
+	Output.rgb = pow(Output.rgb, 1 / 2.2f);
 
     return Output;
 }

@@ -9,7 +9,7 @@ namespace Phe
 	class PMaterial
 	{
 	public:
-		PMaterial(std::string MName, std::string SName, std::vector<std::string> TNames, glm::vec4 BaseColor = glm::vec4(1.f, 1.f, 1.f, 1.f), glm::vec3 FresnelR0 = glm::vec3(0.05f, 0.05f, 0.05f), float Roughness = 0.2f, float Metallic = 0.0f, float Specular = 0.0f);
+		PMaterial(std::string MName, std::string SName, std::vector<std::string> TNames, glm::vec4 BaseColor = glm::vec4(1.f, 1.f, 1.f, 1.f), glm::vec3 FresnelR0 = glm::vec3(0.05f, 0.05f, 0.05f), float Roughness = 0.2f, float Metallic = 0.05f, float Specular = 0.0f);
 		PMaterial(PMaterial* Material);
 		virtual ~PMaterial();
 		bool operator==(const PMaterial* M) { return this->GetName() == M->PMaterialName; }

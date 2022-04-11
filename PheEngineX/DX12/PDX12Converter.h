@@ -169,6 +169,69 @@ namespace Phe
 		}
 	}
 
+	static D3D12_DEPTH_WRITE_MASK SwitchDepthWriteMask(P_DEPTH_WRITE_MASK DepthWriteMask)
+	{
+		switch (DepthWriteMask)
+		{
+		case Phe::P_DEPTH_WRITE_MASK::P_DEPTH_WRITE_MASK_ZERO:
+			return D3D12_DEPTH_WRITE_MASK_ZERO;
+		case Phe::P_DEPTH_WRITE_MASK::P_DEPTH_WRITE_MASK_ALL:
+			return D3D12_DEPTH_WRITE_MASK_ALL;
+		default:
+			return D3D12_DEPTH_WRITE_MASK_ZERO;
+		}
+	}
+
+	static D3D12_COMPARISON_FUNC SwitchComparisonFunc(P_COMPARISON_FUNC ComparisonFunc)
+	{
+		switch (ComparisonFunc)
+		{
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_NEVER:
+			return D3D12_COMPARISON_FUNC_NEVER;
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_LESS:
+			return D3D12_COMPARISON_FUNC_LESS;
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_EQUAL:
+			return D3D12_COMPARISON_FUNC_EQUAL;
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_LESS_EQUAL:
+			return D3D12_COMPARISON_FUNC_LESS_EQUAL;
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_GREATER:
+			return D3D12_COMPARISON_FUNC_GREATER;
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_NOT_EQUAL:
+			return D3D12_COMPARISON_FUNC_NOT_EQUAL;
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_GREATER_EQUAL:
+			return D3D12_COMPARISON_FUNC_GREATER_EQUAL;
+		case Phe::P_COMPARISON_FUNC::P_COMPARISON_FUNC_ALWAYS:
+			return D3D12_COMPARISON_FUNC_ALWAYS;
+		default:
+			return D3D12_COMPARISON_FUNC_NEVER;
+		}
+	}
+
+	static D3D12_STENCIL_OP SwitchStencilOP(P_STENCIL_OP StencilOP)
+	{
+		switch (StencilOP)
+		{
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_KEEP:
+			return D3D12_STENCIL_OP_KEEP;
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_ZERO:
+			return D3D12_STENCIL_OP_ZERO;
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_REPLACE:
+			return D3D12_STENCIL_OP_REPLACE;
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_INCR_SAT:
+			return D3D12_STENCIL_OP_INCR_SAT;
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_DECR_SAT:
+			return D3D12_STENCIL_OP_DECR_SAT;
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_INVERT:
+			return D3D12_STENCIL_OP_INVERT;
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_INCR:
+			return D3D12_STENCIL_OP_INCR;
+		case Phe::P_STENCIL_OP::P_STENCIL_OP_DECR:
+			return D3D12_STENCIL_OP_DECR;
+		default:
+			return D3D12_STENCIL_OP_KEEP;
+		}
+	}
+
 	inline void MakeDX12RasterizerState(P_RasterizerDesc PDesc, D3D12_RASTERIZER_DESC& D3DRasterizerDesc)
 	{
 		D3DRasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
@@ -202,6 +265,25 @@ namespace Phe
 		{
 			D3DBlendState.RenderTarget[i] = BlendDesc;
 		}
+	}
+
+	inline void MakeDX12DepthStencilState(P_DepthStencilState PDepthStencilState, D3D12_DEPTH_STENCIL_DESC& D3DDepthStencilState)
+	{
+		D3DDepthStencilState.DepthEnable = PDepthStencilState.DepthEnable;
+		D3DDepthStencilState.DepthWriteMask = SwitchDepthWriteMask(PDepthStencilState.DepthWriteMask);
+		D3DDepthStencilState.DepthFunc = SwitchComparisonFunc(PDepthStencilState.DepthFunc);
+		D3DDepthStencilState.StencilEnable = PDepthStencilState.StencilEnable;
+		D3DDepthStencilState.StencilReadMask = PDepthStencilState.StencilReadMask;
+		D3DDepthStencilState.StencilWriteMask = PDepthStencilState.StencilWriteMask;
+		D3DDepthStencilState.FrontFace.StencilFailOp = SwitchStencilOP(PDepthStencilState.FrontStencilFailOp);
+		D3DDepthStencilState.FrontFace.StencilDepthFailOp = SwitchStencilOP(PDepthStencilState.FrontStencilDepthFailOp);
+		D3DDepthStencilState.FrontFace.StencilPassOp = SwitchStencilOP(PDepthStencilState.FrontStencilPassOp);
+		D3DDepthStencilState.FrontFace.StencilFunc = SwitchComparisonFunc(PDepthStencilState.FrontStencilFunc);
+		D3DDepthStencilState.BackFace.StencilFailOp = SwitchStencilOP(PDepthStencilState.BackStencilFailOp);
+		D3DDepthStencilState.BackFace.StencilDepthFailOp = SwitchStencilOP(PDepthStencilState.BackStencilDepthFailOp);
+		D3DDepthStencilState.BackFace.StencilPassOp = SwitchStencilOP(PDepthStencilState.BackStencilPassOp);
+		D3DDepthStencilState.BackFace.StencilFunc = SwitchComparisonFunc(PDepthStencilState.BackStencilFunc);
+
 	}
 }
 

@@ -4,7 +4,7 @@
 namespace Phe
 {
 
-	PDX12GPUTexture::PDX12GPUTexture(std::string TextureName, std::wstring FileName) : PGPUTexture(TextureName, FileName)
+	PDX12GPUTexture::PDX12GPUTexture(std::string TextureName, std::wstring FileName, P_TextureType TextureType) : PGPUTexture(TextureName, FileName, TextureType)
 	{
 		PResource = new PDX12GPUResource();
 		PUploadHeap = new PDX12GPUResource();

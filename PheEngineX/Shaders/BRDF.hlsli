@@ -99,7 +99,6 @@ float D_GGX(float a2, float NoH)
 float SmithGGXVisibilityCorrelated(float NdotL, float NdotV, float AlphaRoughness)
 {
     float a2 = AlphaRoughness * AlphaRoughness;
-
     float GGXV = NdotL * sqrt(max(NdotV * NdotV * (1.0 - a2) + a2, 1e-7));
     float GGXL = NdotV * sqrt(max(NdotL * NdotL * (1.0 - a2) + a2, 1e-7));
 
@@ -109,6 +108,8 @@ float SmithGGXVisibilityCorrelated(float NdotL, float NdotV, float AlphaRoughnes
 float Vis_SmithJointApprox(float a2, float NoV, float NoL)
 {
     float a = sqrt(a2);
+    NoL = max(NoL, 1e-6);
+    NoV = max(NoV, 1e-6);
     float Vis_SmithV = NoL * (NoV * (1 - a) + a);
     float Vis_SmithL = NoV * (NoL * (1 - a) + a);
     return 0.5 * rcp(Vis_SmithV + Vis_SmithL);
@@ -170,7 +171,7 @@ void BRDF(AngularInfo angularInfo, SurfaceInfo surfaceInfo, out float3 diffuseCo
 
     float3 F = F_Schlick(angularInfo.VdotH, surfaceInfo.F0, surfaceInfo.F90);
     float D = D_GGX(AlphaRoughness * AlphaRoughness, angularInfo.NdotH);
-//    float G = SmithGGXVisibilityCorrelated(angularInfo.NdotL, angularInfo.NdotV, AlphaRoughness);
+ //   float G = SmithGGXVisibilityCorrelated(angularInfo.NdotL, angularInfo.NdotV, AlphaRoughness);
     float G = Vis_SmithJointApprox(AlphaRoughness * AlphaRoughness, angularInfo.NdotV, angularInfo.NdotL);
 
     diffuseContrib = (1.0 - F) * LambertianDiffuse(surfaceInfo.DiffuseColor);

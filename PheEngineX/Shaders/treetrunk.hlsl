@@ -1,3 +1,6 @@
+#include "BRDF.hlsli"
+#include "BlinnPhong.hlsli"
+
 Texture2D    gDiffuseMap : register(t0);
 Texture2D    gNormalMap : register(t1);
 Texture2D    gShadowMap : register(t4);
@@ -24,24 +27,24 @@ cbuffer cbPass : register(b1)
 {
 	float4x4 gView;
 	float4x4 gProj;
-//	float4x4 gCameraPosition;
 	float4x4 gShadowTransform;
-	float3 gCameraPostion;
+	float3 gCameraPosition;
 	float gTime;
 };
 
 cbuffer cbMaterial : register(b2)
 {
-	float4 gDiffuseAlbedo;
+	float4 gBaseColor;
 	float3 gFresnelR0;
 	float  gRoughness;
+	float gMetallic;
 }
 
 cbuffer cbLight : register(b3)
 {
-	float3 gLightDirection;
-	float3 gLightColor;
+	float3 gLightPosition;
 	float gLightIntensity;
+	float3 gLightColor;
 	float gLightRadius;
 }
 
@@ -61,6 +64,9 @@ struct VertexOut
 	float2 TextCoord : TEXTCOORD;
 	float4 ShadowPos : POSITION0;
 	float3 WorldPos : POSITION1;
+	float3 Norm : NORMAL;
+	float3 TangentW : TANGENT;
+	float3 BiTangent : TANGENTY;
 };
 
 float CalcShadowFactor(float4 shadowPosH)
@@ -123,16 +129,46 @@ VertexOut VS(VertexIn vin)
 	vout.TextCoord = vin.TextCoord;
 
 	vout.ShadowPos = mul(gShadowTransform, PosWorld);
+
+	vout.WorldPos = PosWorld;
+	vout.Norm = normalize(mul((float3x3)gWorld, vin.Normal.xyz));
+	vout.TangentW = normalize(mul((float3x3)gWorld, vin.Tangent.xyz));
 	return vout;
 }
 
 float4 PS(VertexOut pin) : SV_Target
 {
-	float4 diffuseAlbedo = gDiffuseMap.Sample(gsamPointWrap, pin.TextCoord) * gDiffuseAlbedo;
-	float4 NormalAlbedo = gNormalMap.Sample(gsamPointWrap, pin.TextCoord) * gDiffuseAlbedo;
+//	float4 diffuseAlbedo = gDiffuseMap.Sample(gsamPointWrap, pin.TextCoord) * gDiffuseAlbedo;
+//	float4 NormalAlbedo = gNormalMap.Sample(gsamPointWrap, pin.TextCoord) * gDiffuseAlbedo;
+//
+//	float Shadow = CalcShadowFactor(pin.ShadowPos);
+//
+//
+//	return pow(diffuseAlbedo * (Shadow + 0.1), 1 / 2.2f);
+
+    float4 Output = 0.0f;
+
+	float4 BaseColor = gDiffuseMap.Sample(gsamLinearClamp, pin.TextCoord);
+	BaseColor.rgb *= gBaseColor.rgb;
 
 	float Shadow = CalcShadowFactor(pin.ShadowPos);
 
+	float Roughness = gRoughness;
+	float Metallic = gMetallic;
+	float F0 = gFresnelR0;
+//	F0 = lerp(F0.rrr, BaseColor.rgb, Metallic);
 
-	return pow(diffuseAlbedo * (Shadow + 0.1), 1 / 2.2f);
+//	float3 Ambient = 0.5 * gLightColor;
+	float AmbientFactor = 0.35;
+	float3 Ambient = AmbientFactor * float3(1.f, 1.f, 1.f);
+
+	float4 NormalMapSample = gNormalMap.Sample(gsamLinearClamp, pin.TextCoord);
+	float3 BumpedNormalW = NormalSampleToWorldSpace(NormalMapSample.rgb, pin.Norm, pin.TangentW);
+
+	SurfaceInfo surfaceInfo = GetSurfaceInfo(BaseColor, Metallic, Roughness);
+	Output.rgb += ApplyDirectionalLight(gLightPosition - pin.WorldPos, gLightColor, surfaceInfo, BumpedNormalW, gCameraPosition - pin.WorldPos) * Shadow;
+//	Output.rgb += ComputeDirectionalLight(gLightPosition - pin.WorldPos, BumpedNormalW, 1.f, gCameraPosition - pin.WorldPos, Roughness, BaseColor, surfaceInfo.F0, surfaceInfo.F90) * Shadow;
+	Output.rgb += Ambient * BaseColor.rgb;
+	Output.rgb = pow(Output.rgb, 1 / 2.2f);
+	return Output;
 }

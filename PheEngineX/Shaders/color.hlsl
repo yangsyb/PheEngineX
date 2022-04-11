@@ -38,6 +38,7 @@ cbuffer cbMaterial : register(b2)
 	float4 gBaseColor;
 	float3 gFresnelR0;
 	float  gRoughness;
+	float gMetallic;
 }
 
 cbuffer cbLight : register(b3)
@@ -126,13 +127,11 @@ VertexOut VS(VertexIn vin)
 
 	vout.ShadowPos = mul(gShadowTransform, PosWorld);
 
-	vout.Norm = mul((float3x3)gWorld, normalize(vin.Normal.xyz));
+	vout.Norm = normalize(mul((float3x3)gWorld, vin.Normal.xyz));
 
-	vout.TangentW = mul((float3x3)gWorld, normalize(vin.Tangent.xyz));
+	vout.TangentW = normalize(mul((float3x3)gWorld, vin.Tangent.xyz));
 
-//	vout.Norm = normalize(mul((float3x3)gWorld, vin.Normal.xyz));
-//
-//	vout.TangentW = normalize(mul((float3x3)gWorld, vin.Tangent.xyz));
+	vout.BiTangent = normalize(mul((float3x3)gWorld, vin.TangentY.xyz));
 
 	return vout;
 }
@@ -141,26 +140,30 @@ float4 PS(VertexOut pin) : SV_Target
 {
 	float4 Output = 0.0f;
 
-	float4 BaseColor = gDiffuseMap.Sample(gsamPointWrap, pin.TextCoord);
+	float4 BaseColor = gDiffuseMap.Sample(gsamLinearClamp, pin.TextCoord);
 	BaseColor.rgb *= gBaseColor.rgb;
 
 	float Shadow = CalcShadowFactor(pin.ShadowPos);
 
 	float Roughness = gRoughness;
-	float Metallic = gFresnelR0;
-	float F0 = 0.74f;
-	F0 = lerp(F0.rrr, BaseColor.rgb, Metallic);
+	float Metallic = gMetallic;
+	float F0 = gFresnelR0;
+//	F0 = lerp(F0.rrr, BaseColor.rgb, Metallic);
 
-	float3 Ambient = 0.5f * gLightColor;
+//	float3 Ambient = 0.5 * gLightColor;
+	float AmbientFactor = 0.35;
+	float3 Ambient = AmbientFactor * float3(1.f, 1.f, 1.f);
 
-	float4 NormalMapSample = gNormalMap.Sample(gsamAnisotropicWrap, pin.TextCoord);
+	float4 NormalMapSample = gNormalMap.Sample(gsamLinearClamp, pin.TextCoord);
 	float3 BumpedNormalW = NormalSampleToWorldSpace(NormalMapSample.rgb, pin.Norm, pin.TangentW);
+//	float3 BumpedNormalW = NormalSampleToWorldSpace(NormalMapSample.rgb, pin.Norm, pin.TangentW, pin.BiTangent);
 
 	SurfaceInfo surfaceInfo = GetSurfaceInfo(BaseColor, Metallic, Roughness);
 	Output.rgb += ApplyDirectionalLight(gLightPosition - pin.WorldPos, gLightColor, surfaceInfo, BumpedNormalW, gCameraPosition - pin.WorldPos) * Shadow;
-//	Output.rgb += ComputeDirectionalLight(gLightPosition - pin.WorldPos, BumpedNormalW, 1.f, gCameraPosition - pin.WorldPos, Roughness, BaseColor, surfaceInfo.F0, surfaceInfo.F90) * Shadow;
+//	Output.rgb += ComputeDirectionalLight(gLightPosition - pin.WorldPos, BumpedNormalW, 1.f, gCameraPosition - pin.WorldPos, surfaceInfo.PerceptualRoughness, BaseColor, surfaceInfo.F0, surfaceInfo.F90) * Shadow;
+//	AmbientFactor = AmbientFactor + gLightIntensity>0 ? 0.4 : 0;
 	Output.rgb += Ambient * BaseColor.rgb;
-	Output.rgb = pow(Output.rgb, 1 / 2.2);
+	Output.rgb = pow(Output.rgb, 1 / 2.2f);
 	return Output;
 
 	//Light

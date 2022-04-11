@@ -73,6 +73,7 @@ namespace Phe
 		Ret.BaseColor = PBaseColor;
 		Ret.FresnelR0 = PFresnelR0;
 		Ret.Roughness = PRoughness;
+		Ret.Metallic = PMetallic;
 		return Ret;
 	}
 

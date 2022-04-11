@@ -10,11 +10,13 @@ namespace Phe
 		PShader* DefaultShader = new PShader("DefaultShader", L"Shaders\\color.hlsl");
 		PShader* WPOShader = new PShader("WPOShader", L"Shaders\\tree.hlsl");
 		PShader* WPOTrunkShader = new PShader("WPOTrunkShader", L"Shaders\\treetrunk.hlsl");
-		PShader* TowerShader = new PShader("TowerShader", L"Shaders\\BRDFCommon.hlsl");
+		PShader* TowerShader = new PShader("PBRShader", L"Shaders\\BRDFCommon.hlsl");
+		PShader* SkyBoxShader = new PShader("SkyShader", L"Shaders\\SkyBox.hlsl", "VS", "PS", P_RasterizerDesc(), P_BlendState());
 		AddShader(DefaultShader);
 		AddShader(WPOShader);
 		AddShader(WPOTrunkShader);
 		AddShader(TowerShader);
+		AddShader(SkyBoxShader);
 		PropertyID.reserve(64);
 	}
 

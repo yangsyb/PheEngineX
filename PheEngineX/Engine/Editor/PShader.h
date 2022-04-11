@@ -106,10 +106,76 @@ namespace Phe
 		{}
 	};
 
+	enum class P_DEPTH_WRITE_MASK
+	{
+		P_DEPTH_WRITE_MASK_ZERO = 0,
+		P_DEPTH_WRITE_MASK_ALL = 1
+	};
+
+	enum class P_COMPARISON_FUNC
+	{
+		P_COMPARISON_FUNC_NEVER = 1,
+		P_COMPARISON_FUNC_LESS = 2,
+		P_COMPARISON_FUNC_EQUAL = 3,
+		P_COMPARISON_FUNC_LESS_EQUAL = 4,
+		P_COMPARISON_FUNC_GREATER = 5,
+		P_COMPARISON_FUNC_NOT_EQUAL = 6,
+		P_COMPARISON_FUNC_GREATER_EQUAL = 7,
+		P_COMPARISON_FUNC_ALWAYS = 8
+	};
+
+	enum class P_STENCIL_OP
+	{
+		P_STENCIL_OP_KEEP = 1,
+		P_STENCIL_OP_ZERO = 2,
+		P_STENCIL_OP_REPLACE = 3,
+		P_STENCIL_OP_INCR_SAT = 4,
+		P_STENCIL_OP_DECR_SAT = 5,
+		P_STENCIL_OP_INVERT = 6,
+		P_STENCIL_OP_INCR = 7,
+		P_STENCIL_OP_DECR = 8
+	};
+
+	struct P_DepthStencilState
+	{
+		bool DepthEnable;
+		P_DEPTH_WRITE_MASK DepthWriteMask;
+		P_COMPARISON_FUNC DepthFunc;
+		bool StencilEnable;
+		UINT8 StencilReadMask;
+		UINT8 StencilWriteMask;
+		P_STENCIL_OP FrontStencilFailOp;
+		P_STENCIL_OP FrontStencilDepthFailOp;
+		P_STENCIL_OP FrontStencilPassOp;
+		P_COMPARISON_FUNC FrontStencilFunc;
+		P_STENCIL_OP BackStencilFailOp;
+		P_STENCIL_OP BackStencilDepthFailOp;
+		P_STENCIL_OP BackStencilPassOp;
+		P_COMPARISON_FUNC BackStencilFunc;
+
+		P_DepthStencilState()
+		: DepthEnable(true)
+		, DepthWriteMask(P_DEPTH_WRITE_MASK::P_DEPTH_WRITE_MASK_ALL)
+		, DepthFunc(P_COMPARISON_FUNC::P_COMPARISON_FUNC_LESS)
+		, StencilEnable(false)
+		, StencilReadMask(0xff)
+		, StencilWriteMask(0xff)
+		, FrontStencilFailOp(P_STENCIL_OP::P_STENCIL_OP_KEEP)
+		, FrontStencilDepthFailOp(P_STENCIL_OP::P_STENCIL_OP_KEEP)
+		, FrontStencilPassOp(P_STENCIL_OP::P_STENCIL_OP_KEEP)
+		, FrontStencilFunc(P_COMPARISON_FUNC::P_COMPARISON_FUNC_ALWAYS)
+		, BackStencilFailOp(P_STENCIL_OP::P_STENCIL_OP_KEEP)
+		, BackStencilDepthFailOp(P_STENCIL_OP::P_STENCIL_OP_KEEP)
+		, BackStencilPassOp(P_STENCIL_OP::P_STENCIL_OP_KEEP)
+		, BackStencilFunc(P_COMPARISON_FUNC::P_COMPARISON_FUNC_ALWAYS)
+		{
+		}
+	};
+
 	class PShader
 	{
 	public:
-		PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS", P_RasterizerDesc Raster = P_RasterizerDesc(), P_BlendState Blend = P_BlendState());
+		PShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS", P_RasterizerDesc Raster = P_RasterizerDesc(), P_BlendState Blend = P_BlendState(), P_DepthStencilState DepthStencil = P_DepthStencilState());
 		virtual ~PShader();
 
 		void RegisterResourceBinding(UINT32 PrimitiveId, std::string ParameterName, UINT32 BindingOffset);
@@ -128,6 +194,7 @@ namespace Phe
 		std::string PPSEntry;
 		P_RasterizerDesc RasterizerDesc;
 		P_BlendState BlendState;
+		P_DepthStencilState DepthStencilState;
 //		std::unordered_map<UINT32, std::unordered_map<std::string, UINT32>> ResourceBinding;
 	};
 }

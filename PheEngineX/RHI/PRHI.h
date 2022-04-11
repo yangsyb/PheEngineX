@@ -29,8 +29,8 @@ namespace Phe
 		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") = 0;
 		virtual PPipeline* CreatePipeline(PShader* Shader) = 0;
 		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum) = 0;
-		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer) = 0;
-		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName) = 0;
+		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer, P_TextureType TextureType) = 0;
+		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName, P_TextureType TextureType) = 0;
 		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height) = 0;
 		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default", UINT32 Width = 1920, UINT32 Height = 1080) = 0;
 
@@ -56,9 +56,10 @@ namespace Phe
 // 		virtual void AddTextureToMaterial(PMaterial* Material, std::string TextureName) = 0;
 		virtual void DeleteTexturefromMaterial(PMaterial* Material, std::string TextureName) = 0;
 		virtual void DestroyPrimitive(PPrimitive* Primitive) = 0;
-		virtual void DestroyTexture(PGPUTexture* Texture, bool CheckMap = false) = 0;
+		virtual void DestroyTexture(PGPUTexture* Texture) = 0;
 		virtual void DestroyMaterial(PMaterial* Material) = 0;
 		virtual void DestroyRTBuffer(RTBuffer* RtBuffer) = 0;
+		virtual void DestroyGPUCommonBuffer(PGPUCommonBuffer* GPUCommonBuffer) = 0;
 		
 		//Read Back
 		virtual void ReadBackRTBuffer(RTBuffer* InRTBuffer) = 0;
