@@ -163,6 +163,7 @@ float4 PS(VertexOut pin) : SV_Target
 //	Output.rgb += ComputeDirectionalLight(gLightPosition - pin.WorldPos, BumpedNormalW, 1.f, gCameraPosition - pin.WorldPos, surfaceInfo.PerceptualRoughness, BaseColor, surfaceInfo.F0, surfaceInfo.F90) * Shadow;
 //	AmbientFactor = AmbientFactor + gLightIntensity>0 ? 0.4 : 0;
 	Output.rgb += Ambient * BaseColor.rgb;
+
 	Output.rgb = pow(Output.rgb, 1 / 2.2f);
 	return Output;
 

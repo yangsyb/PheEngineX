@@ -117,8 +117,9 @@ namespace Phe
 		// 			&dsvHeapDesc, IID_PPV_ARGS(PDsvHeap.GetAddressOf())));
 
 		ScreenRT = CreateRenderTarget("BackBuffer");
-		ScreenRT->AddColorBuffer(ScreenFrameNumber);
-		ScreenRT->AddDepthStencilBuffer();
+		ScreenRT->AddColorBuffer(ScreenFrameNumber, P_TextureFormat::P_FORMAT_R8G8B8A8_UNORM);
+		ScreenRT->AddDepthStencilBuffer(P_TextureFormat::P_FORMAT_D24_UNORM_S8_UINT);
+		DX12ShaderManager = dynamic_cast<PDX12Shadermanager*>(PShaderManager::Get());
 	}
 
 	void PDX12RHI::BeginFrame()
@@ -162,8 +163,6 @@ namespace Phe
 	void PDX12RHI::InitGraphicsPipeline()
 	{
 		PCbvSrvUavHeap = std::make_unique<PDescriptorHeap>(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV, PDevice);
-
-		DX12ShaderManager = dynamic_cast<PDX12Shadermanager*>(PShaderManager::Get());
 	}
 
 
@@ -393,22 +392,64 @@ namespace Phe
 // 		Flush();
 	}
 
-	void PDX12RHI::BeginRenderRTBuffer(RTBuffer* RtBuffer)
+	void PDX12RHI::BeginRenderRenderTarget(PGPURenderTarget* RenderTarget)
 	{
-//		ResetCommandList();
-		DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RtBuffer);
-		CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_GENERIC_READ, InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE);
-		PCommandList->ResourceBarrier(1, &ResourceBarrier);
+		if(RenderTarget->GetColorBuffer().size() > 0)
+		{
+			for(auto ColorBuffer : RenderTarget->GetColorBuffer())
+			{
+				DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(ColorBuffer);
+//				CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_COMMON, InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE);
+				CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_COMMON, D3D12_RESOURCE_STATE_RENDER_TARGET);
+				PCommandList->ResourceBarrier(1, &ResourceBarrier);
+			}
+		}
+		if(RenderTarget->GetDepthStencilBuffer())
+		{
+			DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RenderTarget->GetDepthStencilBuffer());
+//			CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_GENERIC_READ, InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE);
+			CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_GENERIC_READ, D3D12_RESOURCE_STATE_DEPTH_WRITE);
+			PCommandList->ResourceBarrier(1, &ResourceBarrier);
+		}
 	}
 
-	void PDX12RHI::EndRenderRTBuffer(RTBuffer* RtBuffer)
+	void PDX12RHI::EndRenderRenderTarget(PGPURenderTarget* RenderTarget)
 	{
-		DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RtBuffer);
-		CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
-		PCommandList->ResourceBarrier(1, &ResourceBarrier);
-//		ExecuteCommandList();
-//		Flush();
+		if (RenderTarget->GetColorBuffer().size() > 0)
+		{
+			for (auto ColorBuffer : RenderTarget->GetColorBuffer())
+			{
+				DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(ColorBuffer);
+//				CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+				CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_COMMON);
+				PCommandList->ResourceBarrier(1, &ResourceBarrier);
+			}
+		}
+		if (RenderTarget->GetDepthStencilBuffer())
+		{
+			DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RenderTarget->GetDepthStencilBuffer());
+//			CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+			CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+			PCommandList->ResourceBarrier(1, &ResourceBarrier);
+		}
 	}
+
+// 	void PDX12RHI::BeginRenderRTBuffer(RTBuffer* RtBuffer)
+// 	{
+// //		ResetCommandList();
+// 		DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RtBuffer);
+// 		CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_GENERIC_READ, InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE);
+// 		PCommandList->ResourceBarrier(1, &ResourceBarrier);
+// 	}
+// 
+// 	void PDX12RHI::EndRenderRTBuffer(RTBuffer* RtBuffer)
+// 	{
+// 		DX12RTBuffer* InRtBuffer = static_cast<DX12RTBuffer*>(RtBuffer);
+// 		CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), InRtBuffer->PType == RTBufferType::RTColorBuffer ? D3D12_RESOURCE_STATE_RENDER_TARGET : D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
+// 		PCommandList->ResourceBarrier(1, &ResourceBarrier);
+// //		ExecuteCommandList();
+// //		Flush();
+// 	}
 
 	void PDX12RHI::SetGraphicsPipeline(PPipeline* Pipeline)
 	{
@@ -498,14 +539,14 @@ namespace Phe
 			serializedRootSig->GetBufferSize(),
 			IID_PPV_ARGS(NewRootSignature.GetAddressOf())));
 		NewShader->SetRootSignature(NewRootSignature);
-		DX12ShaderManager->AddShader(NewShader);
+//		DX12ShaderManager->AddShader(NewShader);
 
 		return NewShader;
 	}
 
-	PPipeline* PDX12RHI::CreatePipeline(PShader* Shader)
+	PPipeline* PDX12RHI::CreatePipeline(PShader* Shader, P_RasterizerDesc Raster, P_BlendState Blend, P_DepthStencilState DepthStencil)
 	{
-		return new PDX12Pipeline(Shader);
+		return new PDX12Pipeline(Shader, Raster, Blend, DepthStencil);
 	}
 
 	Phe::PGPUCommonBuffer* PDX12RHI::CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum)
@@ -588,7 +629,7 @@ namespace Phe
 		DX12RTBuffer* InDX12RTBuffer = static_cast<DX12RTBuffer*>(InRTBuffer);
 		D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
 		srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-		srvDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
+		srvDesc.Format = SwitchSupportFormat(InRTBuffer->GetTextureFormat());//DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
 		srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
 		srvDesc.Texture2D.MostDetailedMip = 0;
 		srvDesc.Texture2D.MipLevels = 1;
@@ -597,22 +638,26 @@ namespace Phe
 		auto Pair = PCbvSrvUavHeap->Allocate(1);
 		NewGPUTexture->SetHandleOffset(Pair.second);
 		PDevice->CreateShaderResourceView(InDX12RTBuffer->PResource->GetResource().Get(), &srvDesc, Pair.first);
-//		TextureRefPool.insert({ NewGPUTexture, 1 });
 //		ExecuteCommandList();
 //		Flush();
 		return NewGPUTexture;
 	}
 
-	RTBuffer* PDX12RHI::CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height)
+	RTBuffer* PDX12RHI::CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height, P_TextureFormat Format)
 	{
-		DX12RTBuffer* NewRTBuffer = new DX12RTBuffer(Type, Width, Height);
+		DX12RTBuffer* NewRTBuffer = new DX12RTBuffer(Type, Width, Height, Format);
 		auto HeapProperty = CD3DX12_HEAP_PROPERTIES(D3D12_HEAP_TYPE_DEFAULT);
 		NewRTBuffer->PResource->CreateResource(PDevice.Get(), &HeapProperty, D3D12_HEAP_FLAG_NONE, &NewRTBuffer->PResourceDescriptor, NewRTBuffer->InitialState, &NewRTBuffer->POptClear);
 		if (Type == RTBufferType::RTColorBuffer)
 		{
+			D3D12_RENDER_TARGET_VIEW_DESC RTVDesc = {};
+			RTVDesc.Format = SwitchFormat(Format);
+			RTVDesc.ViewDimension = D3D12_RTV_DIMENSION_TEXTURE2D;
+			RTVDesc.Texture2D.PlaneSlice = 0;
+
 			auto RtvAllocation = PRtvHeap->Allocate(1);
 			NewRTBuffer->PHandleOffset = RtvAllocation.second;
-			PDevice->CreateRenderTargetView(NewRTBuffer->PResource->GetResource().Get(), nullptr, RtvAllocation.first);
+			PDevice->CreateRenderTargetView(NewRTBuffer->PResource->GetResource().Get(), &RTVDesc, RtvAllocation.first);
 		}
 		if (Type == RTBufferType::RTDepthStencilBuffer)
 		{
@@ -670,13 +715,14 @@ namespace Phe
 		std::vector<D3D12_CPU_DESCRIPTOR_HANDLE> RtvDescriptors;
 		if (RTColorBuffer.size() > 0)
 		{
+			RtvDescriptors.reserve(RTColorBuffer.size());
 			for (auto ColorBuffer : RTColorBuffer)
 			{
 				D3D12_CPU_DESCRIPTOR_HANDLE Handle = PRtvHeap->GetCurrentHeap()->GetCPUDescriptorHandleForHeapStart();
 				Handle.ptr += size_t(PRtvDescriptorSize) * ColorBuffer->PHandleOffset;
 				RtvDescriptors.push_back(Handle);
 			}
-			Rtv = &RtvDescriptors[0];
+			Rtv = RtvDescriptors.data();
 		}
 		const D3D12_CPU_DESCRIPTOR_HANDLE* Dsv = nullptr;
 		if (RTDSBuffer)
@@ -690,7 +736,7 @@ namespace Phe
 		{
 			for(size_t index = 0; index< RTColorBuffer.size(); index++)
 			{
-//				PCommandList->ClearRenderTargetView();
+				PCommandList->ClearRenderTargetView(RtvDescriptors[index], RTVColor, 0 , nullptr);
 			}
 		}
 		if (Dsv)
@@ -723,9 +769,37 @@ namespace Phe
 		};
 
 		PsoDesc.InputLayout = { InputLayout.data(), (UINT)InputLayout.size() };
-		InDX12Shader->SetPSODesc(&PsoDesc);
+
+//		InDX12Shader->SetPSODesc(&PsoDesc);
+
+		if (auto PVS = InDX12Shader->GetVS())
+		{
+			PsoDesc.VS =
+			{
+				reinterpret_cast<BYTE*>(PVS->GetBufferPointer()),
+				PVS->GetBufferSize()
+			};
+		}
+		if (auto PPS = InDX12Shader->GetPS())
+		{
+			PsoDesc.PS =
+			{
+				reinterpret_cast<BYTE*>(PPS->GetBufferPointer()),
+				PPS->GetBufferSize()
+			};
+		}
+
+		PsoDesc.pRootSignature = InDX12Shader->GetRootSignature().Get();
+		PsoDesc.RasterizerState = InDX12Pipeline->PRasterizerState;
+		PsoDesc.RasterizerState.FrontCounterClockwise = true;
+		PsoDesc.DepthStencilState = InDX12Pipeline->PDepthStencilState;
+		PsoDesc.BlendState = InDX12Pipeline->PBlendState;
+
+
+
 		PsoDesc.NumRenderTargets = InDX12RenderTarget->GetColorBuffer().size() > 0 ? 1 : 0;
-		PsoDesc.RTVFormats[0] = InDX12RenderTarget->GetColorBuffer().size() > 0 ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_UNKNOWN;
+//		PsoDesc.RTVFormats[0] = InDX12RenderTarget->GetColorBuffer().size() > 0 ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_UNKNOWN;
+		PsoDesc.RTVFormats[0] = SwitchFormat(InDX12RenderTarget->GetColorBuffer().at(0)->GetTextureFormat());
 		PsoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 
@@ -739,7 +813,7 @@ namespace Phe
 		InDX12Pipeline->SetPipelineState(PSO);
 	}
 
-	void PDX12RHI::UpdatePipeline(PPipeline* Pipeline)
+	void PDX12RHI::UpdatePipeline(PPipeline* Pipeline, P_TextureFormat RtvFormat, P_TextureFormat DsvFormat)
 	{
 		PDX12Pipeline* InDX12Pipeline = static_cast<PDX12Pipeline*>(Pipeline);
 		PDX12Shader* InDX12Shader = static_cast<PDX12Shader*>(Pipeline->GetShader());
@@ -755,10 +829,34 @@ namespace Phe
 		};
 
 		PsoDesc.InputLayout = { InputLayout.data(), (UINT)InputLayout.size() };
-		InDX12Shader->SetPSODesc(&PsoDesc);
+		
+		if (auto PVS = InDX12Shader->GetVS())
+		{
+			PsoDesc.VS =
+			{
+				reinterpret_cast<BYTE*>(PVS->GetBufferPointer()),
+				PVS->GetBufferSize()
+			};
+		}
+		if (auto PPS = InDX12Shader->GetPS())
+		{
+			PsoDesc.PS =
+			{
+				reinterpret_cast<BYTE*>(PPS->GetBufferPointer()),
+				PPS->GetBufferSize()
+			};
+		}
+
+		PsoDesc.pRootSignature = InDX12Shader->GetRootSignature().Get();
+		PsoDesc.RasterizerState = InDX12Pipeline->PRasterizerState;
+		PsoDesc.RasterizerState.FrontCounterClockwise = true;
+		PsoDesc.DepthStencilState = InDX12Pipeline->PDepthStencilState;
+		PsoDesc.BlendState = InDX12Pipeline->PBlendState;
+
+
 		PsoDesc.NumRenderTargets = 1;
-		PsoDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
-		PsoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
+		PsoDesc.RTVFormats[0] = SwitchFormat(RtvFormat);
+		PsoDesc.DSVFormat = SwitchFormat(DsvFormat);
 
 		PsoDesc.SampleMask = UINT_MAX;
 		PsoDesc.SampleDesc.Count = 1;

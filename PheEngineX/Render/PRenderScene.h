@@ -52,10 +52,9 @@ namespace Phe
 		PHashMap<std::string, PGPUTexture*> PTexturePool;
 		PHashMap<std::string, PPrimitive*> PPrimitivePool;
 		PHashMap<std::string, PRenderLight*> PRenderLightPool;
-		PVector<PShader*> PShaderPool;
+		PHashMap<std::string, PShader*> PShaderPool;
 		
 		PPrimitive* PSkySphere;
 		PPipeline* PSkyBoxPipeline;
-		PShader* PSkyShader;
 	};
 }

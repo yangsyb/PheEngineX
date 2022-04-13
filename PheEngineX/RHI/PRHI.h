@@ -27,25 +27,25 @@ namespace Phe
 
 		virtual PGPUMeshBuffer* CreateMeshBuffer() = 0;
 		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") = 0;
-		virtual PPipeline* CreatePipeline(PShader* Shader) = 0;
+		virtual PPipeline* CreatePipeline(PShader* Shader, P_RasterizerDesc Raster, P_BlendState Blend, P_DepthStencilState DepthStencil) = 0;
 		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum) = 0;
 		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer, P_TextureType TextureType) = 0;
 		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName, P_TextureType TextureType) = 0;
-		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height) = 0;
+		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height, P_TextureFormat Format) = 0;
 		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default", UINT32 Width = 1920, UINT32 Height = 1080) = 0;
 
 		virtual void ResetRTBuffer(RTBuffer* RtBuffer) = 0;
 		virtual void SetRenderTarget(PGPURenderTarget* RenderTarget) = 0;
 
 		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) = 0;
-		virtual void UpdatePipeline(PPipeline* Pipeline) = 0;
+		virtual void UpdatePipeline(PPipeline* Pipeline, P_TextureFormat RtvFormat, P_TextureFormat DsvFormat) = 0;
 		virtual void UpdatePipeline(PPipeline* Pipeline, PGPURenderTarget* RenderTarget) = 0;
 		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, std::shared_ptr<void> Data) = 0;
 
 		virtual void BeginRenderBackBuffer() = 0;
 		virtual void EndRenderBackBuffer() = 0;
-		virtual void BeginRenderRTBuffer(RTBuffer* RtBuffer) = 0;
-		virtual void EndRenderRTBuffer(RTBuffer* RtBuffer) = 0;
+		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget) = 0;
+		virtual void EndRenderRenderTarget(PGPURenderTarget* RenderTarget) = 0;
 		virtual void PrepareBufferHeap() = 0;
 		virtual void SetGraphicsPipeline(PPipeline* Pipeline) = 0;
 		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) = 0;

@@ -9,15 +9,18 @@
 namespace Phe
 {
 
-	PRenderScene::PRenderScene() : PrimitiveNumber(0), PSkySphere(nullptr), PSkyBoxPipeline(nullptr), PSkyShader(nullptr)
+	PRenderScene::PRenderScene() : PrimitiveNumber(0), PSkySphere(nullptr), PSkyBoxPipeline(nullptr)
 	{
-
+		for (auto Shader : PShaderManager::Get()->GetAllShaders())
+		{
+			PShader* NewShader = PRHI::Get()->CreateShader(Shader.second->GetShaderName(), Shader.second->GetShaderFilePath(), Shader.second->GetVSEntry(), Shader.second->GetPSEntry());
+			PShaderPool.insert({ Shader.second->GetShaderName(), NewShader });
+		}
 	}
 
 	PRenderScene::~PRenderScene()
 	{
 		ReleasePtr(PSkyBoxPipeline);
-		ReleasePtr(PSkyShader);
 		PSkySphere->DestroyPrimitive();
 	}
 
@@ -50,38 +53,45 @@ namespace Phe
   			}
   			else
   			{
-				PVector<PPipeline*> RetPipelines;
-				RetPipelines.resize(static_cast<int>(PipelineType::PipelineCount));
-  				auto Shader = PShaderManager::Get()->GetShaderByName(StaticMeshMaterial->GetShaderName());
-				std::string ShaderName = StaticMeshMaterial->GetShaderName();
-				for(int size = 0; size < static_cast<int>(PipelineType::PipelineCount); size++)
-				{
-					PShader* NewShader = PRHI::Get()->CreateShader(ShaderName, Shader ? Shader->GetShaderFilePath() : L"Shaders\\color.hlsl");
-					PPipeline* NewPipeline = PRHI::Get()->CreatePipeline(NewShader);
-					switch (size)
-					{
-					case static_cast<int>(PipelineType::BasePipeline):
+ 				PVector<PPipeline*> RetPipelines;
+ 				RetPipelines.resize(static_cast<int>(PipelineType::PipelineCount));
+ 				std::string ShaderName = StaticMeshMaterial->GetShaderName();
+ 				for (int size = 0; size < static_cast<int>(PipelineType::PipelineCount); size++)
+ 				{
+ 					PPipeline* NewPipeline = nullptr;
+ 					switch (size)
+ 					{
+   					case static_cast<int>(PipelineType::BasePipeline):
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+//						NewPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetShaderByName(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+   						PRHI::Get()->UpdatePipeline(NewPipeline, LDR_FORMAT, DepthStencil_Format);
+   						break;
+   					case static_cast<int>(PipelineType::ShadowPipeline):
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(ShadowRasterizerDesc), P_BlendState(), P_DepthStencilState());
+   						PRHI::Get()->UpdatePipeline(NewPipeline, LDR_FORMAT, DepthStencil_Format);
 						break;
-					case static_cast<int>(PipelineType::ShadowPipeline):
-						NewShader->SetRasterizerDesc(P_RasterizerDesc(ShadowRasterizerDesc));
-					case static_cast<int>(PipelineType::SkyPipeline):
-						break;
-					}
-					PRHI::Get()->UpdatePipeline(NewPipeline);
-					RetPipelines[size] = NewPipeline;
-					PShaderPool.push_back(NewShader);
-				}
-  				PPipelinePool.insert({ ShaderName, RetPipelines });
-  				NewPrimitive->SetPipeline(RetPipelines);
-  			}
-  			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
-  			auto Mat = PRHI::Get()->CreateCommonBuffer(sizeof(PerMaterialCBuffer), 1);
+   					case static_cast<int>(PipelineType::SkyPipeline):
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+   						PRHI::Get()->UpdatePipeline(NewPipeline, LDR_FORMAT, DepthStencil_Format);
+   						break;
+   					case static_cast<int>(PipelineType::HDRPipeline):
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+   						PRHI::Get()->UpdatePipeline(NewPipeline, HDR_FORMAT, DepthStencil_Format);
+   						break;
+ 					}
+  					RetPipelines[size] = NewPipeline;
+ 				}
+    				PPipelinePool.insert({ ShaderName, RetPipelines });
+    				NewPrimitive->SetPipeline(RetPipelines);
+			}
+			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
+			auto Mat = PRHI::Get()->CreateCommonBuffer(sizeof(PerMaterialCBuffer), 1);
 			std::shared_ptr<void> TransData = std::make_shared<PerObjectCBuffer>(TransformData.GetPositionMat(), TransformData.GetRotaionMat(), TransformData.GetScaleMat());
 			std::shared_ptr<void> MatData = std::make_shared<PerMaterialCBuffer>(StaticMeshMaterial->GetMaterialBuffer());
-  			PRHI::Get()->UpdateCommonBuffer(Obj, TransData);
+			PRHI::Get()->UpdateCommonBuffer(Obj, TransData);
 			PRHI::Get()->UpdateCommonBuffer(Mat, MatData);
-  			NewPrimitive->SetPrimitiveRenderData(ptr, Obj, Mat, PMaterialPool.at(MaterialName));
-  			PPrimitivePool.insert({ InNodeStaticMesh->GetID(), NewPrimitive});
+			NewPrimitive->SetPrimitiveRenderData(ptr, Obj, Mat, PMaterialPool.at(MaterialName));
+			PPrimitivePool.insert({ InNodeStaticMesh->GetID(), NewPrimitive });
 			PrimitiveNumber++;
  		}
 	}
@@ -97,9 +107,9 @@ namespace Phe
 			PSkySphere = new PPrimitive();
 			InNodeStaticMesh->SetLinkedPrimitive(PSkySphere);
 
-			PSkyShader = PRHI::Get()->CreateShader(PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderName(), PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderFilePath());
-			PSkyBoxPipeline = PRHI::Get()->CreatePipeline(PSkyShader);
-			PRHI::Get()->UpdatePipeline(PSkyBoxPipeline);
+//			PSkyShader = PRHI::Get()->CreateShader(PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderName(), PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderFilePath());
+			PSkyBoxPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at("SkyShader"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+			PRHI::Get()->UpdatePipeline(PSkyBoxPipeline, LDR_FORMAT, DepthStencil_Format);
 			PSkySphere->SetPipeline(PipelineType::SkyPipeline, PSkyBoxPipeline);
 			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
 			std::shared_ptr<void> TransData = std::make_shared<PerObjectCBuffer>(TransformData.GetPositionMat(), TransformData.GetRotaionMat(), TransformData.GetScaleMat());
@@ -168,10 +178,9 @@ namespace Phe
 		}
 		PPipelinePool.clear();
 
-
-		for(int index = 0; index < PShaderPool.size(); index++)
+		for (auto& it : PShaderPool)
 		{
-			ReleasePtr(PShaderPool[index]);
+			ReleasePtr(it.second);
 		}
 		PShaderPool.clear();
 	}

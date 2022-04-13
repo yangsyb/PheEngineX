@@ -20,25 +20,27 @@ namespace Phe
 
 		virtual PGPUMeshBuffer* CreateMeshBuffer() override;
 		virtual PShader* CreateShader(const std::string ShaderName, const std::wstring FilePath, std::string VS = "VS", std::string PS = "PS") override;
-		virtual PPipeline* CreatePipeline(PShader* Shader) override;
+		virtual PPipeline* CreatePipeline(PShader* Shader, P_RasterizerDesc Raster, P_BlendState Blend, P_DepthStencilState DepthStencil) override;
 		virtual PGPUCommonBuffer* CreateCommonBuffer(UINT32 InStructByteSize, UINT32 InElementsNum) override;
 		virtual PGPUTexture* CreateTexture(std::string TextureName, RTBuffer* InRTBuffer, P_TextureType TextureType) override;
 		virtual PGPUTexture* CreateTexture(std::string TextureName, std::wstring FileName, P_TextureType TextureType) override;
-		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height) override;
+		virtual RTBuffer* CreateRTBuffer(RTBufferType Type, UINT32 Width, UINT32 Height, P_TextureFormat Format) override;
 		virtual PGPURenderTarget* CreateRenderTarget(std::string RenderTargetName = "Default", UINT32 Width = 1920, UINT32 Height = 1080) override;
 
 		virtual void ResetRTBuffer(RTBuffer* RtBuffer) override;
 		virtual void SetRenderTarget(PGPURenderTarget* RenderTarget) override;
 
 		virtual void UpdateMeshBuffer(PGPUMeshBuffer* GpuMeshBuffer) override;
-		virtual void UpdatePipeline(PPipeline* Pipeline) override;
+		virtual void UpdatePipeline(PPipeline* Pipeline, P_TextureFormat RtvFormat, P_TextureFormat DsvFormat) override;
 		virtual void UpdatePipeline(PPipeline* Pipeline, PGPURenderTarget* RenderTarget) override;
 		virtual void UpdateCommonBuffer(PGPUCommonBuffer* CommonBuffer, std::shared_ptr<void> Data) override;
 
 		virtual void BeginRenderBackBuffer() override;
 		virtual void EndRenderBackBuffer() override;
-		virtual void BeginRenderRTBuffer(RTBuffer* RtBuffer) override;
-		virtual void EndRenderRTBuffer(RTBuffer* RtBuffer) override;
+// 		virtual void BeginRenderRTBuffer(RTBuffer* RtBuffer) override;
+// 		virtual void EndRenderRTBuffer(RTBuffer* RtBuffer) override;
+		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget) override;
+		virtual void EndRenderRenderTarget(PGPURenderTarget* RenderTarget) override;
 		virtual void PrepareBufferHeap() override;
 		virtual void SetGraphicsPipeline(PPipeline* Pipeline) override;
 		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) override;

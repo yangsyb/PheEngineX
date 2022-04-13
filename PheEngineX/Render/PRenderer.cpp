@@ -8,7 +8,8 @@
 #include "Engine/Editor/PAssetManager.h"
 namespace Phe
 {
-	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr), PExportRenderTarget(nullptr), PerOrthoCameraBuffer(nullptr)
+	PRenderer::PRenderer() : PerCameraBuffer(nullptr), PShadowMap(nullptr), PCurrentPipeline(nullptr), PIBLBRDFRenderTarget(nullptr), PExportRenderTarget(nullptr), PerOrthoCameraBuffer(nullptr),
+		DownSamplePipeline(nullptr), HighLightPipeline(nullptr), PHDRRenderTarget(nullptr), PHighLightRenderTarget(nullptr)
 	{
 		PRHI::Get()->InitRHI();
 	}
@@ -22,8 +23,12 @@ namespace Phe
 	{
 		PRHI::Get()->InitGraphicsPipeline();
 		PRHI::Get()->ResizeWindow(1920, 1080);
+		
 		PerCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
 		PerOrthoCameraBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(PerCameraCBuffer), 1);
+
+//		PShader* HighLightShader = PRHI::Get()->CreateShader("HighLightShader", Shader ? Shader->GetShaderFilePath() : L"Shaders\\color.hlsl");
+//		PPipeline* NewPipeline = PRHI::Get()->CreatePipeline(NewShader);
 	}
 
 	
@@ -41,6 +46,7 @@ namespace Phe
 		if(MainRenderLight = RenderScene->GetMainRenderLight())
 		{
 			ShadowPass(RenderScene);
+			BloomPass(RenderScene);
 			return;
 		}
 		ReleasePtr(PShadowMap);
@@ -64,6 +70,8 @@ namespace Phe
 		ReleasePtr(PerOrthoCameraBuffer);
 		ReleasePtr(PShadowMap);
 		ReleasePtr(PExportRenderTarget);
+		ReleasePtr(PHDRRenderTarget);
+		ReleasePtr(PHighLightRenderTarget);
 	}
 
 
@@ -126,10 +134,11 @@ namespace Phe
 		if(!PShadowMap)
 		{
 			PShadowMap = PRHI::Get()->CreateRenderTarget("ShadowMap", 2048, 2048);
-			PShadowMap->AddDepthStencilBuffer();
+			PShadowMap->AddDepthStencilBuffer(P_TextureFormat::P_FORMAT_D24_UNORM_S8_UINT);
 			PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer(), P_TextureType::P_Texture2D);
 		}
-   		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
+//   		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
+		PRHI::Get()->BeginRenderRenderTarget(PShadowMap);
   
  		PRHI::Get()->SetRenderTarget(PShadowMap);
 
@@ -148,19 +157,20 @@ namespace Phe
  			ShaderResourceBinding(Primitive.second);
  			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
    		}
-   		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
+//   		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
+		PRHI::Get()->EndRenderRenderTarget(PShadowMap);
 	}
 
 
 	void PRenderer::IBLBRDFPass(PRenderScene* RenderScene)
 	{
 		PIBLBRDFRenderTarget = PRHI::Get()->CreateRenderTarget("IBLBRDF", 1024, 1024);
-		PIBLBRDFRenderTarget->AddColorBuffer(1);
+		PIBLBRDFRenderTarget->AddColorBuffer(1, P_TextureFormat::P_FORMAT_B8G8R8A8_UNORM);
 		PIBLBRDFRenderTarget->GetColorBuffer(1)->PRTTexture = PRHI::Get()->CreateTexture("IBLBRDFTexture", PIBLBRDFRenderTarget->GetColorBuffer(1), P_TextureType::P_Texture2D);
-		PRHI::Get()->BeginRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
+//		PRHI::Get()->BeginRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
 		PRHI::Get()->SetRenderTarget(PIBLBRDFRenderTarget);
 
-		PRHI::Get()->EndRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
+//		PRHI::Get()->EndRenderRTBuffer(PIBLBRDFRenderTarget->GetColorBuffer(1));
 	}
 
 
@@ -169,10 +179,11 @@ namespace Phe
 		if (!PExportRenderTarget)
 		{
 			PExportRenderTarget = PRHI::Get()->CreateRenderTarget("Export", 1024, 1024);
-			PExportRenderTarget->AddDepthStencilBuffer();
+			PExportRenderTarget->AddDepthStencilBuffer(P_TextureFormat::P_FORMAT_D24_UNORM_S8_UINT);
 			PExportRenderTarget->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ExportDepthTexture", PExportRenderTarget->GetDepthStencilBuffer(), P_TextureType::P_Texture2D);
 		}
-		PRHI::Get()->BeginRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
+//		PRHI::Get()->BeginRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
+		PRHI::Get()->BeginRenderRenderTarget(PExportRenderTarget);
 
 		PRHI::Get()->SetRenderTarget(PExportRenderTarget);
 
@@ -190,7 +201,8 @@ namespace Phe
 			ShaderResourceBinding(Primitive.second);
 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
 		}
-		PRHI::Get()->EndRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
+//		PRHI::Get()->EndRenderRTBuffer(PExportRenderTarget->GetDepthStencilBuffer());
+		PRHI::Get()->EndRenderRenderTarget(PExportRenderTarget);
 	}
 
 
@@ -205,6 +217,70 @@ namespace Phe
 		PRHI::Get()->SetRenderResourceTable("Texture", SkySphere->GetMaterial()->GetHandleOffset());
 		PRHI::Get()->SetRenderResourceTable("PerObjectBuffer", SkySphere->GetPerObjBuffer()->GetHandleOffset());
 		PRHI::Get()->DrawPrimitiveIndexedInstanced(SkySphere->GetMeshBuffer()->GetIndexCount());
+	}
+
+
+	void PRenderer::BloomPass(PRenderScene* RenderScene)
+	{
+		// HDR
+		if (!PHDRRenderTarget)
+		{
+			PHDRRenderTarget = PRHI::Get()->CreateRenderTarget("HDR", 1920, 1080);
+			PHDRRenderTarget->AddColorBuffer(1, HDR_FORMAT);
+			PHDRRenderTarget->AddDepthStencilBuffer(P_TextureFormat::P_FORMAT_D24_UNORM_S8_UINT);
+
+			for(auto& ColorBuffer : PHDRRenderTarget->GetColorBuffer())
+			{
+				ColorBuffer->PRTTexture = PRHI::Get()->CreateTexture("HDRTexture", PHDRRenderTarget->GetColorBuffer().at(0), P_TextureType::P_Texture2D);
+			}
+		}
+
+		PRHI::Get()->BeginRenderRenderTarget(PHDRRenderTarget);
+
+		PRHI::Get()->SetRenderTarget(PHDRRenderTarget);
+
+		auto CurrentDrawPrimitives = RenderScene->GetPrimitives();
+		for (auto Primitive : CurrentDrawPrimitives)
+		{
+			auto PrimitivePipeline = Primitive.second->GetPipeline(PipelineType::HDRPipeline);
+			if (PrimitivePipeline != PCurrentPipeline)
+			{
+				PRHI::Get()->SetGraphicsPipeline(PrimitivePipeline);
+				PCurrentPipeline = PrimitivePipeline;
+			}
+			PRHI::Get()->SetMeshBuffer(Primitive.second->GetMeshBuffer());
+			PRHI::Get()->SetRenderResourceTable("PerCameraBuffer", PerCameraBuffer->GetHandleOffset());
+			ShaderResourceBinding(Primitive.second);
+			if (PShadowMap)
+			{
+				PRHI::Get()->SetRenderResourceTable("ShadowTexture", PShadowMap->GetDepthStencilBuffer()->PRTTexture->GetHandleOffset());
+				PRHI::Get()->SetRenderResourceTable("PerLightBuffer", RenderScene->GetMainRenderLight()->GetPerLightBuffer()->GetHandleOffset());
+			}
+			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
+		}
+
+		PRHI::Get()->EndRenderRenderTarget(PHDRRenderTarget);
+		
+		// Extract HighLight
+		if (!PHighLightRenderTarget)
+		{
+			PHighLightRenderTarget = PRHI::Get()->CreateRenderTarget("HighLight", 480, 270);
+			PHighLightRenderTarget->AddColorBuffer(1, P_TextureFormat::P_FORMAT_R11G11B10_FLOAT);
+			PHighLightRenderTarget->AddDepthStencilBuffer(P_TextureFormat::P_FORMAT_D24_UNORM_S8_UINT);
+
+			for (auto ColorBuffer : PHDRRenderTarget->GetColorBuffer())
+			{
+				ColorBuffer->PRTTexture = PRHI::Get()->CreateTexture("HighLight", PHDRRenderTarget->GetColorBuffer().at(0), P_TextureType::P_Texture2D);
+			}
+
+			PRHI::Get()->BeginRenderRenderTarget(PHighLightRenderTarget);
+
+			PRHI::Get()->SetRenderTarget(PHighLightRenderTarget);
+
+
+
+			PRHI::Get()->EndRenderRenderTarget(PHighLightRenderTarget);
+		}
 	}
 
 	void PRenderer::RenderCurrentScene(PRenderScene* RenderScene)

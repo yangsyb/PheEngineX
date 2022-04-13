@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "PGPUResource.h"
+#include "Engine/Editor/PTexture.h"
 
 namespace Phe
 {

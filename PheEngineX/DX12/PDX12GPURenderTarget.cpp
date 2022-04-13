@@ -15,18 +15,18 @@ namespace Phe
 
 	}
 
-	void PDX12GPURenderTarget::AddColorBuffer(UINT32 BufferNum)
+	void PDX12GPURenderTarget::AddColorBuffer(UINT32 BufferNum, P_TextureFormat Format)
 	{
 		for(size_t index = 0; index < BufferNum; index++)
 		{
-			auto NewColorBuffer = PRHI::Get()->CreateRTBuffer(RTBufferType::RTColorBuffer, PWidth, PHeight);
+			auto NewColorBuffer = PRHI::Get()->CreateRTBuffer(RTBufferType::RTColorBuffer, PWidth, PHeight, Format);
 			PRenderTargetColorBuffer.push_back(NewColorBuffer);
 		}
 	}
 
-	void PDX12GPURenderTarget::AddDepthStencilBuffer()
+	void PDX12GPURenderTarget::AddDepthStencilBuffer(P_TextureFormat Format)
 	{
-		PRenderTargetDepthStencilBuffer = PRHI::Get()->CreateRTBuffer(RTBufferType::RTDepthStencilBuffer, PWidth, PHeight);
+		PRenderTargetDepthStencilBuffer = PRHI::Get()->CreateRTBuffer(RTBufferType::RTDepthStencilBuffer, PWidth, PHeight, Format);
 	}
 
 }

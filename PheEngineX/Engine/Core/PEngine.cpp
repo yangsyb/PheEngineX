@@ -14,10 +14,10 @@ namespace Phe
 		PCurrentPlatform = Platform::Android;
 #endif
 		PheWindow = PWindow::Create("PheEngine", PWidth, PHeight);
+		PShaderManager::CreateShaderManager();
 		PRenderThread::CreateRenderThread();
 		PMainEditor = new PEditor();
 		PMainAssetManager = std::make_unique<PAssetManager>();
-		PShaderManager::CreateShaderManager();
 	}
 
 

@@ -15,10 +15,16 @@ namespace Phe
 		PShaderManager();
 		virtual ~PShaderManager();
 
-		virtual void AddShader(std::string ShaderName, std::wstring FilePath) = 0;
-		virtual void AddShader(PShader* Shader) = 0;
-		virtual PShader* GetShaderByName(std::string ShaderName) = 0;
+		virtual void AddShader(std::string ShaderName, std::wstring FilePath);
+		virtual void AddShader(PShader* Shader);
+		virtual PShader* GetShaderByName(std::string ShaderName);
+		virtual std::unordered_map<std::string, PShader*> GetAllShaders() { return ShaderPool; }
+
+		virtual UINT PropertyToID(std::string property);
 
 	protected:
+		UINT CurID;
+		std::unordered_map<std::string, UINT> PropertyID;
+		std::unordered_map<std::string, PShader*> ShaderPool;
 	};
 }

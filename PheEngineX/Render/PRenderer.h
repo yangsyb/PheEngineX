@@ -31,6 +31,7 @@ namespace Phe
 		void IBLBRDFPass(PRenderScene* RenderScene);
 		void ExportPass(PRenderScene* RenderScene);
 		void SkyBoxPass(PRenderScene* RenderScene);
+		void BloomPass(PRenderScene* RenderScene);
 
 		void SetExportDepth() { NeedExportDepth = true; }
 	private:
@@ -39,9 +40,13 @@ namespace Phe
 		PGPUCommonBuffer* PerOrthoCameraBuffer;
 
 		PPipeline* PCurrentPipeline;
+		PPipeline* HighLightPipeline;
+		PPipeline* DownSamplePipeline;
 		PGPURenderTarget* PShadowMap;
 		PGPURenderTarget* PIBLBRDFRenderTarget;
 		PGPURenderTarget* PExportRenderTarget;
+		PGPURenderTarget* PHDRRenderTarget;
+		PGPURenderTarget* PHighLightRenderTarget;
 
 	private:
 		bool NeedExportDepth = false;

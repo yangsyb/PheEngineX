@@ -23,6 +23,10 @@ namespace Phe
 		ParamMap[DX12ShaderManager->PropertyToID(TextureCube.name)] = UINT(Params.size());
 		Params.push_back(TextureCube);
 
+		ShaderParameter HDRTexture("HDRTexture", ShaderParamType::SRVDescriptorHeap, 1, 6, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(HDRTexture.name)] = UINT(Params.size());
+		Params.push_back(HDRTexture);
+
 		ShaderParameter perObject("PerObjectBuffer", ShaderParamType::CBVDescriptorHeap, 1, 0, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(perObject.name)] = UINT(Params.size());
 		Params.push_back(perObject);
@@ -39,49 +43,15 @@ namespace Phe
 		ParamMap[DX12ShaderManager->PropertyToID(perLight.name)] = UINT(Params.size());
 		Params.push_back(perLight);
 
-		MakeDX12RasterizerState(RasterizerDesc, PRasterizerState);
-		MakeDX12BlendState(BlendState, PBlendState);
-		MakeDX12DepthStencilState(DepthStencilState, PDepthStencilState);
+		ShaderParameter RenderTargetSize("RTSize", ShaderParamType::CBVDescriptorHeap, 1, 4, 0);
+		ParamMap[DX12ShaderManager->PropertyToID(RenderTargetSize.name)] = UINT(Params.size());
+		Params.push_back(RenderTargetSize);
 	}
 
 
-
-	void PDX12Shader::SetRasterizerDesc(P_RasterizerDesc Raster)
+	PDX12Shader::~PDX12Shader()
 	{
-		RasterizerDesc = Raster;
-		MakeDX12RasterizerState(RasterizerDesc, PRasterizerState);
-	}
 
-	void PDX12Shader::SetBlendState(P_BlendState Blend)
-	{
-		BlendState = Blend;
-		MakeDX12BlendState(BlendState, PBlendState);
-	}
-
-	void PDX12Shader::SetPSODesc(D3D12_GRAPHICS_PIPELINE_STATE_DESC* psoDesc)
-	{
-		if(PVS)
-		{
-			psoDesc->VS =
-			{
-				reinterpret_cast<BYTE*>(PVS->GetBufferPointer()),
-				PVS->GetBufferSize()
-			};
-		}
-		if(PPS)
-		{
-			psoDesc->PS =
-			{
-				reinterpret_cast<BYTE*>(PPS->GetBufferPointer()),
-				PPS->GetBufferSize()
-			};
-		}
-
-		psoDesc->pRootSignature = PRootSignature.Get();
-		psoDesc->RasterizerState = PRasterizerState;
-		psoDesc->RasterizerState.FrontCounterClockwise = true;
-		psoDesc->DepthStencilState = PDepthStencilState;
-		psoDesc->BlendState = PBlendState;
 	}
 
 }
