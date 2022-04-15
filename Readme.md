@@ -5,6 +5,8 @@
 
 # 场景
 默认多线程渲染 <br/>
+默认执行DOF Pass <br/>
+在Render/PRenderer.h中注释掉#define bDOFPass可关闭DOF Pass, 建议关闭 目前效果恶心。。<br/>
 按1可渲染一个box <br/>
 按2渲染导出的json地图 + PBR炮台 <br/>
 按3渲染地图 + WPO树 + PBR炮台 <br/>

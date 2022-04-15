@@ -34,8 +34,14 @@ namespace Phe
 	void DOFData::Initialize()
 	{
 		DOFCOCPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName("DOFCOC"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+		DOFPreFilterPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName("DOFPre"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+		DOFBokehPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName("DOFBokeh"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+		DOFPostFilterPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName("DOFPost"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
 
 		DOFCOCBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(DOFDataStruct), 1);
+		DOFPreBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(DOFDataStruct), 1);
+		DOFBokehBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(DOFDataStruct), 1);
+		DOFPostBuffer = PRHI::Get()->CreateCommonBuffer(sizeof(DOFDataStruct), 1);
 	}
 
 
@@ -95,7 +101,9 @@ namespace Phe
 		{
 			ShadowPass(RenderScene);
 			HDRPass(RenderScene);
+#ifdef bDOFPass
 			DOFPass();
+#endif
 			BloomPass();
 
 			PRHI::Get()->BeginRenderBackBuffer();
@@ -310,13 +318,14 @@ namespace Phe
 
 	void PRenderer::DOFPass()
 	{
-		if(!DOF->PDOFCOCRenderTarget)
+		//DOFCOC
+		if (!DOF->PDOFCOCRenderTarget)
 		{
 			DOF->PDOFCOCRenderTarget = PRHI::Get()->CreateRenderTarget("DOFCOC", ScreenWidth, ScreenHeight);
 			DOF->PDOFCOCRenderTarget->AddColorBuffer(1, LDR_FORMAT);
 			DOF->PDOFCOCRenderTarget->AddDepthStencilBuffer(DepthStencil_Format);
 
-//			DOF->PDOFCOCRenderTarget->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("DOFCOC", DOF->PDOFCOCRenderTarget->GetDepthStencilBuffer(), P_TextureType::P_Texture2D);
+			DOF->PDOFCOCRenderTarget->GetColorBuffer().at(0)->PRTTexture = PRHI::Get()->CreateTexture("DOFCOC", DOF->PDOFCOCRenderTarget->GetColorBuffer().at(0), P_TextureType::P_Texture2D);
 		}
 		PRHI::Get()->UpdatePipeline(DOF->DOFCOCPipeline, LDR_FORMAT, DepthStencil_Format);
 
@@ -324,7 +333,7 @@ namespace Phe
 
 		PRHI::Get()->SetRenderTarget(DOF->PDOFCOCRenderTarget);
 
-		std::shared_ptr<void> DOFDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(25.f, 5.f, float(ScreenWidth), float(ScreenHeight)));
+		std::shared_ptr<void> DOFDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
 
 		PRHI::Get()->SetGraphicsPipeline(DOF->DOFCOCPipeline);
 		PRHI::Get()->UpdateCommonBuffer(DOF->DOFCOCBuffer, DOFDataSt);
@@ -333,6 +342,82 @@ namespace Phe
 		PRHI::Get()->SetRenderResourceTable("Texture", PHDRRenderTarget->GetDepthStencilBuffer()->PRTTexture->GetHandleOffset());
 		PRHI::Get()->DrawInstanced(3);
 		PRHI::Get()->EndRenderRenderTarget(DOF->PDOFCOCRenderTarget);
+
+		//DOFPreFilter
+		if (!DOF->PDOFPreRenderTarget)
+		{
+			DOF->PDOFPreRenderTarget = PRHI::Get()->CreateRenderTarget("DOFPre", ScreenWidth, ScreenHeight);
+			DOF->PDOFPreRenderTarget->AddColorBuffer(1, LDR_FORMAT);
+			DOF->PDOFPreRenderTarget->AddDepthStencilBuffer(DepthStencil_Format);
+
+			DOF->PDOFPreRenderTarget->GetColorBuffer().at(0)->PRTTexture = PRHI::Get()->CreateTexture("DOFPre", DOF->PDOFPreRenderTarget->GetColorBuffer().at(0), P_TextureType::P_Texture2D);
+		}
+		PRHI::Get()->UpdatePipeline(DOF->DOFPreFilterPipeline, LDR_FORMAT, DepthStencil_Format);
+
+		PRHI::Get()->BeginRenderRenderTarget(DOF->PDOFPreRenderTarget, L"DOFPreFilterPass");
+
+		PRHI::Get()->SetRenderTarget(DOF->PDOFPreRenderTarget);
+
+		std::shared_ptr<void> DOFPrefilterDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
+
+		PRHI::Get()->SetGraphicsPipeline(DOF->DOFPreFilterPipeline);
+		PRHI::Get()->UpdateCommonBuffer(DOF->DOFPreBuffer, DOFPrefilterDataSt);
+		PRHI::Get()->SetMeshBuffer(ScreenMeshBuffer);
+		PRHI::Get()->SetRenderResourceTable("RTSize", DOF->DOFPreBuffer->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("Texture", DOF->PDOFCOCRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("BloomTexture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+		PRHI::Get()->DrawInstanced(3);
+		PRHI::Get()->EndRenderRenderTarget(DOF->PDOFCOCRenderTarget);
+
+		//DOFBokeh
+		if (!DOF->PDOFBokehRenderTarget)
+		{
+			DOF->PDOFBokehRenderTarget = PRHI::Get()->CreateRenderTarget("DOFBokeh", ScreenWidth, ScreenHeight);
+			DOF->PDOFBokehRenderTarget->AddColorBuffer(1, LDR_FORMAT);
+			DOF->PDOFBokehRenderTarget->AddDepthStencilBuffer(DepthStencil_Format);
+
+			DOF->PDOFBokehRenderTarget->GetColorBuffer().at(0)->PRTTexture = PRHI::Get()->CreateTexture("DOFBokeh", DOF->PDOFBokehRenderTarget->GetColorBuffer().at(0), P_TextureType::P_Texture2D);
+		}
+		PRHI::Get()->UpdatePipeline(DOF->DOFBokehPipeline, LDR_FORMAT, DepthStencil_Format);
+
+		PRHI::Get()->BeginRenderRenderTarget(DOF->PDOFBokehRenderTarget, L"DOFBokehPass");
+
+		PRHI::Get()->SetRenderTarget(DOF->PDOFBokehRenderTarget);
+
+		std::shared_ptr<void> DOFBokehDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
+
+		PRHI::Get()->SetGraphicsPipeline(DOF->DOFBokehPipeline);
+		PRHI::Get()->UpdateCommonBuffer(DOF->DOFBokehBuffer, DOFBokehDataSt);
+		PRHI::Get()->SetMeshBuffer(ScreenMeshBuffer);
+		PRHI::Get()->SetRenderResourceTable("RTSize", DOF->DOFBokehBuffer->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("Texture", DOF->PDOFPreRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+		PRHI::Get()->DrawInstanced(3);
+		PRHI::Get()->EndRenderRenderTarget(DOF->PDOFBokehRenderTarget);
+
+		//DOFPost
+		if (!DOF->PDOFPostRenderTarget)
+		{
+			DOF->PDOFPostRenderTarget = PRHI::Get()->CreateRenderTarget("DODPost", ScreenWidth, ScreenHeight);
+			DOF->PDOFPostRenderTarget->AddColorBuffer(1, HDR_FORMAT);
+			DOF->PDOFPostRenderTarget->AddDepthStencilBuffer(DepthStencil_Format);
+
+			DOF->PDOFPostRenderTarget->GetColorBuffer().at(0)->PRTTexture = PRHI::Get()->CreateTexture("DOFPost", DOF->PDOFPostRenderTarget->GetColorBuffer().at(0), P_TextureType::P_Texture2D);
+		}
+		PRHI::Get()->UpdatePipeline(DOF->DOFPostFilterPipeline, HDR_FORMAT, DepthStencil_Format);
+
+		PRHI::Get()->BeginRenderRenderTarget(DOF->PDOFPostRenderTarget, L"DOFPostPass");
+
+		PRHI::Get()->SetRenderTarget(DOF->PDOFPostRenderTarget);
+
+		std::shared_ptr<void> DOFPostDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
+
+		PRHI::Get()->SetGraphicsPipeline(DOF->DOFPostFilterPipeline);
+		PRHI::Get()->UpdateCommonBuffer(DOF->DOFPostBuffer, DOFPostDataSt);
+		PRHI::Get()->SetMeshBuffer(ScreenMeshBuffer);
+		PRHI::Get()->SetRenderResourceTable("RTSize", DOF->DOFPostBuffer->GetHandleOffset());
+		PRHI::Get()->SetRenderResourceTable("Texture", DOF->PDOFBokehRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+		PRHI::Get()->DrawInstanced(3);
+		PRHI::Get()->EndRenderRenderTarget(DOF->PDOFPostRenderTarget);
 	}
 
 	void PRenderer::BloomPass()
@@ -361,7 +446,11 @@ namespace Phe
 		PRHI::Get()->UpdateCommonBuffer(Bloom->BloomDownBuffer, RenderTargetSize);
 		PRHI::Get()->SetMeshBuffer(ScreenMeshBuffer);
 		PRHI::Get()->SetRenderResourceTable("RTSize", Bloom->BloomDownBuffer->GetHandleOffset());
+#ifdef bDOFPass
+		PRHI::Get()->SetRenderResourceTable("BloomTexture", DOF->PDOFPostRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+#else
 		PRHI::Get()->SetRenderResourceTable("BloomTexture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+#endif
 		PRHI::Get()->DrawInstanced(3);
 
 		PRHI::Get()->EndRenderRenderTarget(Bloom->PHighLightRenderTarget);
@@ -603,7 +692,11 @@ namespace Phe
 		PRHI::Get()->SetMeshBuffer(ScreenMeshBuffer);
 		PRHI::Get()->SetRenderResourceTable("RTSize", Bloom->ToneMapBuffer->GetHandleOffset());
 		PRHI::Get()->SetRenderResourceTable("BloomTexture", Bloom->PBloomMergeRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+#ifdef bDOFPass
+		PRHI::Get()->SetRenderResourceTable("Texture", DOF->PDOFPostRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+#else
 		PRHI::Get()->SetRenderResourceTable("Texture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+#endif
 		PRHI::Get()->DrawInstanced(3);
 	}
 

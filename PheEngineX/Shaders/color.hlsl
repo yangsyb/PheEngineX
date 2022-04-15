@@ -14,7 +14,6 @@ SamplerState gsamAnisotropicWrap : register(s4);
 SamplerState gsamAnisotropicClamp : register(s5);
 SamplerComparisonState gsamShadow : register(s6);
 
-//#define PI 3.1415927
 
 cbuffer cbPerObject : register(b0)
 {
@@ -151,7 +150,7 @@ float4 PS(VertexOut pin) : SV_Target
 //	F0 = lerp(F0.rrr, BaseColor.rgb, Metallic);
 
 //	float3 Ambient = 0.5 * gLightColor;
-	float AmbientFactor = 0.7;
+	float AmbientFactor = 0.35;
 	float3 Ambient = AmbientFactor * float3(1.f, 1.f, 1.f);
 
 	float4 NormalMapSample = gNormalMap.Sample(gsamLinearClamp, pin.TextCoord);
@@ -163,7 +162,6 @@ float4 PS(VertexOut pin) : SV_Target
 //	Output.rgb += ComputeDirectionalLight(gLightPosition - pin.WorldPos, BumpedNormalW, 1.f, gCameraPosition - pin.WorldPos, surfaceInfo.PerceptualRoughness, BaseColor, surfaceInfo.F0, surfaceInfo.F90) * Shadow;
 //	AmbientFactor = AmbientFactor + gLightIntensity>0 ? 0.4 : 0;
 	Output.rgb += Ambient * BaseColor.rgb;
-
 	Output.rgb = pow(Output.rgb, 1 / 2.2f);
 	return Output;
 

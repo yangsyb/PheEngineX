@@ -5,6 +5,7 @@
 #include "PRenderScene.h"
 namespace Phe
 {
+#define bDOFPass
 	class PRHI;
 	class PRenderScene;
 	class PGPUTexture;
@@ -83,23 +84,38 @@ namespace Phe
 	struct DOFData
 	{
 		PPipeline* DOFCOCPipeline;
+		PPipeline* DOFPreFilterPipeline;
+		PPipeline* DOFBokehPipeline;
+		PPipeline* DOFPostFilterPipeline;
 
 		PGPURenderTarget* PDOFCOCRenderTarget;
+		PGPURenderTarget* PDOFPreRenderTarget;
+		PGPURenderTarget* PDOFBokehRenderTarget;
+		PGPURenderTarget* PDOFPostRenderTarget;
 
 		PGPUCommonBuffer* DOFCOCBuffer;
+		PGPUCommonBuffer* DOFPreBuffer;
+		PGPUCommonBuffer* DOFBokehBuffer;
+		PGPUCommonBuffer* DOFPostBuffer;
 
-		DOFData() : PDOFCOCRenderTarget(nullptr),
-			DOFCOCPipeline(nullptr),
-			DOFCOCBuffer(nullptr)
+		DOFData() : PDOFCOCRenderTarget(nullptr), PDOFPreRenderTarget(nullptr), PDOFBokehRenderTarget(nullptr), PDOFPostRenderTarget(nullptr),
+			DOFCOCPipeline(nullptr), DOFPreFilterPipeline(nullptr), DOFBokehPipeline(nullptr), DOFPostFilterPipeline(nullptr),
+			DOFCOCBuffer(nullptr), DOFPreBuffer(nullptr), DOFBokehBuffer(nullptr), DOFPostBuffer(nullptr)
 		{}
 
 		~DOFData()
 		{
 			ReleasePtr(DOFCOCPipeline);
+			ReleasePtr(DOFPreFilterPipeline);
+			ReleasePtr(DOFBokehPipeline);
 
 			ReleasePtr(PDOFCOCRenderTarget);
+			ReleasePtr(PDOFPreRenderTarget);
+			ReleasePtr(PDOFBokehRenderTarget);
 
 			ReleasePtr(DOFCOCBuffer);
+			ReleasePtr(DOFPreBuffer);
+			ReleasePtr(DOFBokehBuffer);
 		}
 
 		void Initialize();

@@ -18,6 +18,10 @@ namespace Phe
 		PShader* BloomMergeShader = new PShader("BloomMerge", L"Shaders\\BloomMerge.hlsl");
 		PShader* ToneMapShader = new PShader("ToneMap", L"Shaders\\ToneMap.hlsl");
 		PShader* DOFCOCShader = new PShader("DOFCOC", L"Shaders\\DepthOfFieldCoc.hlsl");
+		PShader* DOFPreShader = new PShader("DOFPre", L"Shaders\\DepthOfFieldPrefilter.hlsl");
+		PShader* DOFBokehShader = new PShader("DOFBokeh", L"Shaders\\DepthOfFieldBokeh.hlsl");
+		PShader* DOFPostShader = new PShader("DOFPost", L"Shaders\\DepthOfFieldPostfilter.hlsl");
+
 
 		AddShader(DefaultShader);
 		AddShader(WPOShader);
@@ -30,6 +34,9 @@ namespace Phe
 		AddShader(BloomMergeShader);
 		AddShader(ToneMapShader);
 		AddShader(DOFCOCShader);
+		AddShader(DOFPreShader);
+		AddShader(DOFBokehShader);
+		AddShader(DOFPostShader);
 		PropertyID.reserve(64);
 	}
 
