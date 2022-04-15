@@ -50,8 +50,4 @@ float4 PS(VS_Output Input) : SV_Target
     float4 Dof = DofTexture.SampleLevel(gsamLinearClamp, Tex, 0.0f);
 	float Coc = CocTexture.SampleLevel(gsamLinearClamp, Tex, 0.0f).r;
 
-    Coc = (Coc - 0.5) * 2.0 * 0.05;
-
-    float FFa = smoothstep(gInvRenderTargetSize.y * 2.0, gInvRenderTargetSize.y * 4.0, coc);
-
 }

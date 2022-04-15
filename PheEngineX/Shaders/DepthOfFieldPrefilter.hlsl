@@ -76,8 +76,4 @@ half4 PS(VS_Output Input) : SV_Target
 	half coc = (-coc_min > coc_max ? coc_min : coc_max) * 0.05;
 
 	return half4(avg, coc);
-
-//    avg *= smoothstep(0, InvScreenHeight * 2, abs(coc));
-
-//	return half4(avg, coc);
 }
