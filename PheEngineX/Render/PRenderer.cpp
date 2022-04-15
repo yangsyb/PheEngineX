@@ -333,7 +333,7 @@ namespace Phe
 
 		PRHI::Get()->SetRenderTarget(DOF->PDOFCOCRenderTarget);
 
-		std::shared_ptr<void> DOFDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
+		std::shared_ptr<void> DOFDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 30.f, float(ScreenWidth), float(ScreenHeight)));
 
 		PRHI::Get()->SetGraphicsPipeline(DOF->DOFCOCPipeline);
 		PRHI::Get()->UpdateCommonBuffer(DOF->DOFCOCBuffer, DOFDataSt);
@@ -358,7 +358,7 @@ namespace Phe
 
 		PRHI::Get()->SetRenderTarget(DOF->PDOFPreRenderTarget);
 
-		std::shared_ptr<void> DOFPrefilterDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
+		std::shared_ptr<void> DOFPrefilterDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 30.f, float(ScreenWidth), float(ScreenHeight)));
 
 		PRHI::Get()->SetGraphicsPipeline(DOF->DOFPreFilterPipeline);
 		PRHI::Get()->UpdateCommonBuffer(DOF->DOFPreBuffer, DOFPrefilterDataSt);
@@ -384,7 +384,7 @@ namespace Phe
 
 		PRHI::Get()->SetRenderTarget(DOF->PDOFBokehRenderTarget);
 
-		std::shared_ptr<void> DOFBokehDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
+		std::shared_ptr<void> DOFBokehDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 30.f, float(ScreenWidth), float(ScreenHeight)));
 
 		PRHI::Get()->SetGraphicsPipeline(DOF->DOFBokehPipeline);
 		PRHI::Get()->UpdateCommonBuffer(DOF->DOFBokehBuffer, DOFBokehDataSt);
@@ -409,7 +409,7 @@ namespace Phe
 
 		PRHI::Get()->SetRenderTarget(DOF->PDOFPostRenderTarget);
 
-		std::shared_ptr<void> DOFPostDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 8.f, float(ScreenWidth), float(ScreenHeight)));
+		std::shared_ptr<void> DOFPostDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(20.f, 30.f, float(ScreenWidth), float(ScreenHeight)));
 
 		PRHI::Get()->SetGraphicsPipeline(DOF->DOFPostFilterPipeline);
 		PRHI::Get()->UpdateCommonBuffer(DOF->DOFPostBuffer, DOFPostDataSt);
