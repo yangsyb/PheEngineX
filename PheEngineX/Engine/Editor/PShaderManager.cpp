@@ -37,11 +37,17 @@ namespace Phe
 
 	PShaderManager::~PShaderManager()
 	{
-		for (auto it : ShaderPool)
+		for (auto& it : ShaderPool)
 		{
 			ReleasePtr(it.second);
 		}
 		ShaderPool.clear();
+
+		for (auto& it : CompiledShaderPool)
+		{
+			ReleasePtr(it.second);
+		}
+		CompiledShaderPool.clear();
 	}
 
 	void PShaderManager::AddShader(std::string ShaderName, std::wstring FilePath)
@@ -58,11 +64,30 @@ namespace Phe
 		}
 	}
 
+
+	void PShaderManager::AddCompiledShader(PShader* Shader)
+	{
+		if (CompiledShaderPool.count(Shader->GetShaderName()) == 0)
+		{
+			CompiledShaderPool.insert({ Shader->GetShaderName(), Shader });
+		}
+	}
+
 	PShader* PShaderManager::GetShaderByName(std::string ShaderName)
 	{
 		if (ShaderPool.count(ShaderName) > 0)
 		{
 			return ShaderPool.at(ShaderName);
+		}
+		return nullptr;
+	}
+
+
+	Phe::PShader* PShaderManager::GetCompiledShaderByName(std::string ShaderName)
+	{
+		if (CompiledShaderPool.count(ShaderName) > 0)
+		{
+			return CompiledShaderPool.at(ShaderName);
 		}
 		return nullptr;
 	}

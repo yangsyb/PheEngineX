@@ -343,7 +343,8 @@ namespace Phe
 		case Phe::P_TextureFormat::P_FORMAT_R32_TYPELESS:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_D32_FLOAT:
-			break;
+			return DXGI_FORMAT_D32_FLOAT;
+			
 		case Phe::P_TextureFormat::P_FORMAT_R32_FLOAT:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_R32_UINT:
@@ -608,7 +609,7 @@ namespace Phe
 		case Phe::P_TextureFormat::P_FORMAT_R32_TYPELESS:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_D32_FLOAT:
-			break;
+			return DXGI_FORMAT_D32_FLOAT;
 		case Phe::P_TextureFormat::P_FORMAT_R32_FLOAT:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_R32_UINT:

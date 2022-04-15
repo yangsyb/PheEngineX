@@ -44,12 +44,14 @@ namespace Phe
 
 		virtual void BeginRenderBackBuffer() = 0;
 		virtual void EndRenderBackBuffer() = 0;
-		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget) = 0;
+		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget, std::wstring PassName) = 0;
 		virtual void EndRenderRenderTarget(PGPURenderTarget* RenderTarget) = 0;
 		virtual void PrepareBufferHeap() = 0;
 		virtual void SetGraphicsPipeline(PPipeline* Pipeline) = 0;
 		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) = 0;
 		virtual void SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset) = 0;
+		virtual void Set32BitConstant(PPipeline* InPipeline, std::string PropertyName, std::shared_ptr<void> data) = 0;
+		virtual void DrawInstanced(UINT DrawIndexCount) = 0;
 		virtual void DrawPrimitiveIndexedInstanced(UINT DrawIndexCount) = 0;
 
 // 		virtual void CompileMaterial(PMaterial* Material) = 0;

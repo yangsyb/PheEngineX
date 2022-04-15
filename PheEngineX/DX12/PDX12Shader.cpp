@@ -23,7 +23,7 @@ namespace Phe
 		ParamMap[DX12ShaderManager->PropertyToID(TextureCube.name)] = UINT(Params.size());
 		Params.push_back(TextureCube);
 
-		ShaderParameter HDRTexture("HDRTexture", ShaderParamType::SRVDescriptorHeap, 1, 6, 0);
+		ShaderParameter HDRTexture("BloomTexture", ShaderParamType::SRVDescriptorHeap, 1, 6, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(HDRTexture.name)] = UINT(Params.size());
 		Params.push_back(HDRTexture);
 
@@ -46,6 +46,8 @@ namespace Phe
 		ShaderParameter RenderTargetSize("RTSize", ShaderParamType::CBVDescriptorHeap, 1, 4, 0);
 		ParamMap[DX12ShaderManager->PropertyToID(RenderTargetSize.name)] = UINT(Params.size());
 		Params.push_back(RenderTargetSize);
+
+		
 	}
 
 

@@ -13,6 +13,7 @@ namespace Phe
 		virtual ~PGPUMeshBuffer();
 
 		void SetMeshBuffer(std::string Name, PStaticMesh* StaticMeshData);
+		void SetScreenMeshBuffer();
 		UINT32 GetVertexByteStride() const { return PVertexByteStride; }
 		UINT32 GetVertexCount() const { return PVertexCount;}
 		UINT32 GetIndexCount() const { return PIndexCount; }

@@ -29,17 +29,17 @@ namespace Phe
 
 	void PDX12RHI::InitRHI()
 	{
-		ComPtr<ID3D12Debug> DebugController;
-		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&DebugController))))
-		{
-			DebugController->EnableDebugLayer();
-		}
-		ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
- 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
- 		{
- 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
- 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
- 		}
+//		ComPtr<ID3D12Debug> DebugController;
+//		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&DebugController))))
+//		{
+//			DebugController->EnableDebugLayer();
+//		}
+//		ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
+// 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+// 		{
+// 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+// 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+// 		}
 
 		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&PDXGIFactory)));
 
@@ -359,7 +359,7 @@ namespace Phe
 
 	void PDX12RHI::BeginRenderBackBuffer()
 	{
-
+		PIXBeginEvent(PCommandList.Get(), 0, L"BackBuffer");
 		PCommandList->RSSetViewports(1, &PViewport);
 		PCommandList->RSSetScissorRects(1, &PScissorRect);
 
@@ -381,7 +381,7 @@ namespace Phe
 		auto PresourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 			D3D12_RESOURCE_STATE_RENDER_TARGET, D3D12_RESOURCE_STATE_PRESENT);
 		PCommandList->ResourceBarrier(1, &PresourceBarrier);
-
+		PIXEndEvent(PCommandList.Get());
 // 		ExecuteCommandList();
 // 
 // 
@@ -392,8 +392,9 @@ namespace Phe
 // 		Flush();
 	}
 
-	void PDX12RHI::BeginRenderRenderTarget(PGPURenderTarget* RenderTarget)
+	void PDX12RHI::BeginRenderRenderTarget(PGPURenderTarget* RenderTarget, std::wstring PassName)
 	{
+		PIXBeginEvent(PCommandList.Get(), 0, PassName.c_str());
 		if(RenderTarget->GetColorBuffer().size() > 0)
 		{
 			for(auto ColorBuffer : RenderTarget->GetColorBuffer())
@@ -432,6 +433,7 @@ namespace Phe
 			CD3DX12_RESOURCE_BARRIER ResourceBarrier = CD3DX12_RESOURCE_BARRIER::Transition(InRtBuffer->PResource->GetResource().Get(), D3D12_RESOURCE_STATE_DEPTH_WRITE, D3D12_RESOURCE_STATE_GENERIC_READ);
 			PCommandList->ResourceBarrier(1, &ResourceBarrier);
 		}
+		PIXEndEvent(PCommandList.Get());
 	}
 
 // 	void PDX12RHI::BeginRenderRTBuffer(RTBuffer* RtBuffer)
@@ -464,6 +466,12 @@ namespace Phe
 		PCommandList->IASetVertexBuffers(0, 1, &InDX12MeshBuffer->VertexBufferView);
 		PCommandList->IASetIndexBuffer(&InDX12MeshBuffer->IndexBufferView);
 		PCommandList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	}
+
+
+	void PDX12RHI::DrawInstanced(UINT DrawIndexCount)
+	{
+		PCommandList->DrawInstanced(DrawIndexCount, 1, 0, 0);
 	}
 
 	void PDX12RHI::DrawPrimitiveIndexedInstanced(UINT DrawIndexCount)
@@ -539,7 +547,7 @@ namespace Phe
 			serializedRootSig->GetBufferSize(),
 			IID_PPV_ARGS(NewRootSignature.GetAddressOf())));
 		NewShader->SetRootSignature(NewRootSignature);
-//		DX12ShaderManager->AddShader(NewShader);
+		DX12ShaderManager->AddCompiledShader(NewShader);
 
 		return NewShader;
 	}
@@ -799,7 +807,10 @@ namespace Phe
 
 		PsoDesc.NumRenderTargets = InDX12RenderTarget->GetColorBuffer().size() > 0 ? 1 : 0;
 //		PsoDesc.RTVFormats[0] = InDX12RenderTarget->GetColorBuffer().size() > 0 ? DXGI_FORMAT_R8G8B8A8_UNORM : DXGI_FORMAT_UNKNOWN;
-		PsoDesc.RTVFormats[0] = SwitchFormat(InDX12RenderTarget->GetColorBuffer().at(0)->GetTextureFormat());
+		if(InDX12RenderTarget->GetColorBuffer().size())
+		{
+			PsoDesc.RTVFormats[0] = InDX12RenderTarget->GetColorBuffer().size() ? SwitchFormat(InDX12RenderTarget->GetColorBuffer().at(0)->GetTextureFormat()) : DXGI_FORMAT_UNKNOWN;
+		}
 		PsoDesc.DSVFormat = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
 
@@ -872,6 +883,13 @@ namespace Phe
 	{
 		CommonBuffer->ReleaseCurrentData();
 		CommonBuffer->AllocateData(0, Data);
+	}
+
+	void PDX12RHI::Set32BitConstant(PPipeline* InPipeline, std::string PropertyName, std::shared_ptr<void> data)
+	{
+		PDX12Shader* InDX12Shader = static_cast<PDX12Shader*>(InPipeline->GetShader());
+		auto ShaderParam = InDX12Shader->GetParams().at(DX12ShaderManager->PropertyToID(PropertyName));
+		PCommandList->SetGraphicsRoot32BitConstants(ShaderParam.GetBaseRegister(), 2, data.get(), 0);
 	}
 
 	void PDX12RHI::SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset)

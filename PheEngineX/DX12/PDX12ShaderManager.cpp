@@ -12,8 +12,12 @@ namespace Phe
 		PShader* WPOTrunkShader = new PShader("WPOTrunkShader", L"Shaders\\treetrunk.hlsl");
 		PShader* TowerShader = new PShader("PBRShader", L"Shaders\\BRDFCommon.hlsl");
  		PShader* SkyBoxShader = new PShader("SkyShader", L"Shaders\\SkyBox.hlsl", "VS", "PS");
-		PShader* HighLightShader = new PShader("HighLightShader", L"Shaders\\HighLight.hlsl", "", "PS");
-
+		PShader* HighLightShader = new PShader("HighLightShader", L"Shaders\\HighLight.hlsl", "VS", "PS");
+		PShader* BloomDownShader = new PShader("BloomDown", L"Shaders\\BloomDownSample.hlsl", "VS", "PS");
+		PShader* BloomUpShader = new PShader("BloomUp", L"Shaders\\BloomUpSample.hlsl");
+		PShader* BloomMergeShader = new PShader("BloomMerge", L"Shaders\\BloomMerge.hlsl");
+		PShader* ToneMapShader = new PShader("ToneMap", L"Shaders\\ToneMap.hlsl");
+		PShader* DOFCOCShader = new PShader("DOFCOC", L"Shaders\\DepthOfFieldCoc.hlsl");
 
 		AddShader(DefaultShader);
 		AddShader(WPOShader);
@@ -21,6 +25,11 @@ namespace Phe
 		AddShader(TowerShader);
 		AddShader(SkyBoxShader);
 		AddShader(HighLightShader);
+		AddShader(BloomDownShader);
+		AddShader(BloomUpShader);
+		AddShader(BloomMergeShader);
+		AddShader(ToneMapShader);
+		AddShader(DOFCOCShader);
 		PropertyID.reserve(64);
 	}
 

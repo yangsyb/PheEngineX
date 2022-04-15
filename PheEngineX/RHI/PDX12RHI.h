@@ -39,12 +39,14 @@ namespace Phe
 		virtual void EndRenderBackBuffer() override;
 // 		virtual void BeginRenderRTBuffer(RTBuffer* RtBuffer) override;
 // 		virtual void EndRenderRTBuffer(RTBuffer* RtBuffer) override;
-		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget) override;
+		virtual void BeginRenderRenderTarget(PGPURenderTarget* RenderTarget, std::wstring PassName) override;
 		virtual void EndRenderRenderTarget(PGPURenderTarget* RenderTarget) override;
 		virtual void PrepareBufferHeap() override;
 		virtual void SetGraphicsPipeline(PPipeline* Pipeline) override;
 		virtual void SetMeshBuffer(PGPUMeshBuffer* InMeshBuffer) override;
+		virtual void Set32BitConstant(PPipeline* InPipeline, std::string PropertyName, std::shared_ptr<void> data) override;
 		virtual void SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset) override;
+		virtual void DrawInstanced(UINT DrawIndexCount) override;
 		virtual void DrawPrimitiveIndexedInstanced(UINT DrawIndexCount) override;
 
 // 		virtual void CompileMaterial(PMaterial* Material) override;

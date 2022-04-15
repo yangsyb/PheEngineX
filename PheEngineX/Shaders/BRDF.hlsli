@@ -196,7 +196,7 @@ float3 ApplyDirectionalLight(float3 lightDir, float3 lightColor, SurfaceInfo sur
 
     BRDF(angularInfo, surfaceInfo, diffuseContrib, specContrib);
 
-    float3 shade = (diffuseContrib + specContrib) * angularInfo.NdotL;
+    float3 shade = (diffuseContrib + specContrib * 10) * angularInfo.NdotL;
 
     return shade * lightColor;
 }

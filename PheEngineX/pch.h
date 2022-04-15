@@ -27,6 +27,7 @@
 #include "DX12/d3dx12.h"
 #include <dxgi1_4.h>
 #include <d3dcompiler.h>
+#include <pix.h>
 
 #include <cstdint>
 #include <cstdio>

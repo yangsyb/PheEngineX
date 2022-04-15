@@ -151,7 +151,7 @@ float4 PS(VertexOut pin) : SV_Target
 //	F0 = lerp(F0.rrr, BaseColor.rgb, Metallic);
 
 //	float3 Ambient = 0.5 * gLightColor;
-	float AmbientFactor = 0.35;
+	float AmbientFactor = 0.7;
 	float3 Ambient = AmbientFactor * float3(1.f, 1.f, 1.f);
 
 	float4 NormalMapSample = gNormalMap.Sample(gsamLinearClamp, pin.TextCoord);

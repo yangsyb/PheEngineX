@@ -91,3 +91,21 @@ struct PLightDataStruct
 	float LightStrength;
 	float LightRadius;
 };
+
+struct DOFDataStruct
+{
+	float DOFFilmHeight;
+	float ScreenWidth;
+	float ScreenHeight;
+	DOFDataStruct(float doffilmheight, float screenwidth, float screenheight) : 
+		DOFFilmHeight(doffilmheight), ScreenWidth(screenwidth), ScreenHeight(screenheight)
+	{}
+};
+
+struct PINT2
+{
+	int X;
+	int Y;
+	PINT2(int ix, int iy) : X(ix), Y(iy)
+	{}
+};

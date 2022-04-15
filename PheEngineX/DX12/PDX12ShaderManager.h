@@ -9,5 +9,7 @@ namespace Phe
 	public:
 		PDX12Shadermanager();
 		virtual ~PDX12Shadermanager();
+
+	
 	};
 }

@@ -31,6 +31,10 @@ namespace Phe
 
 
 				POptClear.Format = SwitchFormat(Format);
+				POptClear.Color[0] = 0;
+				POptClear.Color[1] = 0;
+				POptClear.Color[2] = 0;
+				POptClear.Color[3] = 0;
 				PResourceDescriptor = ColorDesc;
 				InitialState = D3D12_RESOURCE_STATES::D3D12_RESOURCE_STATE_COMMON;
 				break;

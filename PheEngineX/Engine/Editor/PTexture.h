@@ -6,6 +6,7 @@ namespace Phe
 	#define HDR_FORMAT P_TextureFormat::P_FORMAT_R16G16B16A16_FLOAT
 	#define LDR_FORMAT P_TextureFormat::P_FORMAT_R8G8B8A8_UNORM
 	#define DepthStencil_Format P_TextureFormat::P_FORMAT_D24_UNORM_S8_UINT
+	#define RGBOnly_Format P_TextureFormat::P_FORMAT_R11G11B10_FLOAT
 
 	enum class P_TextureFormat
 	{

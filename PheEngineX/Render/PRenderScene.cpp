@@ -14,7 +14,7 @@ namespace Phe
 		for (auto Shader : PShaderManager::Get()->GetAllShaders())
 		{
 			PShader* NewShader = PRHI::Get()->CreateShader(Shader.second->GetShaderName(), Shader.second->GetShaderFilePath(), Shader.second->GetVSEntry(), Shader.second->GetPSEntry());
-			PShaderPool.insert({ Shader.second->GetShaderName(), NewShader });
+//			PShaderPool.insert({ Shader.second->GetShaderName(), NewShader });
 		}
 	}
 
@@ -62,20 +62,20 @@ namespace Phe
  					switch (size)
  					{
    					case static_cast<int>(PipelineType::BasePipeline):
-   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
 //						NewPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetShaderByName(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
    						PRHI::Get()->UpdatePipeline(NewPipeline, LDR_FORMAT, DepthStencil_Format);
    						break;
    					case static_cast<int>(PipelineType::ShadowPipeline):
-   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(ShadowRasterizerDesc), P_BlendState(), P_DepthStencilState());
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName(ShaderName), P_RasterizerDesc(ShadowRasterizerDesc), P_BlendState(), P_DepthStencilState());
    						PRHI::Get()->UpdatePipeline(NewPipeline, LDR_FORMAT, DepthStencil_Format);
 						break;
    					case static_cast<int>(PipelineType::SkyPipeline):
-   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
    						PRHI::Get()->UpdatePipeline(NewPipeline, LDR_FORMAT, DepthStencil_Format);
    						break;
    					case static_cast<int>(PipelineType::HDRPipeline):
-   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+   						NewPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName(ShaderName), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
    						PRHI::Get()->UpdatePipeline(NewPipeline, HDR_FORMAT, DepthStencil_Format);
    						break;
  					}
@@ -108,7 +108,7 @@ namespace Phe
 			InNodeStaticMesh->SetLinkedPrimitive(PSkySphere);
 
 //			PSkyShader = PRHI::Get()->CreateShader(PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderName(), PShaderManager::Get()->GetShaderByName("SkyShader")->GetShaderFilePath());
-			PSkyBoxPipeline = PRHI::Get()->CreatePipeline(PShaderPool.at("SkyShader"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
+			PSkyBoxPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName("SkyShader"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());
 			PRHI::Get()->UpdatePipeline(PSkyBoxPipeline, LDR_FORMAT, DepthStencil_Format);
 			PSkySphere->SetPipeline(PipelineType::SkyPipeline, PSkyBoxPipeline);
 			auto Obj = PRHI::Get()->CreateCommonBuffer(sizeof(PerObjectCBuffer), 1);
@@ -178,11 +178,11 @@ namespace Phe
 		}
 		PPipelinePool.clear();
 
-		for (auto& it : PShaderPool)
-		{
-			ReleasePtr(it.second);
-		}
-		PShaderPool.clear();
+// 		for (auto& it : PShaderPool)
+// 		{
+// 			ReleasePtr(it.second);
+// 		}
+// 		PShaderPool.clear();
 	}
 
 

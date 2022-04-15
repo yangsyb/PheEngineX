@@ -30,6 +30,10 @@ namespace Phe
 			descriptorNums(descriptorNums),
 			baseRegister(baseRegister),
 			registerSpace(registerSpace) {}
+
+		UINT GetDescriptorNums() { return descriptorNums; }
+		UINT GetBaseRegister() { return baseRegister; }
+		UINT GetRegisterSpace() { return registerSpace; }
 	};
 
 
