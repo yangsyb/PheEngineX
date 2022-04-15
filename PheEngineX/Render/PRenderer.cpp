@@ -446,11 +446,12 @@ namespace Phe
 		PRHI::Get()->UpdateCommonBuffer(Bloom->BloomDownBuffer, RenderTargetSize);
 		PRHI::Get()->SetMeshBuffer(ScreenMeshBuffer);
 		PRHI::Get()->SetRenderResourceTable("RTSize", Bloom->BloomDownBuffer->GetHandleOffset());
-#ifdef bDOFPass
-		PRHI::Get()->SetRenderResourceTable("BloomTexture", DOF->PDOFPostRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
-#else
+//#ifdef bDOFPass
+//		PRHI::Get()->SetRenderResourceTable("BloomTexture", DOF->PDOFPostRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+//#else
+//		PRHI::Get()->SetRenderResourceTable("BloomTexture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
+//#endif
 		PRHI::Get()->SetRenderResourceTable("BloomTexture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
-#endif
 		PRHI::Get()->DrawInstanced(3);
 
 		PRHI::Get()->EndRenderRenderTarget(Bloom->PHighLightRenderTarget);
