@@ -94,11 +94,12 @@ struct PLightDataStruct
 
 struct DOFDataStruct
 {
-	float DOFFilmHeight;
+	float FoucusDistance;
+	float FocusRange;
 	float ScreenWidth;
 	float ScreenHeight;
-	DOFDataStruct(float doffilmheight, float screenwidth, float screenheight) : 
-		DOFFilmHeight(doffilmheight), ScreenWidth(screenwidth), ScreenHeight(screenheight)
+	DOFDataStruct(float focusdistance, float focusrange, float screenwidth, float screenheight) : 
+		FoucusDistance(focusdistance), FocusRange(focusrange), ScreenWidth(screenwidth), ScreenHeight(screenheight)
 	{}
 };
 

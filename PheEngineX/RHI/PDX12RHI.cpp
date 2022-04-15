@@ -29,17 +29,17 @@ namespace Phe
 
 	void PDX12RHI::InitRHI()
 	{
-//		ComPtr<ID3D12Debug> DebugController;
-//		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&DebugController))))
-//		{
-//			DebugController->EnableDebugLayer();
-//		}
-//		ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
-// 		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+// 		ComPtr<ID3D12Debug> DebugController;
+// 		if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&DebugController))))
 // 		{
-// 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
-// 			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+// 			DebugController->EnableDebugLayer();
 // 		}
+// 		ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
+//  		if (SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(dxgiInfoQueue.GetAddressOf()))))
+//  		{
+//  			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true);
+//  			dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true);
+//  		}
 
 		ThrowIfFailed(CreateDXGIFactory1(IID_PPV_ARGS(&PDXGIFactory)));
 

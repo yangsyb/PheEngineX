@@ -324,7 +324,7 @@ namespace Phe
 
 		PRHI::Get()->SetRenderTarget(DOF->PDOFCOCRenderTarget);
 
-		std::shared_ptr<void> DOFDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(0.024f, float(ScreenWidth), float(ScreenHeight)));
+		std::shared_ptr<void> DOFDataSt = std::make_shared<DOFDataStruct>(DOFDataStruct(25.f, 5.f, float(ScreenWidth), float(ScreenHeight)));
 
 		PRHI::Get()->SetGraphicsPipeline(DOF->DOFCOCPipeline);
 		PRHI::Get()->UpdateCommonBuffer(DOF->DOFCOCBuffer, DOFDataSt);
