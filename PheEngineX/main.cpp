@@ -63,8 +63,8 @@ int main()
 #elif defined(PlatformWin32)
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-//	_CrtSetBreakAlloc(975279);
-//	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+//	_CrtSetBreakAlloc(973092);
+	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 	PHashMap<KeyCode, PFunc<void()>> RegisterList;
 	std::unique_ptr<PEngine> PheEngine = std::make_unique<PEngine>();
 	//Load Test Data To AssetManager

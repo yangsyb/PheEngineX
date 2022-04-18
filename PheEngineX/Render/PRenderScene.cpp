@@ -22,6 +22,7 @@ namespace Phe
 	{
 		ReleasePtr(PSkyBoxPipeline);
 		PSkySphere->DestroyPrimitive();
+		ReleasePtr(PSkySphere);
 	}
 
 	void PRenderScene::AddMeshBuffer(std::string StaticMeshName, PNodeStaticMesh* InNodeStaticMesh)

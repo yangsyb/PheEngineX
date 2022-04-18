@@ -23,7 +23,7 @@ struct VertexIn
 struct VS_Output {
 	float4 position : SV_Position;
 };
-//far->up   close->down
+
 float ViewDepth(float depth)
 {
 	return (FAR_Z * NEAR_Z) / (FAR_Z - depth * (FAR_Z - NEAR_Z));
