@@ -7,6 +7,7 @@ namespace Phe
 	#define LDR_FORMAT P_TextureFormat::P_FORMAT_R8G8B8A8_UNORM
 	#define DepthStencil_Format P_TextureFormat::P_FORMAT_D24_UNORM_S8_UINT
 	#define RGBOnly_Format P_TextureFormat::P_FORMAT_R11G11B10_FLOAT
+	#define ROnly_Format P_TextureFormat::P_FORMAT_R8_UNORM
 
 	enum class P_TextureFormat
 	{

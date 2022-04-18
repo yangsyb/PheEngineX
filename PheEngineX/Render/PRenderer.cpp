@@ -322,12 +322,12 @@ namespace Phe
 		if (!DOF->PDOFCOCRenderTarget)
 		{
 			DOF->PDOFCOCRenderTarget = PRHI::Get()->CreateRenderTarget("DOFCOC", ScreenWidth, ScreenHeight);
-			DOF->PDOFCOCRenderTarget->AddColorBuffer(1, LDR_FORMAT);
+			DOF->PDOFCOCRenderTarget->AddColorBuffer(1, ROnly_Format);
 			DOF->PDOFCOCRenderTarget->AddDepthStencilBuffer(DepthStencil_Format);
 
 			DOF->PDOFCOCRenderTarget->GetColorBuffer().at(0)->PRTTexture = PRHI::Get()->CreateTexture("DOFCOC", DOF->PDOFCOCRenderTarget->GetColorBuffer().at(0), P_TextureType::P_Texture2D);
 		}
-		PRHI::Get()->UpdatePipeline(DOF->DOFCOCPipeline, LDR_FORMAT, DepthStencil_Format);
+		PRHI::Get()->UpdatePipeline(DOF->DOFCOCPipeline, ROnly_Format, DepthStencil_Format);
 
 		PRHI::Get()->BeginRenderRenderTarget(DOF->PDOFCOCRenderTarget, L"DOFCOCPass");
 
@@ -367,7 +367,7 @@ namespace Phe
 		PRHI::Get()->SetRenderResourceTable("Texture", DOF->PDOFCOCRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
 		PRHI::Get()->SetRenderResourceTable("BloomTexture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
 		PRHI::Get()->DrawInstanced(3);
-		PRHI::Get()->EndRenderRenderTarget(DOF->PDOFCOCRenderTarget);
+		PRHI::Get()->EndRenderRenderTarget(DOF->PDOFPreRenderTarget);
 
 		//DOFBokeh
 		if (!DOF->PDOFBokehRenderTarget)
@@ -446,11 +446,6 @@ namespace Phe
 		PRHI::Get()->UpdateCommonBuffer(Bloom->BloomDownBuffer, RenderTargetSize);
 		PRHI::Get()->SetMeshBuffer(ScreenMeshBuffer);
 		PRHI::Get()->SetRenderResourceTable("RTSize", Bloom->BloomDownBuffer->GetHandleOffset());
-//#ifdef bDOFPass
-//		PRHI::Get()->SetRenderResourceTable("BloomTexture", DOF->PDOFPostRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
-//#else
-//		PRHI::Get()->SetRenderResourceTable("BloomTexture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
-//#endif
 		PRHI::Get()->SetRenderResourceTable("BloomTexture", PHDRRenderTarget->GetColorBuffer().at(0)->PRTTexture->GetHandleOffset());
 		PRHI::Get()->DrawInstanced(3);
 

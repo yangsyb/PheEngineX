@@ -45,11 +45,13 @@ half4 PS(VS_Output Input) : SV_Target
     float InvScreenWidth = 1/ScreenWidth;
     float InvScreenHeight = 1/ScreenHeight;
 
-    const float4 duv = float4(InvScreenWidth, InvScreenHeight, InvScreenWidth, InvScreenHeight) * 2.0f * float4(0.5f, 0.5f, -0.5f, 0.0f);
-	half4 Acc;
-	Acc = gDepthInput.SampleLevel(gsamLinearClamp, Tex - duv.xy, 0.0f);
-	Acc += gDepthInput.SampleLevel(gsamLinearClamp, Tex - duv.zy, 0.0f);
-	Acc += gDepthInput.SampleLevel(gsamLinearClamp, Tex + duv.zy, 0.0f);
-	Acc += gDepthInput.SampleLevel(gsamLinearClamp, Tex + duv.xy, 0.0f);
-	return Acc / 4.0;
+	return gDepthInput.SampleLevel(gsamLinearClamp, Tex, 0.0f);
+
+//    const float4 duv = float4(InvScreenWidth, InvScreenHeight, InvScreenWidth, InvScreenHeight) * 2.0f * float4(0.5f, 0.5f, -0.5f, 0.0f);
+//	half4 Acc;
+//	Acc = gDepthInput.SampleLevel(gsamLinearClamp, Tex - duv.xy, 0.0f);
+//	Acc += gDepthInput.SampleLevel(gsamLinearClamp, Tex - duv.zy, 0.0f);
+//	Acc += gDepthInput.SampleLevel(gsamLinearClamp, Tex + duv.zy, 0.0f);
+//	Acc += gDepthInput.SampleLevel(gsamLinearClamp, Tex + duv.xy, 0.0f);
+//	return Acc / 4.0;
 }

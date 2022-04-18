@@ -108,14 +108,17 @@ namespace Phe
 			ReleasePtr(DOFCOCPipeline);
 			ReleasePtr(DOFPreFilterPipeline);
 			ReleasePtr(DOFBokehPipeline);
+			ReleasePtr(DOFPostFilterPipeline);
 
 			ReleasePtr(PDOFCOCRenderTarget);
 			ReleasePtr(PDOFPreRenderTarget);
 			ReleasePtr(PDOFBokehRenderTarget);
+			ReleasePtr(PDOFPostRenderTarget);
 
 			ReleasePtr(DOFCOCBuffer);
 			ReleasePtr(DOFPreBuffer);
 			ReleasePtr(DOFBokehBuffer);
+			ReleasePtr(DOFPostBuffer);
 		}
 
 		void Initialize();

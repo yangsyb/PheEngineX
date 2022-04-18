@@ -390,7 +390,7 @@ namespace Phe
 		case Phe::P_TextureFormat::P_FORMAT_R8_TYPELESS:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_R8_UNORM:
-			break;
+			return DXGI_FORMAT_R8_UNORM;
 		case Phe::P_TextureFormat::P_FORMAT_R8_UINT:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_R8_SNORM:
@@ -655,7 +655,7 @@ namespace Phe
 		case Phe::P_TextureFormat::P_FORMAT_R8_TYPELESS:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_R8_UNORM:
-			break;
+			return DXGI_FORMAT_R8_UNORM;
 		case Phe::P_TextureFormat::P_FORMAT_R8_UINT:
 			break;
 		case Phe::P_TextureFormat::P_FORMAT_R8_SNORM:
