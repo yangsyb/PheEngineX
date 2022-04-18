@@ -9,7 +9,6 @@
 #include "Engine/Core/PEngine.h"
 namespace Phe
 {
-
 	void BloomData::Initialize()
 	{
 		HighLightPipeline = PRHI::Get()->CreatePipeline(PShaderManager::Get()->GetCompiledShaderByName("HighLightShader"), P_RasterizerDesc(), P_BlendState(), P_DepthStencilState());

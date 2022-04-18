@@ -89,7 +89,7 @@ half4 PS(VS_Output Input) : SV_Target
 		half BackGroundCoC = max(min(DepthSample.a, DepthSampleR.a), 0.0);
 
 
-		const half Margin = InvScreenHeight * 2;
+		const half Margin = InvScreenHeight * 25;
 		half BackGroundWeight = saturate((BackGroundCoC - dist + Margin) / Margin);
 		half ForeGroundWeight = saturate((-DepthSampleR.a - dist + Margin) / Margin);
 
@@ -103,7 +103,7 @@ half4 PS(VS_Output Input) : SV_Target
     BackGroundAcc.rgb /= BackGroundAcc.a + (BackGroundAcc.a == 0.0); 
 	ForeGroundAcc.rgb /= ForeGroundAcc.a + (ForeGroundAcc.a == 0.0);
 
-	BackGroundAcc.a = smoothstep(InvScreenHeight, InvScreenHeight * 2.0, DepthSample.a);
+	BackGroundAcc.a = smoothstep(InvScreenHeight, InvScreenHeight * 25.0, DepthSample.a);
 
 	ForeGroundAcc.a *= PI / kSampleCount;
 
