@@ -60,6 +60,7 @@ namespace Phe
 	void PEngine::BeginFrame()
 	{
 		PTimer.Tick();
+//		PheWindow->CalculateFrame();
 		PMainEditor->Update();
 		PMainScene->Update();
 	}
@@ -68,7 +69,7 @@ namespace Phe
 	{
 		PRenderThread* RenderThread = PRenderThread::Get();
 		RenderThread->TriggerRender();
-		while (RenderThread->GetRenderNum() > 0)
+		while (RenderThread->GetRenderNum() > 1)
 		{
 			std::this_thread::sleep_for(std::chrono::nanoseconds(1));
 		}

@@ -188,7 +188,6 @@ namespace Phe
 			PShadowMap->AddDepthStencilBuffer(DepthStencil_Format);
 			PShadowMap->GetDepthStencilBuffer()->PRTTexture = PRHI::Get()->CreateTexture("ShadowMapTexture", PShadowMap->GetDepthStencilBuffer(), P_TextureType::P_Texture2D);
 		}
-		//   		PRHI::Get()->BeginRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
 		PRHI::Get()->BeginRenderRenderTarget(PShadowMap, L"ShadowPass");
 
 		PRHI::Get()->SetRenderTarget(PShadowMap);
@@ -208,7 +207,6 @@ namespace Phe
 			ShaderResourceBinding(Primitive.second);
 			PRHI::Get()->DrawPrimitiveIndexedInstanced(Primitive.second->GetMeshBuffer()->GetIndexCount());
 		}
-		//   		PRHI::Get()->EndRenderRTBuffer(PShadowMap->GetDepthStencilBuffer());
 		PRHI::Get()->EndRenderRenderTarget(PShadowMap);
 	}
 

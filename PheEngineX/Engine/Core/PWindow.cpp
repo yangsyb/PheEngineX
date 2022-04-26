@@ -213,4 +213,31 @@ void PWindowWin32::GenerateWindow(const std::string& Name)
 		SetForegroundWindow(HWnd);
 	}
 }
+
+void PWindowWin32::CalculateFrame()
+{
+	static int frameCnt = 0;
+	static float timeElapsed = 0.0f;
+
+	frameCnt++;
+
+	if ((PEngine::GetSingleton().GetTimer().TotalTime() - timeElapsed) >= 1.0f)
+	{
+		float fps = (float)frameCnt; // fps = frameCnt / 1
+		float mspf = 1000.0f / fps;
+
+		std::wstring fpsStr = std::to_wstring(fps);
+		std::wstring mspfStr = std::to_wstring(mspf);
+
+		std::wstring windowText =
+			L"    fps: " + fpsStr +
+			L"   mspf: " + mspfStr;
+
+		SetWindowText(HWnd, windowText.c_str());
+
+		frameCnt = 0;
+		timeElapsed += 1.0f;
+	}
+}
+
 #endif

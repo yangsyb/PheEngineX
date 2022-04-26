@@ -23,4 +23,4 @@ Create An Actor On your ContentBrowser <br/>
 (May not have a Viewable Editor so far but structures are designed) <br/><br/>
 Engine/Scene : MainThread Scene Manager, all NODE are used for Construct MainThreadScene <br/>
 
-Render : RenderThread staff (Renderer, RenderScene, Primitive) <br/>
+Render : RenderThread stuff (Renderer, RenderScene, Primitive) <br/>

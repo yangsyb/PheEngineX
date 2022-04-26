@@ -75,7 +75,7 @@ namespace Phe
 		DXGI_SWAP_CHAIN_DESC sd;
 		sd.BufferDesc.Width = CurrentWindow->GetWidth();
 		sd.BufferDesc.Height = CurrentWindow->GetHeight();
-		sd.BufferDesc.RefreshRate.Numerator = 60;
+		sd.BufferDesc.RefreshRate.Numerator = 70;
 		sd.BufferDesc.RefreshRate.Denominator = 1;
 		sd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		sd.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;

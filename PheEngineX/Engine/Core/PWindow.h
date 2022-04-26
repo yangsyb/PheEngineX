@@ -14,6 +14,8 @@ namespace Phe
 
 		virtual UINT32 GetHeight() { return PHeight; }
 		virtual UINT32 GetWidth() { return PWidth; }
+
+		virtual void CalculateFrame() = 0;
 	protected:
 		PWindow(UINT32 Width, UINT32 Height);
 		virtual ~PWindow();
@@ -31,6 +33,7 @@ namespace Phe
 		PWindowWin32(UINT32 Width, UINT32 Height, void* Handle, const std::string& Name);
 		virtual ~PWindowWin32();
 		virtual bool Run();
+		virtual void CalculateFrame() override;
 
 		void GenerateWindow(const std::string& Name);
 		HWND GetCurrentHwnd() { return HWnd; }
