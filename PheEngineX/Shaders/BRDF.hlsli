@@ -105,14 +105,29 @@ float SmithGGXVisibilityCorrelated(float NdotL, float NdotV, float AlphaRoughnes
     return 0.5 / (GGXV + GGXL);
 }
 
+float GeometrySchlickGGX(float NdotV, float roughness)
+{
+    float r = (roughness + 1.0);
+    float k = (r * r) / 8.0;
+
+    float nom = NdotV;
+    float denom = NdotV * (1.0 - k) + k;
+
+    return nom / denom;
+}
+
 float Vis_SmithJointApprox(float a2, float NoV, float NoL)
 {
-    float a = sqrt(a2);
-    NoL = max(NoL, 1e-6);
-    NoV = max(NoV, 1e-6);
-    float Vis_SmithV = NoL * (NoV * (1 - a) + a);
-    float Vis_SmithL = NoV * (NoL * (1 - a) + a);
-    return 0.5 * rcp(Vis_SmithV + Vis_SmithL);
+//    float a = sqrt(a2);
+//    NoL = max(NoL, 1e-6);
+//    NoV = max(NoV, 1e-6);
+//    float Vis_SmithV = NoL * (NoV * (1 - a) + a);
+//    float Vis_SmithL = NoV * (NoL * (1 - a) + a);
+//    return 0.5 * rcp(Vis_SmithV + Vis_SmithL);
+    
+    float ggx2 = GeometrySchlickGGX(NoV, a2);
+    float ggx1 = GeometrySchlickGGX(NoL, a2);
+    return ggx1 * ggx2;
 }
 
 float Pow5(float val)

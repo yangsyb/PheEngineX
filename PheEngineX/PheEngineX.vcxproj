@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -159,6 +159,7 @@
     <ClInclude Include="DX12\PDX12Texture.h" />
     <ClInclude Include="DX12\PDynamicDescriptorHeap.h" />
     <ClInclude Include="Engine\Editor\PAssetManager.h" />
+    <ClInclude Include="Engine\Scene\PBoundingBox.h" />
     <ClInclude Include="Engine\Scene\PCamera.h" />
     <ClInclude Include="Engine\Scene\PCameraController.h" />
     <ClInclude Include="Engine\Editor\PTexture.h" />
@@ -171,6 +172,7 @@
     <ClInclude Include="Engine\Editor\PMaterial.h" />
     <ClInclude Include="Engine\Scene\PNodeLight.h" />
     <ClInclude Include="Engine\Scene\PNodeStaticMesh.h" />
+    <ClInclude Include="Engine\Scene\PRay.h" />
     <ClInclude Include="Engine\Scene\PScene.h" />
     <ClInclude Include="Engine\Editor\PShader.h" />
     <ClInclude Include="Engine\Editor\PShaderManager.h" />
@@ -220,6 +222,7 @@
     <ClCompile Include="DX12\PDX12ShaderManager.cpp" />
     <ClCompile Include="DX12\PDynamicDescriptorHeap.cpp" />
     <ClCompile Include="Engine\Editor\PAssetManager.cpp" />
+    <ClCompile Include="Engine\Scene\PBoundingBox.cpp" />
     <ClCompile Include="Engine\Scene\PCamera.cpp" />
     <ClCompile Include="Engine\Scene\PCameraController.cpp" />
     <ClCompile Include="Engine\Editor\PEditor.cpp" />
@@ -230,6 +233,7 @@
     <ClCompile Include="Engine\Editor\PTexture.cpp" />
     <ClCompile Include="Engine\Scene\PNodeLight.cpp" />
     <ClCompile Include="Engine\Scene\PNodeStaticMesh.cpp" />
+    <ClCompile Include="Engine\Scene\PRay.cpp" />
     <ClCompile Include="Engine\Scene\PScene.cpp" />
     <ClCompile Include="Engine\Editor\PShader.cpp" />
     <ClCompile Include="Engine\Editor\PShaderManager.cpp" />
