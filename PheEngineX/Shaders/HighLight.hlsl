@@ -58,10 +58,10 @@ float4 PS(VS_Output Input) : SV_TARGET
 	Tex.x = 1.0f * X / Width;
 	Tex.y = 1.0f * Y / Height;
 
-	float4 Color0 = gHDRInput.Sample(gsamPointWrap, Tex + float2(-DeltaU, -DeltaV));
-	float4 Color1 = gHDRInput.Sample(gsamPointWrap, Tex + float2(+DeltaU, -DeltaV));
-	float4 Color2 = gHDRInput.Sample(gsamPointWrap, Tex + float2(-DeltaU, +DeltaV));
-	float4 Color3 = gHDRInput.Sample(gsamPointWrap, Tex + float2(+DeltaU, +DeltaV));
+	float4 Color0 = gHDRInput.Sample(gsamLinearClamp, Tex + float2(-DeltaU, -DeltaV));
+	float4 Color1 = gHDRInput.Sample(gsamLinearClamp, Tex + float2(+DeltaU, -DeltaV));
+	float4 Color2 = gHDRInput.Sample(gsamLinearClamp, Tex + float2(-DeltaU, +DeltaV));
+	float4 Color3 = gHDRInput.Sample(gsamLinearClamp, Tex + float2(+DeltaU, +DeltaV));
 
     float4 AvailableColor = Color0 * 0.25f + Color1 * 0.25f + Color2 * 0.25f + Color3 * 0.25f;
 
