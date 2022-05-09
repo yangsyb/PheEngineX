@@ -15,7 +15,7 @@ namespace Phe
 		ID3D12DescriptorHeap* GetCurrentHeap() { return PCurrentHeap; }
 		void ClearHeap();
 	private:
-		static const UINT32 NumDescriptorPerHeap = 2048;
+		static const UINT32 NumDescriptorPerHeap = 8192;
 		std::vector<ComPtr<ID3D12DescriptorHeap>> PDescriptorHeapPool;
 		ID3D12DescriptorHeap* RequestNewHeap(D3D12_DESCRIPTOR_HEAP_TYPE Type);
 

@@ -72,6 +72,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tree.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\Tower.json");
 	PAssetManager::GetSingleton().LoadJsonFile("JsonFile\\SkySphere.json");
+	PAssetManager::GetSingleton().LoadFBXFile("Map_Outpost_Collision.fbx");
 	PAssetManager::GetSingleton().AddMeshData("box", StandardBoxVertices, StandardBoxIndices, StandardBoxNormal, StandardBoxTangent, StandardBoxTangentY, StandardBoxUVs);
 	//Texture Data
 	PAssetManager::GetSingleton().AddTextureData("Texture1", L"Textures\\jacket_diff.dds");
@@ -92,13 +93,18 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	PAssetManager::GetSingleton().AddMaterialData("WPOTreeTruckMat", "WPOTrunkShader", std::vector<std::string>{"Texture3", "Texture3Normal"});
 	PAssetManager::GetSingleton().AddMaterialData("TowerMat", "PBRShader", std::vector<std::string>{"TextureTower", "TextureTowerNormal", "TextureTowerRM", "TextureTowerEmissive"});
 	PAssetManager::GetSingleton().AddMaterialData("StoneMat", "DefaultShader", std::vector<std::string>{"Texture4", "Texture4Normal"});
+//	PAssetManager::GetSingleton().AddMaterialData("ColorMat", "ColorShader");
 	//Light
 	PAssetManager::GetSingleton().AddLightData("DefaultLight");
 
 	PFunc<void()> f1 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();
-		PEngine::GetSingleton().GetScene()->AddStaticMesh("box", Transform{ glm::vec3(0,0, 0), glm::vec3(0,0,0), glm::vec3(1,1,1) }, "DefaultMat");
+		PEngine::GetSingleton().GetScene()->AddStaticMeshFromFbxFile("DefaultMat");
 		PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", Transform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
+
+		//PEngine::GetSingleton().GetScene()->ClearScene();
+		//PEngine::GetSingleton().GetScene()->AddStaticMesh("box", Transform{ glm::vec3(0,0, 0), glm::vec3(0,0,0), glm::vec3(1,1,1) }, "DefaultMat");
+		//PEngine::GetSingleton().GetScene()->AddLight("DefaultLight", Transform(glm::vec3(0.f, 55.f, 45.f), glm::vec3(0.f, 0.f, 0.f), glm::vec3(1.f, 1.f, 1.f)));
 	};
 	PFunc<void()> f2 = [&]() {
 		PEngine::GetSingleton().GetScene()->ClearScene();

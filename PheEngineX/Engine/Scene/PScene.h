@@ -27,6 +27,8 @@ namespace Phe
 
 		void AddStaticMesh(std::string StaticMeshName, Transform MeshTransform, std::string MaterialName);
 		void AddStaticMeshFromFile(const std::string FilePath, std::string MaterialName);
+		void AddStaticMeshFromFbxFile(std::string MaterialName);
+		void AddFromFbxNode(FbxNode* Node, std::string MaterialName);
 		void AddLight(std::string LightName, Transform LightTransform);
 		void AddLightFromFile(const std::string FilePath);
 		void AddSkySphere(const std::string FilePath, PTexture* SkyTexture);

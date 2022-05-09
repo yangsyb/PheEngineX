@@ -47,5 +47,6 @@ namespace Phe
 		PEditor* PMainEditor;
 		PGameTimer PTimer;
 		std::unique_ptr<PAssetManager> PMainAssetManager;
+
 	};
 }

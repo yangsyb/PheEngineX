@@ -156,7 +156,7 @@ namespace Phe
 	protected:
 		virtual void RecalculateProjectionMatrix() override
 		{
-			PProjection = glm::perspectiveLH_ZO(glm::radians(PFov), PWidth / PHeight, 1.f, 3000.0f);
+			PProjection = glm::perspectiveLH_ZO(glm::radians(PFov), PWidth / PHeight, 1.f, 30000.0f);
 			PProjectionView = PProjection * PView;
 			UpdateProjectionConstant();
 		}

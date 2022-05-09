@@ -9,7 +9,7 @@ namespace Phe
 
 	PAssetManager::PAssetManager()
 	{
-
+		InitializeSdkObjects(lSdkManager, lScene);
 	}
 
 	PAssetManager::~PAssetManager()
@@ -89,6 +89,43 @@ namespace Phe
 		}
 	}
 
+
+	void PAssetManager::LoadFBXFile(const std::string FileName)
+	{
+		FbxString path(FileName.c_str());
+		
+		bool lResult = LoadScene(lSdkManager, lScene, path.Buffer());
+		if (lResult)
+		{
+			//Add MeshBuffer
+			for (int meshIndex = 0; meshIndex < lScene->GetGeometryCount(); ++meshIndex)
+			{
+				const auto Mesh = static_cast<FbxMesh*>(lScene->GetGeometry(meshIndex));
+				int NumVerts = Mesh->GetControlPointsCount();
+				
+				std::string MeshName = Mesh->GetName();
+				std::vector<float> Vertices;
+				std::vector<UINT16> Indices;
+
+				for (int VertexIndex = 0; VertexIndex < NumVerts; VertexIndex++)
+				{
+					FbxVector4 vert = Mesh->GetControlPointAt(VertexIndex);
+					Vertices.push_back((float)vert.mData[0] / 100);
+					Vertices.push_back((float)vert.mData[1] / 100);
+					Vertices.push_back((float)vert.mData[2] / 100);
+				}
+				auto IndexCount = Mesh->GetPolygonVertexCount();
+				int* indices = Mesh->GetPolygonVertices();
+				for (auto index = 0; index < Mesh->GetPolygonVertexCount(); index++)
+				{
+					Indices.push_back(*indices);
+					indices += 1;
+				}
+				PStaticMesh* SMesh = new PStaticMesh(MeshName, Vertices, Indices);
+				MeshData.insert({ MeshName, SMesh });
+			}
+		}
+	}
 
 	void PAssetManager::AddMeshData(std::string MeshName, PStaticMesh* InStaticMesh)
 	{
@@ -187,4 +224,12 @@ namespace Phe
 		return nullptr;
 	}
 
+	void PAssetManager::AddMeshData(const std::string MeshName, std::vector<float> PVertices, std::vector<UINT16> PIndices)
+	{
+		if (MeshData.count(MeshName) == 0)
+		{
+			PStaticMesh* Mesh = new PStaticMesh(MeshName, PVertices, PIndices);
+			MeshData.insert({ MeshName, Mesh });
+		}
+	}
 }

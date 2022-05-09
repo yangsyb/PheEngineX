@@ -5,7 +5,7 @@
 #include "PRenderScene.h"
 namespace Phe
 {
-#define bDOFPass
+//#define bDOFPass
 	class PRHI;
 	class PRenderScene;
 	class PGPUTexture;

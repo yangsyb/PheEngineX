@@ -10,6 +10,15 @@ namespace Phe
 
 	}
 
+
+	PStaticMesh::PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT16> Indices) : PMeshName(Name), PVertices(Vertices), PIndices(Indices)
+	{
+		PNormals.resize(PVertices.size());
+		PTangents.resize(PVertices.size());
+		PTangentYs.resize(PVertices.size());
+		PUVs.resize(PVertices.size());
+	}
+
 	PStaticMesh::~PStaticMesh()
 	{
 		for(auto& LinkedNode : LinkedNodeStaticMesh)

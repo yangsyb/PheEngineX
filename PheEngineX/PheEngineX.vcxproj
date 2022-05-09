@@ -115,14 +115,17 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <SDLCheck>true</SDLCheck>
-      <PreprocessorDefinitions>_DEBUG;_CONSOLE;PlatformWin32;PlatformIOS;PlatformAndroid;RenderDeviceDX12;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;PlatformWin32;PlatformIOS;PlatformAndroid;RenderDeviceDX12;FBXSDK_SHARED;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <PrecompiledHeader>Use</PrecompiledHeader>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
+      <AdditionalIncludeDirectories>.\FBXSDK\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>NotSet</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>.\FBXSDK\lib\vs2019\x64\debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>libfbxsdk.lib;wininet.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -142,6 +145,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Common\AnimationUtility.h" />
+    <ClInclude Include="Common\Common.h" />
+    <ClInclude Include="Common\GeometryUtility.h" />
     <ClInclude Include="DX12\d3dx12.h" />
     <ClInclude Include="DX12\DDS.h" />
     <ClInclude Include="DX12\DDSTextureLoader.h" />
@@ -158,6 +164,7 @@
     <ClInclude Include="DX12\PDX12ShaderManager.h" />
     <ClInclude Include="DX12\PDX12Texture.h" />
     <ClInclude Include="DX12\PDynamicDescriptorHeap.h" />
+    <ClInclude Include="DX12\WICTextureSaver.h" />
     <ClInclude Include="Engine\Editor\PAssetManager.h" />
     <ClInclude Include="Engine\Scene\PBoundingBox.h" />
     <ClInclude Include="Engine\Scene\PCamera.h" />
@@ -208,6 +215,15 @@
     <ClInclude Include="RHI\PShaderManager.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Common\AnimationUtility.cxx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Common\Common.cxx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="Common\GeometryUtility.cxx">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="DX12\DDSTextureLoader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
     </ClCompile>

@@ -7,6 +7,7 @@ namespace Phe
 	{
 	public:
 		PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT16> Indices,std::vector<float> Normals, std::vector<float> Tangents, std::vector<float> Tangentys, std::vector<float> UVs);
+		PStaticMesh(std::string Name, std::vector<float> Vertices, std::vector<UINT16> Indices);
 		~PStaticMesh();
 
 		void BindNodeStaticMesh(PNodeStaticMesh* NodeStaticMesh);

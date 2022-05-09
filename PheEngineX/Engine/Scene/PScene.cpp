@@ -65,6 +65,50 @@ namespace Phe
 		}
 	}
 
+	void PScene::AddStaticMeshFromFbxFile(std::string MaterialName)
+	{
+		AddFromFbxNode(PAssetManager::GetSingleton().GetFbxScene()->GetRootNode(), MaterialName);
+	}
+
+
+	void PScene::AddFromFbxNode(FbxNode* Node, std::string MaterialName)
+	{
+		if (Node->GetNodeAttribute())
+		{
+			switch (Node->GetNodeAttribute()->GetAttributeType())
+			{
+			case FbxNodeAttribute::eMesh:
+			{
+				for(int index = 0; index < Node->GetSrcObjectCount(); index++)
+				{
+					const char* nodeName = Node->GetName();
+					const char* srcName = Node->GetSrcObject(index)->GetName();
+					auto x = std::string(Node->GetSrcObject(index)->GetTypeName());
+					if(std::string(Node->GetSrcObject(index)->GetTypeName()) == "Mesh")
+					{
+						FbxDouble3 translation = Node->LclTranslation.Get();
+						glm::vec3 Translation(translation[0] / 100, translation[1] / 100, translation[2] / 100);
+						FbxDouble3 rotation = Node->LclRotation.Get();
+						glm::vec3 Rotation(rotation[0], rotation[1], rotation[2]);
+						FbxDouble3 scaling = Node->LclScaling.Get();
+						glm::vec3 Scale(scaling[0], scaling[1], scaling[2]);
+						Transform Trans(Translation, Rotation, Scale);
+						AddStaticMesh(std::string(srcName), Trans, MaterialName);
+						break;
+					}
+				}
+			}
+			break;
+			}
+
+		}
+
+		for (int i = 0; i < Node->GetChildCount(); ++i)
+		{
+			AddFromFbxNode(Node->GetChild(i), MaterialName);
+		}
+	}
+
 	void PScene::AddLight(std::string LightName, Transform LightTransform)
 	{
 		PLight* Light = PAssetManager::GetSingleton().GetLightData(LightName);

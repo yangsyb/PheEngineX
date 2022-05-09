@@ -8,6 +8,7 @@
 #include "DX12/PDX12GPUTexture.h"
 #include "DX12/DDSTextureLoader.h"
 #include "DX12/DDSTextureSaver.h"
+#include "DX12/WICTextureSaver.h"
 #include "DX12/PDX12GPURenderTarget.h"
 
 namespace Phe
@@ -133,7 +134,7 @@ namespace Phe
 	{
 		ExecuteCommandList();
 //		Flush();
-		ThrowIfFailed(PSwapChain->Present(1, 0));
+		ThrowIfFailed(PSwapChain->Present(0, 0));
 
 		PCurrBackBuffer = (PCurrBackBuffer + 1) % SwapChainBufferCount;
 
@@ -889,7 +890,7 @@ namespace Phe
 	{
 		PDX12Shader* InDX12Shader = static_cast<PDX12Shader*>(InPipeline->GetShader());
 		auto ShaderParam = InDX12Shader->GetParams().at(DX12ShaderManager->PropertyToID(PropertyName));
-		PCommandList->SetGraphicsRoot32BitConstants(ShaderParam.GetBaseRegister(), 2, data.get(), 0);
+		PCommandList->SetGraphicsRoot32BitConstants(ShaderParam.GetBaseRegister(), 4, data.get(), 0);
 	}
 
 	void PDX12RHI::SetRenderResourceTable(std::string PropertyName, UINT32 HeapOffset)
@@ -1025,7 +1026,9 @@ namespace Phe
 	{
 		DX12RTBuffer* InDX12RTBuffer = static_cast<DX12RTBuffer*>(InRTBuffer);
 
-		HRESULT hr = SaveDDSTextureToFile(PCommandQueue.Get(), InDX12RTBuffer->PResource->GetResource().Get(), L"Depth.dds");
+//		HRESULT hr = SaveDDSTextureToFile(PCommandQueue.Get(), InDX12RTBuffer->PResource->GetResource().Get(), L"Depth.dds");
+
+		HRESULT hr = SaveWICTextureToFile(PCommandQueue.Get(), InDX12RTBuffer->PResource->GetResource().Get(), GUID_ContainerFormatPng, L"Depth.png", nullptr, nullptr, false);
 	}
 
 	void PDX12RHI::ReadBackTexture(PGPUTexture* InTexture)

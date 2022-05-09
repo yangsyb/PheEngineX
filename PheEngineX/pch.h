@@ -69,4 +69,7 @@
 #include <dxgidebug.h>
 #include <iostream>
 
+#include "fbxsdk.h"
+#include "Common/Common.h"
+
 using namespace Microsoft::WRL;
