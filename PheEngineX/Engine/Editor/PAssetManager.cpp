@@ -93,8 +93,9 @@ namespace Phe
 	void PAssetManager::LoadFBXFile(const std::string FileName)
 	{
 		FbxString path(FileName.c_str());
-		
+		FbxGeometryConverter clsConverter(lSdkManager);
 		bool lResult = LoadScene(lSdkManager, lScene, path.Buffer());
+		clsConverter.Triangulate(lScene, true);
 		if (lResult)
 		{
 			//Add MeshBuffer
@@ -116,6 +117,7 @@ namespace Phe
 				}
 				auto IndexCount = Mesh->GetPolygonVertexCount();
 				int* indices = Mesh->GetPolygonVertices();
+
 				for (auto index = 0; index < Mesh->GetPolygonVertexCount(); index++)
 				{
 					Indices.push_back(*indices);

@@ -21,7 +21,7 @@ namespace Phe
 	PScene::PScene() : PSceneCenter(glm::vec3(0, 0, 0)), PSceneRadius(35), PMainLight(nullptr)
 	{
 		PSceneNode = PNodeFactory::CreateNode<PNodeScene>(nullptr, "MainScene");
-		PMainPerspectCamera = std::make_shared<PPerspectiveCamera>(45.0f, 1920.0f, 1080.0f);
+		PMainPerspectCamera = std::make_shared<PPerspectiveCamera>(45.0f, 1920.f, 1080.f);
 		PMainCameraController = std::make_unique<PCameraController>(PMainPerspectCamera);
 
 		AddSkySphere("JsonFile\\SkySphere.json", PAssetManager::GetSingleton().GetTextureData("SkyBoxTexture"));
